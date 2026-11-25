@@ -28,7 +28,7 @@ struct HostsView: View {
                 Circle()
                     .fill(color(for: latency.grade))
                     .frame(width: 7, height: 7)
-                Text(latency.milliseconds.map { "\($0) ms" } ?? "不可达")
+                Text(latency.milliseconds.map { "\($0) ms" } ?? "到達不可")
                     .font(EhFont.mono(11))
                     .foregroundStyle(EhColor.secondaryLabel)
             }
@@ -60,7 +60,7 @@ struct HostsView: View {
         Form {
             Section {
                 if entries.isEmpty {
-                    Text("还没有自定义记录")
+                    Text("カスタム記録はまだありません")
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(entries) { entry in
@@ -87,16 +87,16 @@ struct HostsView: View {
                     }
                 }
             } header: {
-                Text("自定义记录")
+                Text("カスタム記録")
             } footer: {
-                Text("自定义记录优先于内置 IP 表。左滑删除。")
+                Text("カスタム記録は内蔵 IP テーブルより優先されます。左スワイプで削除。")
             }
 
             Section {
                 Button {
                     showAdd = true
                 } label: {
-                    Label("添加记录", systemImage: "plus")
+                    Label("記録を追加", systemImage: "plus")
                 }
 
                 if !entries.isEmpty {
@@ -104,33 +104,33 @@ struct HostsView: View {
                         EhDNS.shared.clearUserHosts()
                         reload()
                     } label: {
-                        Text("清空全部")
+                        Text("すべて消去")
                     }
                 }
             }
         }
-        .navigationTitle("自定义 Hosts")
+        .navigationTitle("カスタム Hosts")
         .task { await probeAll() }
         .refreshable { await probeAll() }
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .onAppear { reload() }
-        .alert("添加记录", isPresented: $showAdd) {
-            TextField("域名，如 exhentai.org", text: $newHost)
+        .alert("記録を追加", isPresented: $showAdd) {
+            TextField("ドメイン名（例：exhentai.org）", text: $newHost)
                 .autocorrectionDisabled()
                 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 #endif
-            TextField("IP，多个用逗号分隔", text: $newIPs)
+            TextField("IP（複数の場合はカンマ区切り）", text: $newIPs)
                 .autocorrectionDisabled()
                 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 #endif
-            Button("添加") { add() }
-            Button("取消", role: .cancel) { clearDraft() }
+            Button("追加") { add() }
+            Button("キャンセル", role: .cancel) { clearDraft() }
         } message: {
-            Text("填一条你确认能连通的 IP。填错会让该域名彻底连不上，删掉即可恢复。")
+            Text("接続できることを確認済みの IP を入力してください。間違えるとそのドメインに一切接続できなくなりますが、削除すれば元に戻ります。")
         }
     }
 

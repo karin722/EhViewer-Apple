@@ -596,7 +596,7 @@ public enum SpiderError: LocalizedError, Sendable {
         case .invalidResponseData: return "Invalid response data"
         case .notImplemented: return "Not implemented"
         case .storageFailed: return "Failed to save image to disk"
-        case .diskFull: return "磁盘空间不足，无法保存图片"
+        case .diskFull: return "ストレージ容量が不足しているため、画像を保存できません"
         }
     }
 }

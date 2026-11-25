@@ -23,18 +23,18 @@ private enum LoginMethod: String, Identifiable, CaseIterable {
 
     var title: String {
         switch self {
-        case .web:      return "网页登录"
-        case .password: return "账号密码登录"
-        case .cookie:   return "粘贴 Cookie 登录"
+        case .web:      return "Web ログイン"
+        case .password: return "ID とパスワードでログイン"
+        case .cookie:   return "Cookie を貼り付けてログイン"
         }
     }
 
     /// 一句话说清"这个方式会发生什么 / 什么时候该用它"
     var blurb: String {
         switch self {
-        case .web:      return "在应用内打开官网登录，能过人机验证"
-        case .password: return "直接填账号密码，可能被人机验证拦下"
-        case .cookie:   return "从浏览器复制整段 Cookie 粘进来"
+        case .web:      return "アプリ内で公式サイトを開いてログイン。CAPTCHA を通過できます"
+        case .password: return "ID とパスワードを直接入力。CAPTCHA でブロックされる場合があります"
+        case .cookie:   return "ブラウザから Cookie 全体をコピーして貼り付け"
         }
     }
 
@@ -57,7 +57,7 @@ private enum LoginMethod: String, Identifiable, CaseIterable {
 private func warnIfCredentialsNotPersisted() {
     guard EhCookieManager.credentialPersistenceFailed else { return }
     EhCookieManager.credentialPersistenceFailed = false
-    EhToast.failure("凭据未能保存，重启后可能需要重新登录")
+    EhToast.failure("認証情報を保存できませんでした。再起動後に再ログインが必要になる場合があります")
 }
 
 struct LoginView: View {
@@ -81,7 +81,7 @@ struct LoginView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 32)
             }
-            .navigationTitle("登录")
+            .navigationTitle("ログイン")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -93,14 +93,14 @@ struct LoginView: View {
                 }
             }
             .confirmationDialog(
-                "以访客身份浏览？",
+                "ゲストとして閲覧しますか？",
                 isPresented: $showGuestConfirm,
                 titleVisibility: .visible
             ) {
-                Button("继续") { enterGuestMode() }
-                Button("取消", role: .cancel) {}
+                Button("再開") { enterGuestMode() }
+                Button("キャンセル", role: .cancel) {}
             } message: {
-                Text("访客只能浏览 E-Hentai，无法使用收藏、下载配额与 ExHentai。随时可以在设置里登录。")
+                Text("ゲストは E-Hentai の閲覧のみ可能で、お気に入り、ダウンロード上限、ExHentai は利用できません。設定からいつでもログインできます。")
             }
         }
     }
@@ -122,10 +122,10 @@ struct LoginView: View {
                 }
 
             VStack(spacing: 4) {
-                Text("登录 E-Hentai")
+                Text("E-Hentai にログイン")
                     .font(.system(size: 22, weight: .bold))
                     .foregroundStyle(EhColor.label)
-                Text("登录后可同步收藏、发表评论、查看配额与访问 ExHentai。也可以先以访客身份浏览。")
+                Text("ログインするとお気に入りの同期、コメントの投稿、上限の確認、ExHentai へのアクセスができます。まずはゲストとして閲覧することもできます。")
                     .font(EhFont.caption)
                     .foregroundStyle(EhColor.secondaryLabel)
                     .multilineTextAlignment(.center)
@@ -152,7 +152,7 @@ struct LoginView: View {
                     HStack(spacing: 6) {
                         Text(LoginMethod.web.title)
                             .font(.headline)
-                        Text("推荐")
+                        Text("おすすめ")
                             .font(.caption2.weight(.semibold))
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -185,7 +185,7 @@ struct LoginView: View {
 
     private var secondaryMethods: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("其他方式")
+            Text("その他の方法")
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(.secondary)
                 .padding(.leading, 4)
@@ -240,7 +240,7 @@ struct LoginView: View {
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "eye")
-                Text("以访客身份浏览")
+                Text("ゲストとして閲覧")
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 4)
@@ -254,9 +254,9 @@ struct LoginView: View {
     /// 单独隔开放最底部 —— 和上面的操作拉开距离，避免误触跳出 App
     private var registerFooter: some View {
         HStack(spacing: 4) {
-            Text("还没有账号？")
+            Text("アカウントをお持ちでないですか？")
                 .foregroundStyle(.secondary)
-            Link("前往注册", destination: URL(string: EhURL.registerUrl)!)
+            Link("登録する", destination: URL(string: EhURL.registerUrl)!)
         }
         .font(.footnote)
         .padding(.top, 12)
@@ -299,7 +299,7 @@ struct PasswordLoginView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("用户名", text: $username)
+                    TextField("ユーザー名", text: $username)
                         .textContentType(.username)
                         #if os(iOS)
                         .textInputAutocapitalization(.never)
@@ -307,12 +307,12 @@ struct PasswordLoginView: View {
                         .autocorrectionDisabled()
                         .disabled(isLoading)
 
-                    SecureField("密码", text: $password)
+                    SecureField("パスワード", text: $password)
                         .textContentType(.password)
                         .disabled(isLoading)
                         .onSubmit { Task { await signIn() } }
                 } footer: {
-                    Text("登录的是 E-Hentai 论坛账号（forums.e-hentai.org）。")
+                    Text("ログインするのは E-Hentai フォーラムのアカウント（forums.e-hentai.org）です。")
                 }
 
                 if let errorMessage {
@@ -323,7 +323,7 @@ struct PasswordLoginView: View {
 
                         // 被人机验证拦下时给一条能走通的路，而不是只报错
                         if blockedByChallenge {
-                            Button("改用网页登录") { showWebFallback = true }
+                            Button("Web ログインに切り替える") { showWebFallback = true }
                         }
                     }
                 }
@@ -337,7 +337,7 @@ struct PasswordLoginView: View {
                             if isLoading {
                                 ProgressView().controlSize(.small)
                             } else {
-                                Text("登录").bold()
+                                Text("ログイン").bold()
                             }
                             Spacer()
                         }
@@ -345,13 +345,13 @@ struct PasswordLoginView: View {
                     .disabled(username.isEmpty || password.isEmpty || isLoading)
                 }
             }
-            .navigationTitle("账号密码登录")
+            .navigationTitle("ID とパスワードでログイン")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("キャンセル") { dismiss() }
                 }
             }
             .sheet(isPresented: $showWebFallback) {
@@ -393,16 +393,16 @@ struct PasswordLoginView: View {
             case .signInError(let msg):
                 errorMessage = msg
             case .parseFailure(let msg):
-                errorMessage = "解析失败: \(msg)"
+                errorMessage = "解析失敗: \(msg)"
             }
         } catch let ehError as EhError {
             if case .cloudflare403 = ehError {
                 errorMessage = ehError.localizedDescription
             } else {
-                errorMessage = "网络错误: \(ehError.localizedDescription)"
+                errorMessage = "ネットワークエラー: \(ehError.localizedDescription)"
             }
         } catch {
-            errorMessage = "网络错误: \(error.localizedDescription)"
+            errorMessage = "ネットワークエラー: \(error.localizedDescription)"
         }
 
         isLoading = false
@@ -459,16 +459,16 @@ struct WebViewLoginView: View {
                 )
 
                 if isLoading {
-                    ProgressView("加载中...")
+                    ProgressView("読み込み中...")
                 }
             }
-            .navigationTitle("网页登录")
+            .navigationTitle("Web ログイン")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("キャンセル") { dismiss() }
                 }
             }
         }
@@ -487,7 +487,7 @@ struct WebViewLoginView: View {
                 AppSettings.shared.avatar = avatar
             }
         } catch {
-            debugLog("[WebViewLogin] 获取用户资料失败: \(error)")
+            debugLog("[WebViewLogin] ユーザー情報の取得に失敗: \(error)")
         }
     }
 }
@@ -809,7 +809,7 @@ struct CookieLoginView: View {
                             #endif
 
                         if pasted.isEmpty {
-                            Text("在这里粘贴整段 Cookie\nipb_member_id=…; ipb_pass_hash=…; igneous=…")
+                            Text("ここに Cookie 全体を貼り付けてください\nipb_member_id=…; ipb_pass_hash=…; igneous=…")
                                 .font(.system(.footnote, design: .monospaced))
                                 .foregroundStyle(.tertiary)
                                 .padding(.top, 8)
@@ -830,26 +830,26 @@ struct CookieLoginView: View {
                     Button {
                         pasteFromClipboard()
                     } label: {
-                        Label("从剪贴板粘贴", systemImage: "doc.on.clipboard")
+                        Label("クリップボードから貼り付け", systemImage: "doc.on.clipboard")
                     }
                     #endif
                 } header: {
-                    Text("粘贴 Cookie")
+                    Text("Cookie を貼り付け")
                 } footer: {
-                    Text("整段粘进来就行，不用自己拆。分号分隔、请求头、Cookie 导出插件的 JSON 都能识别。")
+                    Text("全体をそのまま貼り付けるだけで、自分で分ける必要はありません。セミコロン区切り、リクエストヘッダー、Cookie エクスポート拡張機能の JSON を認識できます。")
                 }
 
                 // 实时解析反馈 —— 粘完立刻知道认没认出来
                 if !pasted.isEmpty && !showManualFields {
-                    Section("识别结果") {
+                    Section("認識結果") {
                         detectedRow("ipb_member_id", parsed.memberId, required: true)
                         detectedRow("ipb_pass_hash", parsed.passHash, required: true)
                         detectedRow("igneous", parsed.igneous, required: false)
 
                         if !parsed.isUsable {
                             Text(EhCookieTextParser.mentionsAnyKey(pasted)
-                                 ? "认出了字段名但没取到值，检查一下是不是复制漏了。"
-                                 : "没找到 ipb_member_id / ipb_pass_hash，可能粘错了内容。")
+                                 ? "フィールド名は認識しましたが値を取得できませんでした。コピー漏れがないか確認してください。"
+                                 : "ipb_member_id / ipb_pass_hash が見つかりません。貼り付けた内容が間違っている可能性があります。")
                                 .font(.caption)
                                 .foregroundStyle(.orange)
                         }
@@ -857,7 +857,7 @@ struct CookieLoginView: View {
                 }
 
                 Section {
-                    DisclosureGroup("手动填写", isExpanded: $showManualFields) {
+                    DisclosureGroup("手動で入力", isExpanded: $showManualFields) {
                         TextField("ipb_member_id", text: $manualMemberId)
                             .autocorrectionDisabled()
                             #if os(iOS)
@@ -868,7 +868,7 @@ struct CookieLoginView: View {
                             #if os(iOS)
                             .textInputAutocapitalization(.never)
                             #endif
-                        TextField("igneous (仅 ExHentai)", text: $manualIgneous)
+                        TextField("igneous (ExHentai のみ)", text: $manualIgneous)
                             .autocorrectionDisabled()
                             #if os(iOS)
                             .textInputAutocapitalization(.never)
@@ -876,7 +876,7 @@ struct CookieLoginView: View {
                     }
                     .font(.system(.body, design: .monospaced))
                 } footer: {
-                    Text("在浏览器里登录 e-hentai.org 后打开开发者工具 → 应用 → Cookie，复制这几项。")
+                    Text("ブラウザで e-hentai.org にログインしてから、開発者ツール → アプリケーション → Cookie を開き、これらの項目をコピーしてください。")
                 }
 
                 Section {
@@ -885,22 +885,22 @@ struct CookieLoginView: View {
                     } label: {
                         HStack {
                             Spacer()
-                            Text("验证并登录").bold()
+                            Text("確認してログイン").bold()
                             Spacer()
                         }
                     }
                     .disabled(!parsed.isUsable)
                 } footer: {
-                    Text("凭据保存在本机钥匙串，仅本设备可用，不进 iCloud、不随备份迁移，也不会上传到任何第三方。ExHentai 需要 igneous 才能访问，缺它只能浏览 E-Hentai。")
+                    Text("認証情報はこのデバイスのキーチェーンに保存され、このデバイスでのみ利用できます。iCloud には入らず、バックアップでも移行されず、第三者にアップロードされることもありません。ExHentai へのアクセスには igneous が必要で、ない場合は E-Hentai のみ閲覧できます。")
                 }
             }
-            .navigationTitle("Cookie 登录")
+            .navigationTitle("Cookie ログイン")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("キャンセル") { dismiss() }
                 }
             }
         }
@@ -913,7 +913,7 @@ struct CookieLoginView: View {
             Text(name)
                 .font(.system(.footnote, design: .monospaced))
             Spacer()
-            Text(value.map(masked) ?? (required ? "未识别" : "未提供"))
+            Text(value.map(masked) ?? (required ? "認識できません" : "未入力"))
                 .font(.system(.footnote, design: .monospaced))
                 .foregroundStyle(.secondary)
         }

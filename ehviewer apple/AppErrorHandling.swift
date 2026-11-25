@@ -29,23 +29,23 @@ struct AppError: Identifiable {
         if let urlError = error as? URLError {
             switch urlError.code {
             case .notConnectedToInternet:
-                return AppError("网络不可用", message: "请检查网络连接后重试。")
+                return AppError("ネットワークが利用できません", message: "ネットワーク接続を確認してから再試行してください。")
             case .timedOut:
-                return AppError("请求超时", message: "服务器响应过慢，请稍后重试。")
+                return AppError("リクエストがタイムアウトしました", message: "サーバーの応答が遅すぎます。しばらくしてから再試行してください。")
             case .cancelled:
-                return AppError("请求已取消", message: "操作已被取消。")
+                return AppError("リクエストがキャンセルされました", message: "操作はキャンセルされました。")
             default:
-                return AppError("网络错误", message: urlError.localizedDescription, error: error)
+                return AppError("ネットワークエラー", message: urlError.localizedDescription, error: error)
             }
         }
 
         // 解码错误
         if error is DecodingError {
-            return AppError("数据解析失败", message: "服务器返回了意外的数据格式。", error: error)
+            return AppError("データの解析に失敗しました", message: "サーバーから予期しない形式のデータが返されました。", error: error)
         }
 
         // 通用错误
-        return AppError("发生错误", message: error.localizedDescription, error: error)
+        return AppError("エラーが発生しました", message: error.localizedDescription, error: error)
     }
 }
 
@@ -105,15 +105,15 @@ struct GlobalErrorBoundary: ViewModifier {
                 }
             }
             .alert(
-                capturedError?.title ?? "错误",
+                capturedError?.title ?? "エラー",
                 isPresented: $showError
             ) {
-                Button("确定", role: .cancel) {
+                Button("OK", role: .cancel) {
                     capturedError = nil
                 }
                 // 提供"复制详情"按钮, 方便用户反馈
                 if let detail = capturedError?.underlyingError {
-                    Button("复制错误详情") {
+                    Button("エラーの詳細をコピー") {
                         let text = String(describing: detail)
                         #if os(iOS)
                         UIPasteboard.general.string = text

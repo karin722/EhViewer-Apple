@@ -31,12 +31,12 @@ struct SelectSiteView: View {
                 }
                 .padding(.bottom, 18)
 
-            Text("欢迎使用 EhViewer")
+            Text("EhViewer へようこそ")
                 .font(.system(size: 26, weight: .bold))
                 .foregroundStyle(EhColor.label)
                 .padding(.bottom, 6)
 
-            Text("先选一个默认站点，之后可以随时切换")
+            Text("まずデフォルトのサイトを選んでください。後からいつでも切り替えられます")
                 .font(EhFont.caption)
                 .foregroundStyle(EhColor.secondaryLabel)
                 .padding(.bottom, 32)
@@ -45,13 +45,13 @@ struct SelectSiteView: View {
                 siteOption(
                     site: .eHentai,
                     title: "E-Hentai",
-                    description: "无需登录即可浏览大部分内容",
+                    description: "ログインしなくてもほとんどのコンテンツを閲覧できます",
                     icon: "globe"
                 )
                 siteOption(
                     site: .exHentai,
                     title: "ExHentai",
-                    description: "内容更全，需要账号且账号需具备访问权限",
+                    description: "コンテンツがより充実していますが、アクセス権限のあるアカウントが必要です",
                     icon: "globe.badge.chevron.backward"
                 )
             }
@@ -63,7 +63,7 @@ struct SelectSiteView: View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.system(size: 12))
                         .foregroundStyle(EhColor.warning)
-                    Text("账号若不具备 ExHentai 权限，登录后会自动退回 E-Hentai。")
+                    Text("アカウントに ExHentai の権限がない場合、ログイン後に自動的に E-Hentai に戻ります。")
                         .font(EhFont.footnote)
                         .foregroundStyle(EhColor.secondaryLabel)
                         .fixedSize(horizontal: false, vertical: true)
@@ -74,7 +74,7 @@ struct SelectSiteView: View {
 
             Spacer(minLength: 24)
 
-            Button("开始使用", action: confirmSelection)
+            Button("はじめる", action: confirmSelection)
                 .buttonStyle(EhFilledButtonStyle(height: EhSize.actionButtonHeight))
                 .padding(.horizontal, EhSpacing.page)
                 .padding(.bottom, 32)

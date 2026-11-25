@@ -34,11 +34,11 @@ struct ProxySettingsTests {
         AppSettings.shared.proxyMode = 1
 
         AppSettings.shared.proxyHost = "127.0.0.1"
-        #expect(!AppSettings.shared.manualProxyIsUsable, "只有地址没有端口不该生效")
+        #expect(!AppSettings.shared.manualProxyIsUsable, "アドレスだけでポートがない場合は有効になるべきではない")
 
         AppSettings.shared.proxyHost = ""
         AppSettings.shared.proxyPort = 7890
-        #expect(!AppSettings.shared.manualProxyIsUsable, "只有端口没有地址不该生效")
+        #expect(!AppSettings.shared.manualProxyIsUsable, "ポートだけでアドレスがない場合は有効になるべきではない")
 
         AppSettings.shared.proxyHost = "127.0.0.1"
         #expect(AppSettings.shared.manualProxyIsUsable)
@@ -86,10 +86,10 @@ struct SettingsKeyIsolationTests {
 
         settings.enableSecurity = false
         settings.enableSecureScreen = true
-        #expect(!settings.enableSecurity, "开隐私遮罩把应用锁也打开了 —— 两者共用了同一个键")
+        #expect(!settings.enableSecurity, "プライバシーマスクを有効にするとアプリロックも有効になる —— 両者が同じキーを共有している")
 
         settings.enableSecureScreen = false
         settings.enableSecurity = true
-        #expect(!settings.enableSecureScreen, "开应用锁把隐私遮罩也打开了")
+        #expect(!settings.enableSecureScreen, "アプリロックを有効にするとプライバシーマスクも有効になる")
     }
 }

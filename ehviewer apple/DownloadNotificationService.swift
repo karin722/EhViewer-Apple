@@ -56,14 +56,14 @@ final class DownloadNotificationService: NSObject, @unchecked Sendable {
         // 停止所有下载的操作
         let stopAllAction = UNNotificationAction(
             identifier: "STOP_ALL",
-            title: "停止全部",
+            title: "すべて停止",
             options: [.destructive]
         )
 
         // 清除通知的操作
         let clearAction = UNNotificationAction(
             identifier: "CLEAR",
-            title: "清除",
+            title: "クリア",
             options: []
         )
 
@@ -119,7 +119,7 @@ final class DownloadNotificationService: NSObject, @unchecked Sendable {
         )
 
         let content = UNMutableNotificationContent()
-        content.title = "正在下载"
+        content.title = "ダウンロード中"
         content.body = title
         content.categoryIdentifier = "DOWNLOADING"
         content.sound = nil // 静默
@@ -151,9 +151,9 @@ final class DownloadNotificationService: NSObject, @unchecked Sendable {
         if total > 0 {
             let progress = downloaded * 100 / total
             content.body = "\(downloaded)/\(total) (\(progress)%) - \(speedText)"
-            content.subtitle = "\(progress)% 完成"
+            content.subtitle = "\(progress)% 完了"
         } else {
-            content.body = "\(downloaded) 页 - \(speedText)"
+            content.body = "\(downloaded) ページ - \(speedText)"
         }
 
         content.userInfo = ["gid": gid]
@@ -183,17 +183,17 @@ final class DownloadNotificationService: NSObject, @unchecked Sendable {
 
         if completedItems.count == 1 {
             // 单个下载完成
-            content.title = success ? "下载完成" : "下载失败"
+            content.title = success ? "ダウンロード完了" : "ダウンロード失敗"
             content.body = title
         } else {
             // 多个下载完成
-            content.title = "下载完成"
+            content.title = "ダウンロード完了"
             if finishedCount > 0 && failedCount > 0 {
-                content.body = "\(finishedCount) 个成功，\(failedCount) 个失败"
+                content.body = "\(finishedCount) 件成功、\(failedCount) 件失敗"
             } else if finishedCount > 0 {
-                content.body = "\(finishedCount) 个画廊下载完成"
+                content.body = "\(finishedCount) 件のギャラリーのダウンロードが完了しました"
             } else {
-                content.body = "\(failedCount) 个画廊下载失败"
+                content.body = "\(failedCount) 件のギャラリーのダウンロードに失敗しました"
             }
 
             // 使用收件箱样式显示列表
@@ -203,7 +203,7 @@ final class DownloadNotificationService: NSObject, @unchecked Sendable {
                 summaryText += "\(status) \(itemTitle)\n"
             }
             if completedItems.count > 5 {
-                summaryText += "... 还有 \(completedItems.count - 5) 个"
+                summaryText += "... ほか \(completedItems.count - 5) 件"
             }
             content.subtitle = summaryText.trimmingCharacters(in: .newlines)
         }
@@ -225,8 +225,8 @@ final class DownloadNotificationService: NSObject, @unchecked Sendable {
 
     func on509Error() {
         let content = UNMutableNotificationContent()
-        content.title = "下载限制"
-        content.body = "已达到图片浏览限制 (509)，请稍后再试或获取更多配额"
+        content.title = "ダウンロード制限"
+        content.body = "画像の閲覧上限 (509) に達しました。しばらくしてから再試行するか、上限を増やしてください"
         content.categoryIdentifier = "ERROR_509"
         content.sound = .default
 

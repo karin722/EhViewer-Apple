@@ -38,7 +38,7 @@ final class FavoritesOfflineUITests: XCTestCase {
 
     @MainActor private func back(_ app: XCUIApplication) {
         let custom = app.buttons["gallery-detail-back"]
-        let labeled = app.buttons["返回"]
+        let labeled = app.buttons["戻る"]
         if custom.waitForExistence(timeout: 2) { custom.tap() }
         else if labeled.exists { labeled.tap() }
         else {
@@ -70,11 +70,11 @@ final class FavoritesOfflineUITests: XCTestCase {
 
     @MainActor private func checkFlow(cloud: String) {
         let app = launch(cloud: cloud)
-        tab("收藏", in: app)
+        tab("お気に入り", in: app)
         let header = header(app)
         XCTAssertTrue(header.waitForExistence(timeout: 8))
         let emptyY = header.frame.minY
-        tab("首页", in: app)
+        tab("ホーム", in: app)
         openSynthetic(app)
         let heart = app.buttons["gallery-detail-favorite"]
         XCTAssertTrue(heart.waitForExistence(timeout: 8))
@@ -82,7 +82,7 @@ final class FavoritesOfflineUITests: XCTestCase {
         heart.tap()
         expectSelection(true, heart: heart)
         back(app)
-        tab("收藏", in: app)
+        tab("お気に入り", in: app)
         XCTAssertTrue(app.staticTexts["Synthetic Gallery"].firstMatch.waitForExistence(timeout: 8))
         XCTAssertEqual(header.frame.minY, emptyY, accuracy: 2)
         if cloud == "one" {
@@ -95,11 +95,11 @@ final class FavoritesOfflineUITests: XCTestCase {
         expectSelection(false, heart: heart)
         back(app)
         XCTAssertEqual(header.frame.minY, emptyY, accuracy: 2)
-        tab("历史", in: app)
-        XCTAssertTrue(app.staticTexts["阅读历史"].waitForExistence(timeout: 6))
-        tab("下载", in: app)
-        XCTAssertTrue(app.staticTexts["下载"].firstMatch.waitForExistence(timeout: 6))
-        tab("收藏", in: app)
+        tab("履歴", in: app)
+        XCTAssertTrue(app.staticTexts["閲覧履歴"].waitForExistence(timeout: 6))
+        tab("ダウンロード", in: app)
+        XCTAssertTrue(app.staticTexts["ダウンロード"].firstMatch.waitForExistence(timeout: 6))
+        tab("お気に入り", in: app)
         XCTAssertEqual(header.frame.minY, emptyY, accuracy: 2)
     }
 
@@ -108,11 +108,11 @@ final class FavoritesOfflineUITests: XCTestCase {
         let fileBase = "offline-regression-" + importID
         let app = launch(cloud: "empty", importID: importID, nativePicker: nativePicker)
         XCTAssertTrue(app.staticTexts["Apple resume fixture"].firstMatch.waitForExistence(timeout: 8))
-        tab("收藏", in: app)
+        tab("お気に入り", in: app)
         XCTAssertTrue(header(app).waitForExistence(timeout: 8))
-        tab("历史", in: app)
+        tab("履歴", in: app)
         XCTAssertTrue(app.staticTexts["Apple resume fixture"].firstMatch.waitForExistence(timeout: 8))
-        tab("我的", in: app)
+        tab("マイページ", in: app)
 
         let entry = app.buttons["settings-favorites-entry"].firstMatch
         for _ in 0..<3 where !entry.isHittable { app.swipeUp() }
@@ -134,15 +134,15 @@ final class FavoritesOfflineUITests: XCTestCase {
             file.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
         }
 
-        let preview = app.staticTexts["导入预览"]
+        let preview = app.staticTexts["インポートのプレビュー"]
         if !preview.waitForExistence(timeout: 8) { attachHierarchy(app, note: "The import selection did not open preview") }
         XCTAssertTrue(preview.exists)
-        app.buttons["导入"].tap()
-        let success = app.alerts["导入完成"]
+        app.buttons["インポート"].tap()
+        let success = app.alerts["インポート完了"]
         if !success.waitForExistence(timeout: 8) { attachHierarchy(app, note: "Import failed") }
         XCTAssertTrue(success.exists)
-        success.buttons["好"].tap()
-        let labeledBack = app.buttons["返回"].firstMatch
+        success.buttons["OK"].tap()
+        let labeledBack = app.buttons["戻る"].firstMatch
         let duoSystemBack = app.buttons["BackButton"].firstMatch
         let nativeBack = app.navigationBars.buttons.firstMatch
         if labeledBack.isHittable {
@@ -156,15 +156,15 @@ final class FavoritesOfflineUITests: XCTestCase {
             XCTFail("Missing settings Back after import")
             return
         }
-        tab("收藏", in: app)
+        tab("お気に入り", in: app)
         let importedFavorite = app.staticTexts["Imported favorite fixture"].firstMatch
         XCTAssertTrue(importedFavorite.waitForExistence(timeout: 8))
         XCTAssertTrue(importedFavorite.isHittable)
-        tab("历史", in: app)
+        tab("履歴", in: app)
         let importedRead = app.staticTexts["Imported reading 54"].firstMatch
         XCTAssertTrue(importedRead.waitForExistence(timeout: 8))
         XCTAssertTrue(importedRead.isHittable)
-        tab("首页", in: app)
+        tab("ホーム", in: app)
         XCTAssertTrue(app.staticTexts["Apple resume fixture"].firstMatch.waitForExistence(timeout: 8))
     }
 
@@ -185,7 +185,7 @@ final class FavoritesOfflineUITests: XCTestCase {
 
         let ranking = launch(cloud: "empty", launchPage: 2)
         XCTAssertTrue(ranking.staticTexts["Synthetic ranking launch"].firstMatch.waitForExistence(timeout: 8))
-        XCTAssertTrue(ranking.buttons["全部时间"].firstMatch.exists)
+        XCTAssertTrue(ranking.buttons["全期間"].firstMatch.exists)
     }
 
     @MainActor func testApplyKeywordlessMinimumRatingAndReplaceIt() {
@@ -196,18 +196,18 @@ final class FavoritesOfflineUITests: XCTestCase {
         app.launch()
 
         func openOptions() {
-            let fields = app.textFields.matching(NSPredicate(format: "placeholderValue == %@", "搜索标签或标题"))
+            let fields = app.textFields.matching(NSPredicate(format: "placeholderValue == %@", "タグまたはタイトルを検索"))
                 .allElementsBoundByIndex.filter(\.isHittable)
             // On blank filtered results the visible field leaves room for its
             // Clear affordance; the retained origin can still appear in AX.
             let field = fields.min(by: { $0.frame.width < $1.frame.width })
             XCTAssertNotNil(field)
             field?.tap()
-            let advanced = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "高级搜索")).firstMatch
+            let advanced = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "詳細検索")).firstMatch
             XCTAssertTrue(advanced.waitForExistence(timeout: 5))
             if !advanced.isHittable { app.swipeUp() }
             advanced.tap()
-            XCTAssertTrue(app.navigationBars["搜索选项"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.navigationBars["検索オプション"].waitForExistence(timeout: 5))
         }
         func chooseRating(_ current: String, _ next: String) {
             let currentRating = app.buttons[current].firstMatch
@@ -217,8 +217,8 @@ final class FavoritesOfflineUITests: XCTestCase {
             app.buttons[next].firstMatch.tap()
         }
         func apply() {
-            let apply = app.buttons["应用"].firstMatch
-            if apply.exists { apply.tap() } else { app.buttons["完成"].firstMatch.tap() }
+            let apply = app.buttons["適用"].firstMatch
+            if apply.exists { apply.tap() } else { app.buttons["完了"].firstMatch.tap() }
         }
         XCTAssertTrue(app.staticTexts["Synthetic Gallery"].firstMatch.waitForExistence(timeout: 8))
         openOptions()
@@ -236,11 +236,11 @@ final class FavoritesOfflineUITests: XCTestCase {
 
         openOptions()
         chooseRating("4 stars", "5 stars")
-        app.navigationBars["搜索选项"].buttons["取消"].tap()
-        XCTAssertFalse(app.navigationBars["搜索选项"].exists)
+        app.navigationBars["検索オプション"].buttons["キャンセル"].tap()
+        XCTAssertFalse(app.navigationBars["検索オプション"].exists)
         // The advanced form returns to search focus; leave the search panel
         // separately without submitting another query.
-        if !four.isHittable { app.buttons["取消"].firstMatch.tap() }
+        if !four.isHittable { app.buttons["キャンセル"].firstMatch.tap() }
         let visible = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hittable == true"), object: four)
         XCTAssertEqual(XCTWaiter.wait(for: [visible], timeout: 5), .completed)
         XCTAssertFalse(five.exists)
@@ -252,7 +252,7 @@ final class FavoritesOfflineUITests: XCTestCase {
         XCTAssertFalse(four.exists)
         XCTAssertFalse(app.staticTexts["Synthetic rating 4 cursor page"].exists)
         XCTAssertTrue(app.staticTexts["Synthetic rating 5 numbered page"].waitForExistence(timeout: 8))
-        app.buttons["清除搜索"].firstMatch.tap()
+        app.buttons["検索をクリア"].firstMatch.tap()
         let home = app.staticTexts["Synthetic Gallery"].firstMatch
         let homeVisible = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hittable == true"), object: home)
         XCTAssertEqual(XCTWaiter.wait(for: [homeVisible], timeout: 5), .completed)
@@ -265,18 +265,18 @@ final class FavoritesOfflineUITests: XCTestCase {
         app.launchEnvironment["EH_OFFLINE_UI_FIXTURE"] = "1"
         app.launchEnvironment["EH_FIXTURE_ADVANCED_SEARCH"] = "1"
         app.launch()
-        let field = app.textFields.matching(NSPredicate(format: "placeholderValue == %@", "搜索标签或标题")).firstMatch
+        let field = app.textFields.matching(NSPredicate(format: "placeholderValue == %@", "タグまたはタイトルを検索")).firstMatch
         XCTAssertTrue(field.waitForExistence(timeout: 8))
         field.tap()
         field.typeText("offline-filter-reset")
-        let advanced = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "高级搜索")).firstMatch
+        let advanced = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "詳細検索")).firstMatch
         XCTAssertTrue(advanced.waitForExistence(timeout: 5))
         if !advanced.isHittable { app.swipeUp() }
         advanced.tap()
         app.switches["Enable advance options"].firstMatch.tap()
-        app.buttons["应用"].firstMatch.tap()
+        app.buttons["適用"].firstMatch.tap()
 
-        let relax = app.buttons["清除筛选条件"].firstMatch
+        let relax = app.buttons["絞り込み条件をクリア"].firstMatch
         XCTAssertTrue(relax.waitForExistence(timeout: 8))
         relax.tap()
         XCTAssertTrue(app.staticTexts["Synthetic same query after clearing filters"].waitForExistence(timeout: 8))
@@ -290,7 +290,7 @@ final class FavoritesOfflineUITests: XCTestCase {
             // The wide shell keeps Home's submitted search mounted when a
             // sidebar destination is selected. Target the current empty input,
             // not Home's retained field that still holds the prior query.
-            let placeholder = "搜索标签或标题"
+            let placeholder = "タグまたはタイトルを検索"
             let emptyInput = NSPredicate(format: "placeholderValue == %@ AND (value == %@ OR value == %@ OR value == nil)", placeholder, placeholder, "")
             let field = app.textFields.matching(emptyInput).firstMatch
             XCTAssertTrue(field.waitForExistence(timeout: 5))
@@ -302,7 +302,7 @@ final class FavoritesOfflineUITests: XCTestCase {
         submit("offlinehome")
         XCTAssertTrue(app.staticTexts["Synthetic home search result"].firstMatch.waitForExistence(timeout: 8))
 
-        let popular = app.buttons["热门"].firstMatch
+        let popular = app.buttons["人気"].firstMatch
         XCTAssertTrue(popular.waitForExistence(timeout: 5))
         popular.tap()
         XCTAssertTrue(app.staticTexts["Synthetic popular launch"].firstMatch.waitForExistence(timeout: 8))
@@ -331,7 +331,7 @@ final class FavoritesOfflineUITests: XCTestCase {
     // Run only on a dedicated offline simulator with no non-fixture downloads.
     @MainActor func testClearFinishedDownloadsRequiresDestructiveConfirmation() {
         let app = launch(cloud: "empty", localReader: true, clearFinished: true)
-        tab("下载", in: app)
+        tab("ダウンロード", in: app)
         let completed = app.staticTexts["Synthetic cleared download"].firstMatch
         let paused = app.staticTexts["Synthetic preserved download"].firstMatch
         XCTAssertTrue(completed.waitForExistence(timeout: 8))
@@ -341,15 +341,15 @@ final class FavoritesOfflineUITests: XCTestCase {
         func openConfirmation() {
             XCTAssertTrue(actions.waitForExistence(timeout: 5))
             actions.tap()
-            let clear = app.buttons["清空已完成"].firstMatch
+            let clear = app.buttons["完了済みを消去"].firstMatch
             XCTAssertTrue(clear.waitForExistence(timeout: 5))
             clear.tap()
-            XCTAssertTrue(app.staticTexts["删除 1 个已完成的下载？"].firstMatch.waitForExistence(timeout: 5))
-            XCTAssertTrue(app.buttons["删除记录和文件"].firstMatch.exists)
+            XCTAssertTrue(app.staticTexts["完了済みの 1 件のダウンロードを削除しますか？"].firstMatch.waitForExistence(timeout: 5))
+            XCTAssertTrue(app.buttons["記録とファイルを削除"].firstMatch.exists)
         }
 
         openConfirmation()
-        let cancel = app.buttons["取消"].firstMatch
+        let cancel = app.buttons["キャンセル"].firstMatch
         if cancel.exists { cancel.tap() }
         else {
             // iPad SwiftUI popover omits Cancel; outside-tap is dismissal.
@@ -358,7 +358,7 @@ final class FavoritesOfflineUITests: XCTestCase {
         XCTAssertTrue(completed.exists)
         XCTAssertTrue(paused.exists)
         openConfirmation()
-        app.buttons["删除记录和文件"].firstMatch.tap()
+        app.buttons["記録とファイルを削除"].firstMatch.tap()
         XCTAssertTrue(completed.waitForNonExistence(timeout: 8))
         XCTAssertTrue(paused.exists)
     }
@@ -367,7 +367,7 @@ final class FavoritesOfflineUITests: XCTestCase {
     @MainActor func testDownloadCategoryAndTitleOrderScopeSelectAll() {
         continueAfterFailure = false
         let app = launch(cloud: "empty", localReader: true, downloadSort: true)
-        tab("下载", in: app)
+        tab("ダウンロード", in: app)
         let zebra = app.staticTexts["Sort Fixture Zebra"].firstMatch
         let apple = app.staticTexts["Sort Fixture Apple"].firstMatch
         XCTAssertTrue(zebra.waitForExistence(timeout: 8))
@@ -384,11 +384,11 @@ final class FavoritesOfflineUITests: XCTestCase {
         }
 
         actions.tap()
-        tapMenu("排序：默认顺序")
+        tapMenu("並べ替え：デフォルト順")
         // Depending on the OS the picker is a submenu or its options are inlined.
-        let sortBy = app.buttons["排序依据"].firstMatch
+        let sortBy = app.buttons["並べ替え"].firstMatch
         if sortBy.exists { sortBy.tap() }
-        tapMenu("标题")
+        tapMenu("タイトル")
         XCTAssertTrue(apple.waitForExistence(timeout: 6))
         XCTAssertLessThan(apple.frame.minY, zebra.frame.minY)
 
@@ -396,7 +396,7 @@ final class FavoritesOfflineUITests: XCTestCase {
         let category = app.buttons["downloads-category"].firstMatch
         XCTAssertTrue(category.waitForExistence(timeout: 5))
         category.tap()
-        let categoryOptions = app.buttons["画廊分类"].firstMatch
+        let categoryOptions = app.buttons["ギャラリーのカテゴリ"].firstMatch
         if categoryOptions.exists && categoryOptions.isHittable { categoryOptions.tap() }
         tapMenu("Manga")
         XCTAssertTrue(apple.waitForNonExistence(timeout: 6))
@@ -406,13 +406,13 @@ final class FavoritesOfflineUITests: XCTestCase {
         }
 
         actions.tap()
-        tapMenu("批量操作")
+        tapMenu("一括操作")
         actions.tap()
-        tapMenu("全选")
+        tapMenu("すべて選択")
         actions.tap()
-        tapMenu("批量删除 (1)")
-        XCTAssertTrue(app.staticTexts["确认删除 1 个下载？"].firstMatch.waitForExistence(timeout: 5))
-        let cancel = app.buttons["取消"].firstMatch
+        tapMenu("一括削除 (1)")
+        XCTAssertTrue(app.staticTexts["1 件のダウンロードを削除しますか？"].firstMatch.waitForExistence(timeout: 5))
+        let cancel = app.buttons["キャンセル"].firstMatch
         if cancel.exists { cancel.tap() }
         else { app.coordinate(withNormalizedOffset: CGVector(dx: 0.10, dy: 0.85)).tap() }
         XCTAssertTrue(zebra.exists)
@@ -421,14 +421,14 @@ final class FavoritesOfflineUITests: XCTestCase {
     @MainActor func testDownloadedReaderPageJumpAndReopenRetainsProgress() {
         let app = launch(cloud: "empty", localReader: true)
         openSynthetic(app)
-        let read = app.buttons["阅读"].firstMatch
+        let read = app.buttons["読む"].firstMatch
         XCTAssertTrue(read.waitForExistence(timeout: 8))
         read.tap()
 
         let pages = app.buttons["reader-pages"]
         XCTAssertTrue(pages.waitForExistence(timeout: 8))
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 1 页"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["1 ページ目へジャンプ"].waitForExistence(timeout: 5))
         app.buttons["2"].tap()
 
         // Reopening the grid proves the logical reading position changed.
@@ -437,13 +437,13 @@ final class FavoritesOfflineUITests: XCTestCase {
         }
         XCTAssertTrue(pages.waitForExistence(timeout: 5))
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 2 页"].waitForExistence(timeout: 5))
-        app.buttons["完成"].tap()
+        XCTAssertTrue(app.navigationBars["2 ページ目へジャンプ"].waitForExistence(timeout: 5))
+        app.buttons["完了"].tap()
         app.buttons["reader-close"].tap()
         back(app)
         openSynthetic(app)
 
-        let resume = app.buttons["继续阅读"].firstMatch
+        let resume = app.buttons["続きを読む"].firstMatch
         XCTAssertTrue(resume.waitForExistence(timeout: 8))
         resume.tap()
         if !pages.waitForExistence(timeout: 3) {
@@ -454,7 +454,7 @@ final class FavoritesOfflineUITests: XCTestCase {
         }
         XCTAssertTrue(pages.waitForExistence(timeout: 5))
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 2 页"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["2 ページ目へジャンプ"].waitForExistence(timeout: 5))
     }
 
     @MainActor func testSuccessfulEmptyCloudAndLocalFavoriteReopen() { checkFlow(cloud: "empty") }

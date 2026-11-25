@@ -73,7 +73,7 @@ final class DownloadLiveActivityManager {
         currentActivity = nil
 
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
-            debugLog("[LiveActivity] Live Activities 未启用")
+            debugLog("[LiveActivity] Live Activities が有効になっていません")
             return
         }
 
@@ -83,7 +83,7 @@ final class DownloadLiveActivityManager {
             downloadedPages: 0,
             totalPages: 0,
             speed: 0,
-            statusText: "正在下载"
+            statusText: "ダウンロード中"
         )
 
         do {
@@ -93,9 +93,9 @@ final class DownloadLiveActivityManager {
                 pushType: nil
             )
             currentActivity = activity
-            debugLog("[LiveActivity] 已启动: \(activity.id)")
+            debugLog("[LiveActivity] 開始しました: \(activity.id)")
         } catch {
-            debugLog("[LiveActivity] 启动失败: \(error)")
+            debugLog("[LiveActivity] 開始に失敗: \(error)")
         }
     }
 
@@ -118,7 +118,7 @@ final class DownloadLiveActivityManager {
             downloadedPages: downloaded,
             totalPages: total,
             speed: speed,
-            statusText: "正在下载"
+            statusText: "ダウンロード中"
         )
 
         Task {
@@ -140,7 +140,7 @@ final class DownloadLiveActivityManager {
             downloadedPages: 0,
             totalPages: 0,
             speed: 0,
-            statusText: success ? "下载完成" : "下载失败"
+            statusText: success ? "ダウンロード完了" : "ダウンロード失敗"
         )
 
         Task {

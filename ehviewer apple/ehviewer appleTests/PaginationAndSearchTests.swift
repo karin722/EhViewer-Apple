@@ -36,7 +36,7 @@ struct PaginationAndSearchTests {
 
         let result = try GalleryListParser.parse(html)
 
-        #expect(result.pages == -1, "searchnav 模式必须置 pages = -1")
+        #expect(result.pages == -1, "searchnav モードでは pages = -1 にしなければならない")
         #expect(result.nextHref == "https://e-hentai.org/?next=2370115")
         // 首页的 #uprev 是 <span> 没有 href，不能当成"有上一页"
         #expect(result.prevHref == nil)
@@ -98,9 +98,9 @@ struct PaginationAndSearchTests {
 
         let result = try GalleryListParser.parse(html)
 
-        #expect(result.pages >= 0, "ptt 模式 pages 必须是非负数")
-        #expect(result.nextPage == 0, "末页的下一页链接回绕到 page=0")
-        #expect(result.nextHref != nil, "href 仍然存在, 正因如此才必须用 nextPage 判定末页")
+        #expect(result.pages >= 0, "ptt モードの pages は非負でなければならない")
+        #expect(result.nextPage == 0, "最終ページの次ページリンクが page=0 に戻る")
+        #expect(result.nextHref != nil, "href はまだ存在するので、nextPage で最終ページを判定しなければならない")
     }
 
     // MARK: - 高级搜索 URL (issue #8 问题三)

@@ -13,7 +13,7 @@ final class GalleryDirectReadUITests: XCTestCase {
         let originalY = row.frame.midY
         row.press(forDuration: 0.8)
 
-        let read = app.buttons["直接阅读"].firstMatch
+        let read = app.buttons["すぐに読む"].firstMatch
         XCTAssertTrue(read.waitForExistence(timeout: 6))
         let close = app.buttons["reader-close"]
         XCTAssertFalse(close.exists, "Long press alone must not open the reader.")
@@ -21,19 +21,19 @@ final class GalleryDirectReadUITests: XCTestCase {
         // Resuming an already-saved page can enter immersive mode. Verify the
         // page HUD first, then show the controls with the normal reader gesture.
         XCTAssertTrue(app.staticTexts["2 / 3"].waitForExistence(timeout: 8))
-        XCTAssertFalse(app.buttons["我的"].firstMatch.isHittable)
+        XCTAssertFalse(app.buttons["マイページ"].firstMatch.isHittable)
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertTrue(close.waitForExistence(timeout: 5))
 
         let pages = app.buttons["reader-pages"]
         XCTAssertTrue(pages.waitForExistence(timeout: 8))
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 2 页"].waitForExistence(timeout: 5))
-        app.buttons["完成"].firstMatch.tap()
+        XCTAssertTrue(app.navigationBars["2 ページ目へジャンプ"].waitForExistence(timeout: 5))
+        app.buttons["完了"].firstMatch.tap()
         XCTAssertTrue(close.isHittable)
         close.tap()
 
-        let profile = app.buttons["我的"].firstMatch
+        let profile = app.buttons["マイページ"].firstMatch
         let returned = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hittable == true"), object: profile)
         XCTAssertEqual(XCTWaiter.wait(for: [returned], timeout: 8), .completed)
         XCTAssertFalse(close.exists)
@@ -42,7 +42,7 @@ final class GalleryDirectReadUITests: XCTestCase {
         // A retained accessibility node is not enough: the actual row must
         // respond to a normal tap and open detail, not start reading again.
         row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        XCTAssertTrue(app.buttons["阅读"].firstMatch.waitForExistence(timeout: 8))
+        XCTAssertTrue(app.buttons["読む"].firstMatch.waitForExistence(timeout: 8))
     }
     @MainActor func testFirstUncachedReadPersistsHistoryAndResumeAfterRelaunch() {
         continueAfterFailure = false
@@ -54,26 +54,26 @@ final class GalleryDirectReadUITests: XCTestCase {
         let row = app.staticTexts["First visit fixture"].firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 8))
         row.press(forDuration: 0.8)
-        let read = app.buttons["直接阅读"].firstMatch
+        let read = app.buttons["すぐに読む"].firstMatch
         XCTAssertTrue(read.waitForExistence(timeout: 6))
         read.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.5)).tap()
 
         let pages = app.buttons["reader-pages"]
         XCTAssertTrue(pages.waitForExistence(timeout: 8))
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 1 页"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["1 ページ目へジャンプ"].waitForExistence(timeout: 5))
         app.buttons["2"].tap()
         showReaderControls(app)
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 2 页"].waitForExistence(timeout: 5))
-        app.buttons["完成"].firstMatch.tap()
+        XCTAssertTrue(app.navigationBars["2 ページ目へジャンプ"].waitForExistence(timeout: 5))
+        app.buttons["完了"].firstMatch.tap()
         app.buttons["reader-close"].tap()
 
-        let history = app.buttons["历史"].firstMatch
+        let history = app.buttons["履歴"].firstMatch
         let ready = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hittable == true"), object: history)
         XCTAssertEqual(XCTWaiter.wait(for: [ready], timeout: 8), .completed)
         history.tap()
-        XCTAssertTrue(app.staticTexts["阅读历史"].waitForExistence(timeout: 6))
+        XCTAssertTrue(app.staticTexts["閲覧履歴"].waitForExistence(timeout: 6))
         XCTAssertTrue(app.staticTexts["First visit fixture"].firstMatch.waitForExistence(timeout: 8))
 
         app.terminate()
@@ -85,7 +85,7 @@ final class GalleryDirectReadUITests: XCTestCase {
         resume.tap()
         showReaderControls(app)
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 2 页"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["2 ページ目へジャンプ"].waitForExistence(timeout: 5))
     }
 
     @MainActor func testHomeResumeReopensLatestProgressWithoutRelaunch() {
@@ -102,7 +102,7 @@ final class GalleryDirectReadUITests: XCTestCase {
         let pages = app.buttons["reader-pages"]
         XCTAssertTrue(pages.waitForExistence(timeout: 8))
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 1 页"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["1 ページ目へジャンプ"].waitForExistence(timeout: 5))
         app.buttons["2"].tap()
         showReaderControls(app)
         app.buttons["reader-close"].tap()
@@ -113,11 +113,11 @@ final class GalleryDirectReadUITests: XCTestCase {
         resume.coordinate(withNormalizedOffset: CGVector(dx: 0.40, dy: 0.50)).tap()
         showReaderControls(app)
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 2 页"].waitForExistence(timeout: 5))
-        app.buttons["完成"].tap()
+        XCTAssertTrue(app.navigationBars["2 ページ目へジャンプ"].waitForExistence(timeout: 5))
+        app.buttons["完了"].tap()
         app.buttons["reader-close"].tap()
         let updated = NSPredicate { _, _ in
-            resume.label.contains("2 / 3 页") || resume.staticTexts["2 / 3 页 · 66%"].exists
+            resume.label.contains("2 / 3 ページ") || resume.staticTexts["2 / 3 ページ · 66%"].exists
         }
         XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: updated, object: nil)], timeout: 5),
                        .completed)
@@ -142,13 +142,13 @@ final class GalleryDirectReadUITests: XCTestCase {
         XCTAssertTrue(visibleArea.contains(row.frame.midY))
         let originalY = row.frame.midY
         row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).press(forDuration: 0.8)
-        let read = app.buttons["直接阅读"].firstMatch
+        let read = app.buttons["すぐに読む"].firstMatch
         XCTAssertTrue(read.waitForExistence(timeout: 6))
         read.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.5)).tap()
         let close = app.buttons["reader-close"]
         XCTAssertTrue(close.waitForExistence(timeout: 8))
         close.tap()
-        let profile = app.buttons["我的"].firstMatch
+        let profile = app.buttons["マイページ"].firstMatch
         let returned = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hittable == true"), object: profile)
         XCTAssertEqual(XCTWaiter.wait(for: [returned], timeout: 8), .completed)
         XCTAssertEqual(row.frame.midY, originalY, accuracy: 2)
@@ -169,7 +169,7 @@ final class GalleryDirectReadUITests: XCTestCase {
         app.launchEnvironment["EH_FIXTURE_DIRECT_COLD"] = "missing-reset"
         app.launch()
         openMissingCount(app)
-        XCTAssertTrue(app.staticTexts["无法加载画廊"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts["ギャラリーを読み込めません"].waitForExistence(timeout: 8))
         app.buttons["reader-close"].tap()
 
         app.terminate()
@@ -179,20 +179,20 @@ final class GalleryDirectReadUITests: XCTestCase {
         XCTAssertTrue(previous.waitForExistence(timeout: 8))
         XCTAssertTrue(previous.staticTexts["Previous visit fixture"].exists || previous.label.contains("Previous visit fixture"))
         openMissingCount(app)
-        let retry = app.buttons["重试"]
+        let retry = app.buttons["再試行"]
         XCTAssertTrue(retry.waitForExistence(timeout: 8))
         retry.tap()
         let pages = app.buttons["reader-pages"]
         XCTAssertTrue(pages.waitForExistence(timeout: 8))
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 1 页"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["1 ページ目へジャンプ"].waitForExistence(timeout: 5))
     }
 
     @MainActor private func openMissingCount(_ app: XCUIApplication) {
         let row = app.staticTexts["Missing page count fixture"].firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 8))
         row.press(forDuration: 0.8)
-        let read = app.buttons["直接阅读"].firstMatch
+        let read = app.buttons["すぐに読む"].firstMatch
         XCTAssertTrue(read.waitForExistence(timeout: 6))
         read.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.5)).tap()
     }

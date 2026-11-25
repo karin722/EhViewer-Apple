@@ -111,7 +111,7 @@ struct ReaderPageShareSheet: UIViewControllerRepresentable {
     static func save(_ export: ReaderPageExport) async {
         let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
         guard status == .authorized || status == .limited else {
-            EhToast.failure("没有相册权限")
+            EhToast.failure("写真へのアクセス権限がありません")
             return
         }
         guard !Task.isCancelled else { return }
@@ -122,9 +122,9 @@ struct ReaderPageShareSheet: UIViewControllerRepresentable {
                 options.uniformTypeIdentifier = export.type.identifier
                 PHAssetCreationRequest.forAsset().addResource(with: .photo, data: export.bytes, options: options)
             }
-            EhToast.success("已保存到相册")
+            EhToast.success("写真に保存しました")
         } catch {
-            EhToast.failure("相册无法保存此图片格式，请尝试存储到文件")
+            EhToast.failure("この画像形式は写真に保存できません。ファイルに保存してみてください")
         }
     }
 }

@@ -11,7 +11,7 @@ final class CompactHomeReselectUITests: XCTestCase {
             throw XCTSkip("Reselect belongs to the compact floating tab bar.")
         }
 
-        let search = app.textFields.matching(NSPredicate(format: "placeholderValue == %@", "搜索标签或标题")).firstMatch
+        let search = app.textFields.matching(NSPredicate(format: "placeholderValue == %@", "タグまたはタイトルを検索")).firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 5))
         search.tap()
         search.typeText("offlineretap\n")
@@ -30,8 +30,8 @@ final class CompactHomeReselectUITests: XCTestCase {
         waitUntil(first, isHittable: false)
 
         // No reversing the scroll to reveal the bar. Browse still owns the selected Home tab.
-        waitUntil(app.buttons["收藏"].firstMatch, isHittable: true)
-        let homeTab = app.buttons.matching(NSPredicate(format: "label == %@ AND selected == YES", "首页")).firstMatch
+        waitUntil(app.buttons["お気に入り"].firstMatch, isHittable: true)
+        let homeTab = app.buttons.matching(NSPredicate(format: "label == %@ AND selected == YES", "ホーム")).firstMatch
         waitUntil(homeTab, isHittable: true)
         homeTab.tap()
 
@@ -56,10 +56,10 @@ final class CompactHomeReselectUITests: XCTestCase {
         }
 
         // Use a unique top-level button, not 下载/收藏 controls also found inside detail.
-        let profileTab = app.buttons["我的"].firstMatch
+        let profileTab = app.buttons["マイページ"].firstMatch
         waitUntil(profileTab, isHittable: true)
         gallery.tap()
-        let read = app.buttons["阅读"].firstMatch
+        let read = app.buttons["読む"].firstMatch
         XCTAssertTrue(read.waitForExistence(timeout: 8))
         waitUntil(profileTab, isHittable: false)
         read.tap()
@@ -79,7 +79,7 @@ final class CompactHomeReselectUITests: XCTestCase {
         XCTAssertTrue(read.waitForExistence(timeout: 8))
         waitUntil(profileTab, isHittable: false)
 
-        let labeledBack = app.buttons["返回"].firstMatch
+        let labeledBack = app.buttons["戻る"].firstMatch
         let back = labeledBack.exists ? labeledBack : app.navigationBars.buttons.firstMatch
         waitUntil(back, isHittable: true)
         back.tap()

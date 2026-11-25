@@ -134,7 +134,7 @@ struct CredentialStorageTests {
         try await settle()
 
         #expect(EhCredentialStore.load() == nil,
-                "注销后钥匙串里还留着凭据，下次启动会被静默恢复成已登录")
+                "ログアウト後もキーチェーンに認証情報が残っており、次回起動時に黙ってログイン状態に復元されてしまう")
     }
 
     /// URLSession 自动落盘的持久认证 Cookie 必须被收编成会话 Cookie。
@@ -171,15 +171,15 @@ struct CredentialStorageTests {
         let url = URL(string: "https://e-hentai.org")!
         #expect(HTTPCookieStorage.shared.cookies(for: url)?
             .first { $0.name == EhCookieManager.keyIPBPassHash }?.isSessionOnly == false,
-            "前置条件：这条应该先是持久 Cookie")
+            "前提条件：これはまず永続 Cookie であるはず")
 
         #expect(manager.secureAuthCookies())
         try await settle()
 
         let after = HTTPCookieStorage.shared.cookies(for: url) ?? []
         let hash = after.first { $0.name == EhCookieManager.keyIPBPassHash }
-        #expect(hash?.isSessionOnly == true, "pass hash 仍以持久 Cookie 落在容器里")
-        #expect(hash?.value == "persisted-hash", "收编过程不能把值弄丢")
+        #expect(hash?.isSessionOnly == true, "pass hash がまだ永続 Cookie としてコンテナに残っている")
+        #expect(hash?.value == "persisted-hash", "取り込みの過程で値を失ってはいけない")
         #expect(EhCredentialStore.load()?.passHash == "persisted-hash")
 
         manager.signOut()
@@ -209,7 +209,7 @@ struct CredentialStorageTests {
         for cookie in HTTPCookieStorage.shared.cookies(for: url) ?? [] {
             HTTPCookieStorage.shared.deleteCookie(cookie)
         }
-        #expect(manager.passHash == nil, "前置条件：罐子应该是空的")
+        #expect(manager.passHash == nil, "前提条件：Cookie ストアは空のはず")
 
         // 先把异步写队列灌满：如果恢复走的是那条队列，它就得排在这些后面，
         // 下面的同步读必然读不到。同步写则直接落罐，不受影响。
@@ -224,8 +224,8 @@ struct CredentialStorageTests {
         manager.restoreCredentialsFromKeychainForTesting()
 
         #expect(manager.passHash == "restored-hash",
-                "恢复不是同步的 —— 启动时读登录态会看到空罐子")
-        #expect(manager.isSignedIn, "重启后应当仍是登录状态")
+                "復元が同期的でない —— 起動時にログイン状態を読むと空のストアが見える")
+        #expect(manager.isSignedIn, "再起動後もログイン状態のままであるべき")
 
         manager.signOut()
     }
@@ -243,6 +243,6 @@ struct CredentialStorageTests {
             if cookies.contains(where: { $0.name == name }) { return }
             try await Task.sleep(for: .milliseconds(20))
         }
-        Issue.record("Cookie \(name) 没有在预期时间内写入")
+        Issue.record("Cookie \(name) が想定時間内に書き込まれなかった")
     }
 }

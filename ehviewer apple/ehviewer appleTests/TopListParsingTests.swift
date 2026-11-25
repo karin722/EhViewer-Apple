@@ -49,14 +49,14 @@ struct TopListParsingTests {
     @Test func genericParserHandlesToplistPage() throws {
         let result = try GalleryListParser.parse(Self.toplistHTML)
 
-        #expect(!result.galleries.isEmpty, "通用解析器吃不下排行榜页")
+        #expect(!result.galleries.isEmpty, "汎用パーサーがランキングページを処理できない")
 
         let first = try #require(result.galleries.first)
         #expect(first.gid > 0)
         #expect(!first.token.isEmpty)
         #expect(!(first.title ?? "").isEmpty)
         // 分类、封面、标签这些「首页卡片有、排行榜也该有」的字段
-        #expect(first.category.name != "Misc", "分类没解析出来（回落到了默认值）")
+        #expect(first.category.name != "Misc", "カテゴリが解析されていない（デフォルト値にフォールバックした）")
         #expect(first.thumb?.isEmpty == false)
         #expect(!(first.simpleTags ?? []).isEmpty)
     }

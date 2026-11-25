@@ -32,7 +32,7 @@ struct LaunchTabTests {
         for page in -1...10 {
             let tab = MainTabView.Tab.fromLaunchPage(page)
             #expect(MainTabView.Tab.bottomTabs.contains(tab),
-                    "启动页面 \(page) 映射到 \(tab.rawValue)，它不在底部栏里 → 冷启动黑屏")
+                    "起動画面 \(page) が \(tab.rawValue) にマッピングされているが、タブバーにない → コールドスタートで黒画面")
         }
     }
 

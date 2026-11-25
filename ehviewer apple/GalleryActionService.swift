@@ -108,11 +108,11 @@ final class GalleryActionService {
         let context = context ?? cloudFavoriteContext
         do {
             try await mutateCloudFavorite(gid: gid, token: token, slot: slot, context: context) {
-                EhToast.success("已添加至收藏")
+                EhToast.success("お気に入りに追加しました")
                 AppSettings.shared.recentFavCat = slot
             }
         } catch {
-            if isCurrentCloudFavoriteContext(context) { EhToast.failure("添加收藏失败") }
+            if isCurrentCloudFavoriteContext(context) { EhToast.failure("お気に入りへの追加に失敗しました") }
             throw error
         }
     }
@@ -134,11 +134,11 @@ final class GalleryActionService {
         do {
             try EhDatabase.shared.insertLocalFavorite(record)
             postFavoriteUpdate(gid: gallery.gid, local: true)
-            EhToast.success("已添加至本地收藏")
+            EhToast.success("ローカルお気に入りに追加しました")
             return true
         } catch {
             debugLog("[GalleryActionService] Add local favorite failed: \(error)")
-            EhToast.failure("添加收藏失败")
+            EhToast.failure("お気に入りへの追加に失敗しました")
             return false
         }
     }
@@ -151,16 +151,16 @@ final class GalleryActionService {
                 readLocal: { try EhDatabase.shared.containsLocalFavorite(gid: gid) },
                 removeLocal: {
                     try self.removeLocalFavorite(gid: gid)
-                    EhToast.success("已移出本地收藏")
+                    EhToast.success("ローカルお気に入りから削除しました")
                 },
                 removeCloud: {
                     try await self.mutateCloudFavorite(gid: gid, token: token, slot: -1, context: context) {
-                        EhToast.success("已取消云端收藏")
+                        EhToast.success("クラウドお気に入りを解除しました")
                     }
                 }
             )
         } catch {
-            if isCurrentCloudFavoriteContext(context) { EhToast.failure("取消收藏失败") }
+            if isCurrentCloudFavoriteContext(context) { EhToast.failure("お気に入りの解除に失敗しました") }
             throw error
         }
     }
@@ -218,7 +218,7 @@ final class GalleryActionService {
         NotificationCenter.default.post(name: .galleryDownloadChanged, object: nil,
                                         userInfo: ["gid": gallery.gid, "downloading": true])
         // 对齐 Android added_to_download_list
-        EhToast.success("已添加至下载列表")
+        EhToast.success("ダウンロードリストに追加しました")
     }
 
     /// 当前是否在计费网络上，且用户开了"移动网络下载前提醒"
@@ -245,7 +245,7 @@ final class GalleryActionService {
         #else
         UIPasteboard.general.string = url
         #endif
-        EhToast.success("已复制链接")
+        EhToast.success("リンクをコピーしました")
     }
 
     // MARK: - 站点工具

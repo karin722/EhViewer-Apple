@@ -61,10 +61,10 @@ struct HistoryView: View {
         VStack(spacing: 0) {
             // 紧凑页头：标题与动作同一行。系统大标题会先留一条空导航栏带
             // 再放标题，两处加起来白白吃掉近百点垂直空间。
-            EhPageHeader(title: "阅读历史") {
+            EhPageHeader(title: "閲覧履歴") {
                 EhSearchToggleButton(isActive: $isSearching)
                 if !vm.records.isEmpty {
-                    Button("清空", role: .destructive) { vm.showClearConfirm = true }
+                    Button("消去", role: .destructive) { vm.showClearConfirm = true }
                         .font(.system(size: 15))
                         .foregroundStyle(EhColor.danger)
                 }
@@ -75,14 +75,14 @@ struct HistoryView: View {
                     if searchText.isEmpty {
                         EhStateView(kind: .empty(
                             symbol: "clock",
-                            title: "还没有阅读记录",
-                            message: "浏览过的画廊会出现在这里"
+                            title: "閲覧記録はまだありません",
+                            message: "閲覧したギャラリーがここに表示されます"
                         ))
                     } else {
                         EhStateView(kind: .empty(
                             symbol: "magnifyingglass",
-                            title: "没有匹配的记录",
-                            message: "换个关键词，或清空搜索看全部历史"
+                            title: "一致する記録はありません",
+                            message: "キーワードを変えるか、検索をクリアしてすべての履歴を表示してください"
                         ))
                     }
                 } else {
@@ -92,10 +92,10 @@ struct HistoryView: View {
         }
             // 去掉 .searchable：iOS 26 把搜索栏放在屏幕**底部**，
             // 于是它和浮起导航条重叠，键盘弹出后也没有收起的落点。
-            .ehPageSearch(isActive: $isSearching, text: $searchText, placeholder: "搜索历史")
+            .ehPageSearch(isActive: $isSearching, text: $searchText, placeholder: "検索履歴")
             .ehCompactHeader()
-            .confirmationDialog("确认清空所有历史记录？", isPresented: $vm.showClearConfirm, titleVisibility: .visible) {
-                Button("清空", role: .destructive) {
+            .confirmationDialog("すべての履歴を消去しますか？", isPresented: $vm.showClearConfirm, titleVisibility: .visible) {
+                Button("消去", role: .destructive) {
                     vm.clearAll()
                 }
             }
@@ -127,7 +127,7 @@ struct HistoryView: View {
             else if cal.isDateInYesterday(r.date) { yesterday.append(r) }
             else { earlier.append(r) }
         }
-        return [("今天", today), ("昨天", yesterday), ("更早", earlier)]
+        return [("今日", today), ("昨日", yesterday), ("それ以前", earlier)]
             .filter { !$0.1.isEmpty }
     }
 
@@ -183,7 +183,7 @@ struct HistoryView: View {
                 if OfflineGallery.isImported(gid: record.gid, token: record.token) {
                     Button { resumeReading(record) } label: {
                         EhGalleryRow(gallery: record.toGalleryInfo(),
-                                     subtitleOverride: "本地图片 · \(formattedTime(record.date))")
+                                     subtitleOverride: "ローカル画像 · \(formattedTime(record.date))")
                     }
                     .buttonStyle(.plain)
                     .overlay(alignment: .bottom) { EhHairline() }
@@ -191,7 +191,7 @@ struct HistoryView: View {
                         Button(role: .destructive) {
                             vm.deleteByGid(record.gid)
                         } label: {
-                            Label("删除阅读记录", systemImage: "trash")
+                            Label("閲覧記録を削除", systemImage: "trash")
                         }
                     }
                 } else {
@@ -220,7 +220,7 @@ struct HistoryView: View {
                         Button {
                             Task { await GalleryActionService.shared.startDownload(gallery: record.toGalleryInfo()) }
                         } label: {
-                            Label("下载", systemImage: "arrow.down.circle")
+                            Label("ダウンロード", systemImage: "arrow.down.circle")
                         }
 
                         Button {
@@ -233,7 +233,7 @@ struct HistoryView: View {
                                 }
                             }
                         } label: {
-                            Label("收藏", systemImage: "heart")
+                            Label("お気に入り", systemImage: "heart")
                         }
 
                         Divider()
@@ -241,7 +241,7 @@ struct HistoryView: View {
                         Button(role: .destructive) {
                             vm.deleteByGid(record.gid)
                         } label: {
-                            Label("删除", systemImage: "trash")
+                            Label("削除", systemImage: "trash")
                         }
                     }
                 }
@@ -272,7 +272,7 @@ struct HistoryView: View {
 
     private func formattedTime(_ date: Date) -> String {
         let formatter = RelativeDateTimeFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.locale = Locale(identifier: "ja_JP")
         return formatter.localizedString(for: date, relativeTo: Date())
     }
 }

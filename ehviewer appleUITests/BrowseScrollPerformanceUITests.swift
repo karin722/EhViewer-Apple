@@ -15,7 +15,7 @@ final class BrowseScrollPerformanceUITests: XCTestCase {
         app.launchEnvironment["EH_FIXTURE_SUBSCRIPTION_FLOW"] = "1"
         app.launch()
         XCTAssertTrue(app.staticTexts["Synthetic Gallery"].firstMatch.waitForExistence(timeout: 8))
-        let controls = app.buttons.matching(NSPredicate(format: "label == %@", "订阅"))
+        let controls = app.buttons.matching(NSPredicate(format: "label == %@", "購読"))
         try XCTUnwrap(controls.allElementsBoundByIndex.first(where: \.isHittable)).tap()
         let first = app.staticTexts["Watched origin row 1"]
         XCTAssertTrue(first.waitForExistence(timeout: 8))
@@ -41,7 +41,7 @@ final class BrowseScrollPerformanceUITests: XCTestCase {
             stopMeasuring()
             XCTAssertTrue(!first.isHittable || abs(first.frame.midY - initialY) > 40,
                           "The list must actually move; a swallowed swipe cannot be a performance pass.")
-            XCTAssertFalse(app.staticTexts["快速搜索"].firstMatch.isHittable)
+            XCTAssertFalse(app.staticTexts["クイック検索"].firstMatch.isHittable)
             XCTAssertFalse(app.buttons["reader-close"].exists)
         }
     }

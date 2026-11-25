@@ -761,7 +761,7 @@ public enum ImageResolution: String, Sendable, CaseIterable, Identifiable {
 
     public var displayName: String {
         switch self {
-        case .auto: return "自动"
+        case .auto: return "自動"
         case .x780: return "780x"
         case .x980: return "980x"
         case .x1280: return "1280x"

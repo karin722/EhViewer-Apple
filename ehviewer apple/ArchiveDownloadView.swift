@@ -42,34 +42,34 @@ struct ArchiveDownloadView: View {
         NavigationStack {
             Group {
                 if isLoading {
-                    ProgressView("读取归档信息…")
+                    ProgressView("アーカイブ情報を読み込み中…")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let loadError {
                     ContentUnavailableView {
-                        Label("读不到归档信息", systemImage: "archivebox")
+                        Label("アーカイブ情報を読み込めません", systemImage: "archivebox")
                     } description: {
                         Text(loadError)
                     } actions: {
-                        Button("重试") { Task { await load() } }
+                        Button("再試行") { Task { await load() } }
                     }
                 } else {
                     form
                 }
             }
-            .navigationTitle("归档下载")
+            .navigationTitle("アーカイブダウンロード")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭") { dismiss() }
+                    Button("閉じる") { dismiss() }
                 }
             }
             .task { await load() }
             .alert(item: $hathMessage) { message in
                 Alert(title: Text(message.title),
                       message: Text(message.body),
-                      dismissButton: .default(Text("好")))
+                      dismissButton: .default(Text("OK")))
             }
             .sheet(item: $readyLink) { link in
                 ArchiveLinkSheet(link: link)
@@ -84,7 +84,7 @@ struct ArchiveDownloadView: View {
             // 访客看到的是两块空壳，得说清楚为什么
             if !AppSettings.shared.isLogin {
                 Section {
-                    Label("归档与 H@H 都需要登录账号后才能使用。", systemImage: "person.crop.circle.badge.exclamationmark")
+                    Label("アーカイブと H@H はアカウントにログインしないと利用できません。", systemImage: "person.crop.circle.badge.exclamationmark")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -93,8 +93,8 @@ struct ArchiveDownloadView: View {
             Section {
                 if resolutions.isEmpty {
                     Text(AppSettings.shared.isLogin
-                         ? "这本没有可用的 H@H 规格"
-                         : "登录后才会列出可选规格")
+                         ? "このギャラリーには利用可能な H@H の形式がありません"
+                         : "ログインすると選択可能な形式が表示されます")
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(resolutions) { item in
@@ -117,9 +117,9 @@ struct ArchiveDownloadView: View {
                     }
                 }
             } header: {
-                Text("H@H 下载")
+                Text("H@H ダウンロード")
             } footer: {
-                Text("任务会派给你账号下的 H@H 客户端，由它在后台下载，不消耗 GP。需要先在网站上绑定过 H@H 客户端。")
+                Text("タスクはアカウントに紐付けられた H@H クライアントに送られ、バックグラウンドでダウンロードされます。GP は消費しません。事前にサイト上で H@H クライアントを紐付けておく必要があります。")
             }
 
             if let archiver {
@@ -129,12 +129,12 @@ struct ArchiveDownloadView: View {
                     archiverRow(.resample, cost: archiver.resampleCost, size: archiver.resampleSize,
                                 url: archiver.resampleUrl)
                 } header: {
-                    Text("归档下载")
+                    Text("アーカイブダウンロード")
                 } footer: {
                     if let funds = archiver.funds, !funds.isEmpty {
-                        Text("余额：\(funds)")
+                        Text("残高：\(funds)")
                     } else {
-                        Text("服务端现打包，会消耗 GP 或 Credits。")
+                        Text("サーバー側でその場でアーカイブを作成するため、GP または Credits を消費します。")
                     }
                 }
             }
@@ -151,7 +151,7 @@ struct ArchiveDownloadView: View {
                     Text(kind.title)
                         .foregroundStyle(url == nil ? .secondary : .primary)
                     let detail = [size, cost].compactMap { $0 }.filter { !$0.isEmpty }
-                    Text(detail.isEmpty ? "不可用" : detail.joined(separator: " · "))
+                    Text(detail.isEmpty ? "利用不可" : detail.joined(separator: " · "))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -185,7 +185,7 @@ struct ArchiveDownloadView: View {
         archiver = archiverData
 
         if list == nil && archiverData == nil {
-            loadError = "请求失败，检查网络或稍后再试。"
+            loadError = "リクエストに失敗しました。ネットワークを確認するか、しばらくしてから再試行してください。"
         }
         isLoading = false
     }
@@ -196,16 +196,16 @@ struct ArchiveDownloadView: View {
         do {
             try await EhAPI.shared.downloadArchive(gid: gid, token: token, or: paramOr, res: item.res)
             hathMessage = HathMessage(
-                title: "已派发",
-                body: "「\(item.name)」已经交给你的 H@H 客户端，下载完成后在客户端本地目录查看。"
+                title: "送信しました",
+                body: "「\(item.name)」を H@H クライアントに送信しました。ダウンロード完了後、クライアントのローカルフォルダーで確認してください。"
             )
         } catch EhError.noHathClient {
             hathMessage = HathMessage(
-                title: "还没有 H@H 客户端",
-                body: "这个功能需要先在 E-Hentai 网站上给账号绑定一个 H@H 客户端。"
+                title: "H@H クライアントがありません",
+                body: "この機能を使うには、先に E-Hentai のサイトでアカウントに H@H クライアントを紐付ける必要があります。"
             )
         } catch {
-            hathMessage = HathMessage(title: "派发失败", body: EhError.localizedMessage(for: error))
+            hathMessage = HathMessage(title: "送信に失敗しました", body: EhError.localizedMessage(for: error))
         }
     }
 
@@ -222,10 +222,10 @@ struct ArchiveDownloadView: View {
             if let link, !link.isEmpty {
                 readyLink = ReadyLink(url: link, title: kind.title)
             } else {
-                hathMessage = HathMessage(title: "没拿到下载链接", body: "服务端没有返回直链，可能是余额不足。")
+                hathMessage = HathMessage(title: "ダウンロードリンクを取得できませんでした", body: "サーバーから直接リンクが返されませんでした。残高不足の可能性があります。")
             }
         } catch {
-            hathMessage = HathMessage(title: "请求失败", body: EhError.localizedMessage(for: error))
+            hathMessage = HathMessage(title: "リクエストに失敗しました", body: EhError.localizedMessage(for: error))
         }
     }
 }
@@ -246,8 +246,8 @@ enum ArchiverKind: String, Identifiable {
 
     var title: String {
         switch self {
-        case .original: return "原始档案"
-        case .resample: return "重采样档案"
+        case .original: return "オリジナルアーカイブ"
+        case .resample: return "リサンプルアーカイブ"
         }
     }
 
@@ -297,9 +297,9 @@ private struct ArchiveLinkSheet: View {
                         .font(.system(.footnote, design: .monospaced))
                         .textSelection(.enabled)
                 } header: {
-                    Text("下载链接已就绪")
+                    Text("ダウンロードリンクの準備ができました")
                 } footer: {
-                    Text("链接有时效，尽快下载。用浏览器打开可以直接存进「文件」。")
+                    Text("リンクには有効期限があります。早めにダウンロードしてください。ブラウザで開くと「ファイル」に直接保存できます。")
                 }
 
                 Section {
@@ -308,11 +308,11 @@ private struct ArchiveLinkSheet: View {
                             openURL(url)
                             dismiss()
                         } label: {
-                            Label("在浏览器中下载", systemImage: "safari")
+                            Label("ブラウザでダウンロード", systemImage: "safari")
                         }
 
                         ShareLink(item: url) {
-                            Label("分享链接", systemImage: "square.and.arrow.up")
+                            Label("リンクを共有", systemImage: "square.and.arrow.up")
                         }
                     }
                 }
@@ -323,7 +323,7 @@ private struct ArchiveLinkSheet: View {
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭") { dismiss() }
+                    Button("閉じる") { dismiss() }
                 }
             }
         }

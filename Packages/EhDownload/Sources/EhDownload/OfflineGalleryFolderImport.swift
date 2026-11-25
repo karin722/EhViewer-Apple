@@ -31,14 +31,14 @@ public enum OfflineGalleryImportError: LocalizedError {
 
     public var errorDescription: String? {
         switch self {
-        case .noImages: "这个文件夹没有可导入的图片。请选择直接存放图片的文件夹，或包含图片的归档。"
-        case .tooLarge: "超过导入限制：2,000 页、单个文件 64 MB、解压后合计 4 GB、压缩包 1 GB 或单页 4,800 万像素。"
-        case .unsafeFile: "无法安全读取文件夹中的图片。请确定文件已下载到本机，并且不是符号链接。"
-        case .invalidImage: "至少一张图片已损坏或格式不受支持。原文件没有改动。"
-        case .unavailable: "应用的本地下载库不可用，未导入任何图片。"
-        case .failed: "未能保存到下载库。请检查可用空间后再试。"
-        case .invalidArchive: "压缩包损坏或内容不一致，没有导入任何图片。"
-        case .unsupportedArchive: "仅支持普通 ZIP/CBZ。不支持加密、分卷或 ZIP64 压缩包。"
+        case .noImages: "このフォルダーにはインポートできる画像がありません。画像を直接含むフォルダー、または画像を含むアーカイブを選択してください。"
+        case .tooLarge: "インポート上限を超えています：2,000 ページ、1 ファイル 64 MB、展開後合計 4 GB、アーカイブ 1 GB、または 1 ページ 4,800 万ピクセル。"
+        case .unsafeFile: "フォルダー内の画像を安全に読み込めません。ファイルがこのデバイスにダウンロード済みで、シンボリックリンクでないことを確認してください。"
+        case .invalidImage: "少なくとも 1 枚の画像が破損しているか、非対応の形式です。元のファイルは変更されていません。"
+        case .unavailable: "アプリのローカルダウンロードライブラリが利用できないため、画像はインポートされませんでした。"
+        case .failed: "ダウンロードライブラリに保存できませんでした。空き容量を確認してからもう一度お試しください。"
+        case .invalidArchive: "アーカイブが破損しているか内容が不整合なため、画像はインポートされませんでした。"
+        case .unsupportedArchive: "通常の ZIP/CBZ のみ対応しています。暗号化・分割・ZIP64 のアーカイブには対応していません。"
         }
     }
 }
@@ -173,7 +173,7 @@ enum OfflineGalleryFolderImport {
             title.append(character)
             titleBytes += bytes
         }
-        if title.isEmpty { title = "本地画廊" }
+        if title.isEmpty { title = "ローカルギャラリー" }
         let fm = FileManager.default
         let staging = root.appendingPathComponent(".offline-stage-\(UUID().uuidString)", isDirectory: true)
         try fm.createDirectory(at: staging, withIntermediateDirectories: false,

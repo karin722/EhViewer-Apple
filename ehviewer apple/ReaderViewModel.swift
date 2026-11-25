@@ -40,9 +40,9 @@ enum ReadingDirection: Int, CaseIterable {
 
     var label: String {
         switch self {
-        case .leftToRight: return "从左到右"
-        case .rightToLeft: return "从右到左"
-        case .topToBottom: return "从上到下"
+        case .leftToRight: return "左から右"
+        case .rightToLeft: return "右から左"
+        case .topToBottom: return "上から下"
         }
     }
 
@@ -66,11 +66,11 @@ enum ScaleMode: Int, CaseIterable {
 
     var label: String {
         switch self {
-        case .origin: return "原始大小"
-        case .fitWidth: return "适应宽度"
-        case .fitHeight: return "适应高度"
-        case .fit: return "适应屏幕"
-        case .fixed: return "固定缩放"
+        case .origin: return "元のサイズ"
+        case .fitWidth: return "幅に合わせる"
+        case .fitHeight: return "高さに合わせる"
+        case .fit: return "画面に合わせる"
+        case .fixed: return "固定倍率"
         }
     }
 }
@@ -90,7 +90,7 @@ enum StartPosition: Int, CaseIterable {
         case .topRight: return "右上"
         case .bottomLeft: return "左下"
         case .bottomRight: return "右下"
-        case .center: return "居中"
+        case .center: return "中央"
         }
     }
 }
@@ -1187,7 +1187,7 @@ class ReaderViewModel {
                     continue
                 }
                 errorPages.insert(index)
-                errorMessages[index] = "下载失败: \(error.localizedDescription)"
+                errorMessages[index] = "ダウンロード失敗: \(error.localizedDescription)"
                 downloadProgress.removeValue(forKey: index)
             }
         }
@@ -1231,7 +1231,7 @@ class ReaderViewModel {
         guard ownsDownload(index, owner) else { return }
         guard let image else {
             errorPages.insert(index)
-            errorMessages[index] = "图片数据无效"
+            errorMessages[index] = "画像データが無効です"
             downloadProgress.removeValue(forKey: index)
             return
         }
@@ -1362,7 +1362,7 @@ class ReaderViewModel {
             if EhOfflineUIFixture.readerLoadingMode == "spread-error", index == 1, retry == 0 {
                 downloadProgress.removeValue(forKey: index)
                 errorPages.insert(index)
-                errorMessages[index] = "合成测试图片读取失败"
+                errorMessages[index] = "合成テスト画像の読み込みに失敗しました"
                 return
             }
         }
@@ -1388,7 +1388,7 @@ class ReaderViewModel {
             errorPages.remove(index)
         } else {
             errorPages.insert(index)
-            errorMessages[index] = "本地文件读取失败"
+            errorMessages[index] = "ローカルファイルの読み込みに失敗しました"
         }
     }
 
@@ -1522,7 +1522,7 @@ class ReaderViewModel {
         }
         guard ownsResolution(index, context), pageRetryOwners[index] == owner else { return }
         errorPages.insert(index)
-        errorMessages[index] = "加载超时，请点击重试"
+        errorMessages[index] = "読み込みがタイムアウトしました。タップして再試行してください"
     }
 
     func loadPage(_ index: Int, resolver: PageResolver? = nil) async {
@@ -1540,7 +1540,7 @@ class ReaderViewModel {
 
         if OfflineGallery.isImported(gid: context.gid, token: token) {
             errorPages.insert(index)
-            errorMessages[index] = "找不到本地图片。请确认离线画廊的文件仍在下载库中。"
+            errorMessages[index] = "ローカル画像が見つかりません。オフラインギャラリーのファイルがダウンロードライブラリに残っているか確認してください。"
             return
         }
 

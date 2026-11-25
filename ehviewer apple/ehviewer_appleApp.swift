@@ -117,7 +117,7 @@ struct EhViewerApp: App {
     }
 
     var body: some Scene {
-        let _ = NSLog("[RENDER] EhViewerApp body — 如果此行反复出现，说明 App 级重渲染")
+        let _ = NSLog("[RENDER] EhViewerApp body — この行が繰り返し出力される場合、App レベルの再レンダリングが発生しています")
         WindowGroup {
             #if EH_OFFLINE_UI_FIXTURE && targetEnvironment(simulator)
             if EhOfflineUIFixture.enabled {
@@ -140,7 +140,7 @@ struct EhViewerApp: App {
 
             // 自定义菜单
             CommandGroup(replacing: .newItem) {
-                Button("新建窗口") {
+                Button("新規ウインドウ") {
                     if let url = URL(string: "ehviewer://new-window") {
                         NSWorkspace.shared.open(url)
                     }
@@ -148,80 +148,80 @@ struct EhViewerApp: App {
                 .keyboardShortcut("n", modifiers: .command)
             }
 
-            CommandMenu("浏览") {
-                Button("首页") {
+            CommandMenu("ブラウズ") {
+                Button("ホーム") {
                     NotificationCenter.default.post(name: .navigateToHome, object: nil)
                 }
                 .keyboardShortcut("1", modifiers: .command)
 
-                Button("热门") {
+                Button("人気") {
                     NotificationCenter.default.post(name: .navigateToPopular, object: nil)
                 }
                 .keyboardShortcut("2", modifiers: .command)
 
-                Button("排行榜") {
+                Button("ランキング") {
                     NotificationCenter.default.post(name: .navigateToTopList, object: nil)
                 }
                 .keyboardShortcut("3", modifiers: .command)
 
-                Button("收藏") {
+                Button("お気に入り") {
                     NotificationCenter.default.post(name: .navigateToFavorites, object: nil)
                 }
                 .keyboardShortcut("4", modifiers: .command)
 
                 Divider()
 
-                Button("刷新") {
+                Button("更新") {
                     NotificationCenter.default.post(name: .refresh, object: nil)
                 }
                 .keyboardShortcut("r", modifiers: .command)
 
                 Divider()
 
-                Button("搜索") {
+                Button("検索") {
                     NotificationCenter.default.post(name: .focusSearch, object: nil)
                 }
                 .keyboardShortcut("f", modifiers: .command)
             }
 
-            CommandMenu("画廊") {
-                Button("下载") {
+            CommandMenu("ギャラリー") {
+                Button("ダウンロード") {
                     NotificationCenter.default.post(name: .downloadGallery, object: nil)
                 }
                 .keyboardShortcut("s", modifiers: .command)
 
-                Button("收藏") {
+                Button("お気に入り") {
                     NotificationCenter.default.post(name: .favoriteGallery, object: nil)
                 }
                 .keyboardShortcut("d", modifiers: .command)
             }
 
-            CommandMenu("阅读") {
-                Button("上一页") {
+            CommandMenu("読む") {
+                Button("前のページ") {
                     NotificationCenter.default.post(name: .previousPage, object: nil)
                 }
                 .keyboardShortcut(.leftArrow, modifiers: [])
 
-                Button("下一页") {
+                Button("次のページ") {
                     NotificationCenter.default.post(name: .nextPage, object: nil)
                 }
                 .keyboardShortcut(.rightArrow, modifiers: [])
 
-                Button("下一页 (空格)") {
+                Button("次のページ (スペース)") {
                     NotificationCenter.default.post(name: .nextPage, object: nil)
                 }
                 .keyboardShortcut(.space, modifiers: [])
 
                 Divider()
 
-                Button("退出阅读") {
+                Button("閲覧を終了") {
                     NotificationCenter.default.post(name: .exitReader, object: nil)
                 }
                 .keyboardShortcut(.escape, modifiers: [])
 
                 Divider()
 
-                Button("全屏") {
+                Button("フルスクリーン") {
                     NotificationCenter.default.post(name: .toggleFullscreen, object: nil)
                 }
                 .keyboardShortcut("f", modifiers: [.command, .control])

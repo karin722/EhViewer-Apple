@@ -307,7 +307,7 @@ extension EhGalleryRow {
         if settings.showReadProgress, gallery.pages > 0 {
             let index = UserDefaults.standard.integer(forKey: "reading_progress_\(gallery.gid)")
             if index > 0 {
-                meta.append(.init("读至 \(index + 1)", color: EhColor.accent))
+                meta.append(.init("\(index + 1) まで読了", color: EhColor.accent))
             }
         }
 

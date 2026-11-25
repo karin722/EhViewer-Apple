@@ -4,7 +4,7 @@ final class BrowseSearchScopeUITests: XCTestCase {
     @MainActor func testSubscriptionKeywordUsesWatchedEndpoint() {
         continueAfterFailure = false
         let app = launch()
-        app.buttons["订阅"].firstMatch.tap()
+        app.buttons["購読"].firstMatch.tap()
         XCTAssertTrue(app.staticTexts["Synthetic subscription origin"].waitForExistence(timeout: 8))
         typeKeyword(in: app, submit: true)
         XCTAssertTrue(app.staticTexts["Scoped fixture result"].waitForExistence(timeout: 8),
@@ -15,10 +15,10 @@ final class BrowseSearchScopeUITests: XCTestCase {
     @MainActor func testExplicitFullSiteSearchFromSubscriptionUsesGlobalEndpoint() {
         continueAfterFailure = false
         let app = launch()
-        app.buttons["订阅"].firstMatch.tap()
+        app.buttons["購読"].firstMatch.tap()
         XCTAssertTrue(app.staticTexts["Synthetic subscription origin"].waitForExistence(timeout: 8))
         typeKeyword(in: app, submit: false)
-        let global = app.buttons["浏览-搜全站"]
+        let global = app.buttons["ブラウズ - 全体を検索"]
         XCTAssertTrue(global.waitForExistence(timeout: 6))
         global.tap()
         XCTAssertTrue(app.staticTexts["Global fixture result"].waitForExistence(timeout: 8))

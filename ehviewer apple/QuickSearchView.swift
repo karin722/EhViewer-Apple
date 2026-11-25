@@ -20,20 +20,20 @@ struct QuickSearchView: View {
         NavigationStack {
             Group {
                 if vm.searches.isEmpty {
-                    ContentUnavailableView("暂无快速搜索",
+                    ContentUnavailableView("クイック検索はありません",
                         systemImage: "magnifyingglass",
-                        description: Text("点击右上角添加常用搜索词"))
+                        description: Text("右上をタップしてよく使う検索語を追加してください"))
                 } else {
                     searchList
                 }
             }
-            .navigationTitle("快速搜索")
+            .navigationTitle("クイック検索")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("キャンセル") { dismiss() }
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -61,7 +61,7 @@ struct QuickSearchView: View {
                 } label: {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(search.name ?? Self.translateKeyword(search.keyword) ?? "未命名")
+                            Text(search.name ?? Self.translateKeyword(search.keyword) ?? "名前なし")
                                 .font(.body)
                                 .foregroundStyle(.primary)
 
@@ -191,16 +191,16 @@ struct QuickSearchView: View {
         switch namespace {
         case "female": return "女性"
         case "male": return "男性"
-        case "artist": return "艺术家"
+        case "artist": return "アーティスト"
         case "cosplayer": return "Coser"
-        case "character": return "角色"
-        case "group": return "团体"
-        case "language": return "语言"
+        case "character": return "キャラクター"
+        case "group": return "グループ"
+        case "language": return "言語"
         case "misc", "": return ""
         case "mixed": return "混合"
-        case "other": return "其他"
+        case "other": return "その他"
         case "parody": return "原作"
-        case "reclass": return "重分类"
+        case "reclass": return "再分類"
         case "rows": return "行名"
         default: return namespace
         }
@@ -219,7 +219,7 @@ struct QuickSearchDrawerContent: View {
         VStack(spacing: 0) {
             // 顶部标题栏 (对齐 Android drawer header)
             HStack(spacing: EhSpacing.meta) {
-                Text("快速搜索")
+                Text("クイック検索")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(EhColor.label)
                 Spacer()
@@ -229,7 +229,7 @@ struct QuickSearchDrawerContent: View {
                     if vm.addSearch(currentSearch) {
                         Haptics.success()
                     } else {
-                        EhToast.failure("无法保存快速搜索")
+                        EhToast.failure("クイック検索を保存できません")
                     }
                 } label: {
                     Image(systemName: "plus")
@@ -246,7 +246,7 @@ struct QuickSearchDrawerContent: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(currentSearch == nil)
-                .accessibilityLabel("保存当前搜索")
+                .accessibilityLabel("現在の検索を保存")
                 .accessibilityIdentifier("quick-search-save-current")
             }
             .padding(.horizontal, EhSpacing.page)
@@ -259,10 +259,10 @@ struct QuickSearchDrawerContent: View {
             if vm.searches.isEmpty {
                 EhStateView(kind: .empty(
                     symbol: "bookmark",
-                    title: "还没有快速搜索",
+                    title: "クイック検索はまだありません",
                     message: currentSearch == nil
-                        ? "先搜一次，再回到这里把条件存下来"
-                        : "点右上角 + 把当前搜索条件存下来"
+                        ? "一度検索してから、ここに戻って条件を保存してください"
+                        : "右上の + をタップして現在の検索条件を保存してください"
                 ))
             } else {
                 List {
@@ -272,7 +272,7 @@ struct QuickSearchDrawerContent: View {
                             onDismiss()
                         } label: {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(search.name ?? QuickSearchView.translateKeyword(search.keyword) ?? "未命名")
+                                Text(search.name ?? QuickSearchView.translateKeyword(search.keyword) ?? "名前なし")
                                     .font(.body)
                                     .foregroundStyle(.primary)
                                 if let scope = BrowseQuickSearchSnapshot.scopeTitle(search) {
@@ -330,14 +330,14 @@ struct AddQuickSearchSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("基本信息") {
-                    TextField("名称 (可选)", text: $name)
-                    TextField("搜索关键词", text: $keyword)
+                Section("基本情報") {
+                    TextField("名前 (任意)", text: $name)
+                    TextField("検索キーワード", text: $keyword)
                 }
 
-                Section("最低评分") {
-                    Picker("最低评分", selection: $minRating) {
-                        Text("不限").tag(0)
+                Section("最低評価") {
+                    Picker("最低評価", selection: $minRating) {
+                        Text("指定なし").tag(0)
                         ForEach(2...5, id: \.self) { rating in
                             HStack {
                                 ForEach(0..<rating, id: \.self) { _ in
@@ -351,7 +351,7 @@ struct AddQuickSearchSheet: View {
                     .pickerStyle(.menu)
                 }
 
-                Section("分类筛选") {
+                Section("カテゴリで絞り込み") {
                     ForEach(allCategories, id: \.rawValue) { category in
                         Toggle(category.name, isOn: Binding(
                             get: { selectedCategories.contains(category) },
@@ -366,20 +366,20 @@ struct AddQuickSearchSheet: View {
                     }
                 }
             }
-            .navigationTitle("添加快速搜索")
+            .navigationTitle("クイック検索を追加")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("キャンセル") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("保存") {
                         if save() {
                             dismiss()
                         } else {
-                            EhToast.failure("无法保存快速搜索")
+                            EhToast.failure("クイック検索を保存できません")
                         }
                     }
                     .disabled(keyword.isEmpty)

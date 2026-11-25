@@ -51,7 +51,7 @@ struct GalleryCommentsView: View {
                                 ProgressView()
                                     .scaleEffect(0.8)
                             }
-                            Text(vm.isLoading ? "加载中..." : "加载全部评论")
+                            Text(vm.isLoading ? "読み込み中..." : "すべてのコメントを読み込む")
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -64,7 +64,7 @@ struct GalleryCommentsView: View {
                 }
             }
         }
-        .navigationTitle("评论 (\(vm.comments.count)\(vm.hasMore ? "+" : ""))")
+        .navigationTitle("コメント (\(vm.comments.count)\(vm.hasMore ? "+" : ""))")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -77,7 +77,7 @@ struct GalleryCommentsView: View {
                     Button {
                         composing = CommentComposeTarget(comment: nil)
                     } label: {
-                        Label("发表评论", systemImage: "square.and.pencil")
+                        Label("コメントを投稿", systemImage: "square.and.pencil")
                     }
                 }
             }
@@ -111,7 +111,7 @@ struct GalleryCommentsView: View {
                 // （补图、修正、致歉）和读者的闲聊分量完全不同。
                 // 服务端不单独下发标记，但上传者评论的 id 固定为 0（也因此不可投票）。
                 if comment.id == 0 {
-                    Text("上传者")
+                    Text("アップローダー")
                         .font(EhFont.footnote.weight(.semibold))
                         .foregroundStyle(EhColor.onAccentFill)
                         .padding(.horizontal, 6)
@@ -145,7 +145,7 @@ struct GalleryCommentsView: View {
                         Button {
                             composing = CommentComposeTarget(comment: comment)
                         } label: {
-                            Label("编辑", systemImage: "pencil")
+                            Label("編集", systemImage: "pencil")
                                 .font(.caption)
                         }
                         .buttonStyle(.bordered)
@@ -162,7 +162,7 @@ struct GalleryCommentsView: View {
                                 )
                             }
                         } label: {
-                            Label("赞同", systemImage: comment.voteUpEd ? "hand.thumbsup.fill" : "hand.thumbsup")
+                            Label("賛成", systemImage: comment.voteUpEd ? "hand.thumbsup.fill" : "hand.thumbsup")
                                 .font(.caption)
                         }
                         .buttonStyle(.bordered)
@@ -179,7 +179,7 @@ struct GalleryCommentsView: View {
                                 )
                             }
                         } label: {
-                            Label("反对", systemImage: comment.voteDownEd ? "hand.thumbsdown.fill" : "hand.thumbsdown")
+                            Label("反対", systemImage: comment.voteDownEd ? "hand.thumbsdown.fill" : "hand.thumbsdown")
                                 .font(.caption)
                         }
                         .buttonStyle(.bordered)
@@ -190,7 +190,7 @@ struct GalleryCommentsView: View {
             
             // 编辑信息
             if let lastEdited = comment.lastEdited {
-                Text("最后编辑: \(lastEdited, style: .date)")
+                Text("最終編集: \(lastEdited, style: .date)")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -207,16 +207,16 @@ struct GalleryCommentsView: View {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(Self.plainText(comment.comment), forType: .string)
                 #endif
-                EhToast.success("已复制评论")
+                EhToast.success("コメントをコピーしました")
             } label: {
-                Label("复制评论内容", systemImage: "doc.on.doc")
+                Label("コメント内容をコピー", systemImage: "doc.on.doc")
             }
 
             if !comment.user.isEmpty {
                 Button(role: .destructive) {
                     blockCommenter(comment.user)
                 } label: {
-                    Label("屏蔽「\(comment.user)」", systemImage: "person.slash")
+                    Label("「\(comment.user)」をブロック", systemImage: "person.slash")
                 }
             }
         }
@@ -243,10 +243,10 @@ struct GalleryCommentsView: View {
             try EhDatabase.shared.insertFilter(
                 FilterRecord(mode: 1, text: user, enable: true)
             )
-            EhToast.success("已屏蔽「\(user)」")
+            EhToast.success("「\(user)」をブロックしました")
         } catch {
-            EhToast.failure("屏蔽失败")
-            debugLog("[Comments] 屏蔽评论者失败: \(error)")
+            EhToast.failure("ブロックに失敗しました")
+            debugLog("[Comments] コメント投稿者のブロックに失敗: \(error)")
         }
     }
 }

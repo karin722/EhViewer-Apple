@@ -66,7 +66,7 @@ struct MainTabView: View {
                     GalleryDetailView(gallery: gallery)
                         .id(gallery.gid)
                 } else {
-                    ContentUnavailableView("选择画廊", systemImage: "photo.stack", description: Text("从列表选择一个画廊"))
+                    ContentUnavailableView("ギャラリーを選択", systemImage: "photo.stack", description: Text("リストからギャラリーを選択してください"))
                 }
             }
             .environment(\.tagNavigationAction, TagNavigationAction { tag in
@@ -150,7 +150,7 @@ struct MainTabView: View {
                     .id(gallery.gid)
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
-                            Button("关闭") { clipboardGallery = nil }
+                            Button("閉じる") { clipboardGallery = nil }
                         }
                     }
                     .navigationDestination(for: GalleryInfo.self) { result in

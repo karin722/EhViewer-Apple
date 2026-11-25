@@ -74,8 +74,8 @@ struct FavoritesView: View {
                         .id(selectedSlot)
                 }
             }
-            .navigationTitle("收藏")
-            .ehPageSearch(isActive: $isSearching, text: $searchText, placeholder: "搜索收藏")
+            .navigationTitle("お気に入り")
+            .ehPageSearch(isActive: $isSearching, text: $searchText, placeholder: "お気に入りを検索")
                 // 去掉 .searchable：iOS 26 把搜索栏放在屏幕底部，与浮起导航条重叠。
                 // 设计稿这一屏顶部只有标题与过滤胶囊，检索由胶囊承担。
             .onChange(of: searchText) { _, _ in
@@ -87,7 +87,7 @@ struct FavoritesView: View {
                     // 紧凑页头：标题与动作同一行。同步状态作为副标题挂在标题下方，
                     // 它是对标题的注解，不该单独占一行。
                     EhPageHeader(
-                        title: "收藏",
+                        title: "お気に入り",
                         subtitle: selectedSlot >= 0 ? syncStatusText : nil
                     ) {
                         EhSearchToggleButton(isActive: $isSearching)
@@ -123,7 +123,7 @@ struct FavoritesView: View {
                         .id(selectedSlot)
                     }
                 }
-                .ehPageSearch(isActive: $isSearching, text: $searchText, placeholder: "搜索收藏")
+                .ehPageSearch(isActive: $isSearching, text: $searchText, placeholder: "お気に入りを検索")
                 .ehCompactHeader()
                 .navigationDestination(for: GalleryInfo.self) { gallery in
                     GalleryDetailView(gallery: gallery).id(gallery.gid)
@@ -157,7 +157,7 @@ struct FavoritesView: View {
                     isCloudSelecting = false
                     cloudSelection.removeAll()
                 } label: {
-                    Label("退出选择", systemImage: "xmark.circle")
+                    Label("選択を終了", systemImage: "xmark.circle")
                 }
 
                 Divider()
@@ -165,7 +165,7 @@ struct FavoritesView: View {
                 Button {
                     batchDownloadCloud()
                 } label: {
-                    Label("下载选中 (\(cloudSelection.count))", systemImage: "arrow.down.circle")
+                    Label("選択項目をダウンロード (\(cloudSelection.count))", systemImage: "arrow.down.circle")
                 }
                 .disabled(cloudSelection.isEmpty)
 
@@ -180,7 +180,7 @@ struct FavoritesView: View {
                         }
                     }
                 } label: {
-                    Label("移动到… (\(cloudSelection.count))", systemImage: "folder")
+                    Label("移動… (\(cloudSelection.count))", systemImage: "folder")
                 }
                 .disabled(cloudSelection.isEmpty)
 
@@ -189,7 +189,7 @@ struct FavoritesView: View {
                 Button(role: .destructive) {
                     batchMoveCloud(to: -1)
                 } label: {
-                    Label("移出收藏 (\(cloudSelection.count))", systemImage: "heart.slash")
+                    Label("お気に入りから削除 (\(cloudSelection.count))", systemImage: "heart.slash")
                 }
                 .disabled(cloudSelection.isEmpty)
             } else {
@@ -197,7 +197,7 @@ struct FavoritesView: View {
                     isCloudSelecting = true
                     cloudSelection.removeAll()
                 } label: {
-                    Label("批量操作", systemImage: "checkmark.circle")
+                    Label("一括操作", systemImage: "checkmark.circle")
                 }
             }
         } label: {
@@ -234,14 +234,14 @@ struct FavoritesView: View {
                 } catch is CloudFavoriteContext.Superseded {
                     return
                 } catch {
-                    debugLog("[Favorites] 批量操作失败 gid=\(info.gid): \(error)")
+                    debugLog("[Favorites] 一括操作に失敗 gid=\(info.gid): \(error)")
                 }
             }
             guard actions.isCurrentCloudFavoriteContext(context) else { return }
             if moved == gids.count {
-                EhToast.success(slot >= 0 ? "已移动 \(moved) 本" : "已移出 \(moved) 本")
+                EhToast.success(slot >= 0 ? "\(moved) 件を移動しました" : "\(moved) 件を削除しました")
             } else {
-                EhToast.failure("成功 \(moved) / \(gids.count) 本")
+                EhToast.failure("\(moved) / \(gids.count) 件成功")
             }
             isCloudSelecting = false
             cloudSelection.removeAll()
@@ -260,7 +260,7 @@ struct FavoritesView: View {
                         selectedGids = Set(localFavorites.map { $0.gid })
                     }
                 } label: {
-                    Label(selectedGids.count == localFavorites.count ? "取消全选" : "全选",
+                    Label(selectedGids.count == localFavorites.count ? "選択を解除" : "すべて選択",
                           systemImage: selectedGids.count == localFavorites.count ? "square" : "checkmark.square")
                 }
 
@@ -269,14 +269,14 @@ struct FavoritesView: View {
                 Button {
                     batchDownloadSelected()
                 } label: {
-                    Label("批量下载 (\(selectedGids.count))", systemImage: "arrow.down.circle")
+                    Label("一括ダウンロード (\(selectedGids.count))", systemImage: "arrow.down.circle")
                 }
                 .disabled(selectedGids.isEmpty)
 
                 Button {
                     showMoveSheet = true
                 } label: {
-                    Label("移动到云收藏 (\(selectedGids.count))", systemImage: "arrow.right.circle")
+                    Label("クラウドお気に入りへ移動 (\(selectedGids.count))", systemImage: "arrow.right.circle")
                 }
                 .disabled(selectedGids.isEmpty)
 
@@ -285,7 +285,7 @@ struct FavoritesView: View {
                 Button(role: .destructive) {
                     showDeleteConfirm = true
                 } label: {
-                    Label("删除 (\(selectedGids.count))", systemImage: "trash")
+                    Label("削除 (\(selectedGids.count))", systemImage: "trash")
                 }
                 .disabled(selectedGids.isEmpty)
 
@@ -295,14 +295,14 @@ struct FavoritesView: View {
                     isSelectMode = false
                     selectedGids.removeAll()
                 } label: {
-                    Label("退出选择", systemImage: "xmark.circle")
+                    Label("選択を終了", systemImage: "xmark.circle")
                 }
             } else {
                 Button {
                     isSelectMode = true
                     selectedGids.removeAll()
                 } label: {
-                    Label("批量操作", systemImage: "checkmark.circle")
+                    Label("一括操作", systemImage: "checkmark.circle")
                 }
             }
         } label: {
@@ -320,8 +320,8 @@ struct FavoritesView: View {
             )
             .presentationDetents([.medium])
         }
-        .confirmationDialog("确认删除 \(selectedGids.count) 个收藏？", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
-            Button("删除", role: .destructive) {
+        .confirmationDialog("\(selectedGids.count) 件のお気に入りを削除しますか？", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+            Button("削除", role: .destructive) {
                 batchDeleteSelected()
             }
         }
@@ -332,13 +332,13 @@ struct FavoritesView: View {
     private var localFavoritesContent: some View {
         Group {
             if isLoadingLocal && localFavorites.isEmpty {
-                ProgressView("加载中...")
+                ProgressView("読み込み中...")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if localFavorites.isEmpty {
                 EhStateView(kind: .empty(
                     symbol: "heart.slash",
-                    title: "还没有本地收藏",
-                    message: "在画廊详情页点 ♡ 即可加入本地收藏，不需要登录"
+                    title: "ローカルお気に入りはまだありません",
+                    message: "ギャラリーの詳細画面で ♡ をタップするとローカルお気に入りに追加できます。ログインは不要です"
                 ))
             } else {
                 List {
@@ -391,7 +391,7 @@ struct FavoritesView: View {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()
                     .overlay {
-                        ProgressView("处理中...")
+                        ProgressView("処理中...")
                             .padding()
                             .background(.regularMaterial)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -415,7 +415,7 @@ struct FavoritesView: View {
                         Image(systemName: "heart.fill")
                             .font(.system(size: 10))
                             .foregroundStyle(EhColor.danger)
-                        Text("本地收藏 (\(localFavorites.count))")
+                        Text("ローカルお気に入り (\(localFavorites.count))")
                             .ehSectionHeader()
                         Spacer()
                     }
@@ -439,7 +439,7 @@ struct FavoritesView: View {
                         Button {
                             selectedSlot = -2  // 切换到本地收藏查看全部
                         } label: {
-                            Text("查看全部 \(localFavorites.count) 个本地收藏")
+                            Text("ローカルお気に入り \(localFavorites.count) 件をすべて表示")
                                 .font(.subheadline)
                                 .foregroundStyle(Color.accentColor)
                                 .frame(maxWidth: .infinity)
@@ -559,7 +559,7 @@ struct FavoritesView: View {
             do {
                 try GalleryActionService.shared.removeLocalFavorite(gid: gid)
             } catch {
-                EhToast.failure("移出本地收藏失败")
+                EhToast.failure("ローカルお気に入りからの削除に失敗しました")
             }
         }
         loadLocalFavorites()
@@ -574,8 +574,8 @@ struct FavoritesView: View {
             // 时忘了删的旧实现——「云端收藏夹」在同一屏上下紧挨着显示两遍。
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    slotPill(slot: -1, title: "全部", symbol: nil, count: 0)
-                    slotPill(slot: -2, title: "本地收藏", symbol: "heart.fill", count: 0)
+                    slotPill(slot: -1, title: "すべて", symbol: nil, count: 0)
+                    slotPill(slot: -2, title: "ローカルお気に入り", symbol: "heart.fill", count: 0)
                     ForEach(0..<10, id: \.self) { slot in
                         slotPill(
                             slot: slot,
@@ -620,11 +620,11 @@ struct FavoritesView: View {
     /// 上次同步时间。没同步过就不说「刚刚」——那是错的。
     private var syncStatusText: String {
         guard let ts = UserDefaults.standard.object(forKey: "fav_last_sync") as? TimeInterval else {
-            return "云端收藏夹"
+            return "クラウドお気に入り"
         }
         let f = RelativeDateTimeFormatter()
-        f.locale = Locale(identifier: "zh_CN")
-        return "云端同步 · " + f.localizedString(for: Date(timeIntervalSince1970: ts), relativeTo: Date())
+        f.locale = Locale(identifier: "ja_JP")
+        return "クラウド同期 · " + f.localizedString(for: Date(timeIntervalSince1970: ts), relativeTo: Date())
     }
 }
 

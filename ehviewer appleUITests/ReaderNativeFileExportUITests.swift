@@ -16,7 +16,7 @@ final class ReaderNativeFileExportUITests: XCTestCase {
         let row = app.staticTexts["Synthetic Gallery"].firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 8))
         row.tap()
-        let read = app.buttons["阅读"].firstMatch
+        let read = app.buttons["読む"].firstMatch
         XCTAssertTrue(read.waitForExistence(timeout: 8))
         read.tap()
         let close = app.buttons["reader-close"]
@@ -24,7 +24,7 @@ final class ReaderNativeFileExportUITests: XCTestCase {
 
         func showPicker() {
             app.coordinate(withNormalizedOffset: CGVector(dx: 0.55, dy: 0.5)).press(forDuration: 0.85)
-            let save = app.buttons["存储到文件"].firstMatch
+            let save = app.buttons["ファイルに保存"].firstMatch
             XCTAssertTrue(save.waitForExistence(timeout: 6))
             save.tap()
             let filename = app.descendants(matching: .any).matching(NSPredicate(

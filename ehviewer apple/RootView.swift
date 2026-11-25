@@ -147,14 +147,14 @@ struct RootView: View {
             GalleryStatusCache.shared.resetCloudState()
             GalleryCache.shared.clearAccountSnapshots()
         }
-        .alert("ExHentai 可用", isPresented: $showExHAlert) {
-            Button("切换到 ExHentai") {
+        .alert("ExHentai が利用可能です", isPresented: $showExHAlert) {
+            Button("ExHentai に切り替える") {
                 AppSettings.shared.gallerySite = .exHentai
                 NotificationCenter.default.post(name: GalleryActionService.siteChangedNotification, object: nil)
             }
-            Button("保持 E-Hentai", role: .cancel) {}
+            Button("E-Hentai のままにする", role: .cancel) {}
         } message: {
-            Text("检测到你的账号拥有 ExHentai 访问权限，是否切换到 ExHentai？")
+            Text("お使いのアカウントに ExHentai へのアクセス権限が検出されました。ExHentai に切り替えますか？")
         }
         // Sad Panda / igneous 失效警告 (V-15)
         .onReceive(NotificationCenter.default.publisher(for: .ehSadPandaDetected)) { _ in
@@ -164,24 +164,24 @@ struct RootView: View {
         .onReceive(NotificationCenter.default.publisher(for: .ehDiskFull)) { _ in
             showDiskFullAlert = true
         }
-        .alert("磁盘空间不足", isPresented: $showDiskFullAlert) {
-            Button("我知道了", role: .cancel) {}
+        .alert("ストレージ容量不足", isPresented: $showDiskFullAlert) {
+            Button("わかりました", role: .cancel) {}
         } message: {
-            Text("磁盘剩余空间不足，所有下载已自动暂停。\n请前往系统设置释放存储空间后，手动恢复下载。")
+            Text("ストレージの空き容量が不足しているため、すべてのダウンロードを自動的に一時停止しました。\nシステム設定でストレージの空き容量を確保してから、手動でダウンロードを再開してください。")
         }
-        .alert("ExHentai 访问失效", isPresented: $showSadPandaAlert) {
-            Button("重新登录") {
+        .alert("ExHentai へのアクセスが無効になりました", isPresented: $showSadPandaAlert) {
+            Button("再ログイン") {
                 AppSettings.shared.gallerySite = .eHentai
                 NotificationCenter.default.post(name: GalleryActionService.siteChangedNotification, object: nil)
                 appState.isSignedIn = false
                 flowStep = .login
             }
-            Button("切换到 E-Hentai", role: .cancel) {
+            Button("E-Hentai に切り替える", role: .cancel) {
                 AppSettings.shared.gallerySite = .eHentai
                 NotificationCenter.default.post(name: GalleryActionService.siteChangedNotification, object: nil)
             }
         } message: {
-            Text("igneous Cookie 已失效 (Sad Panda)，已自动清除。\n请重新登录以恢复 ExHentai 访问权限，或切换到 E-Hentai。")
+            Text("igneous Cookie が無効になったため (Sad Panda)、自動的に削除しました。\n再ログインして ExHentai へのアクセスを回復するか、E-Hentai に切り替えてください。")
         }
         // 对齐 Android: 深色模式支持 (Settings.KEY_THEME)
         // 0=跟随系统, 1=浅色, 2=深色  (使用 cachedColorScheme 避免 body 直接读 AppSettings)
@@ -215,8 +215,8 @@ struct RootView: View {
             checkClipboardForGalleryUrl()
         }
         #endif
-        .alert("检测到画廊链接", isPresented: $showClipboardAlert) {
-            Button("打开") {
+        .alert("ギャラリーのリンクを検出しました", isPresented: $showClipboardAlert) {
+            Button("開く") {
                 if let gallery = clipboardGallery {
                     NotificationCenter.default.post(
                         name: .openGalleryFromClipboard,
@@ -225,10 +225,10 @@ struct RootView: View {
                     )
                 }
             }
-            Button("取消", role: .cancel) {}
+            Button("キャンセル", role: .cancel) {}
         } message: {
             if let gallery = clipboardGallery {
-                Text("剪贴板含有画廊链接 (GID: \(gallery.gid))，是否打开？")
+                Text("クリップボードにギャラリーのリンクがあります (GID: \(gallery.gid))。開きますか？")
             }
         }
     }
@@ -258,9 +258,9 @@ struct RootView: View {
                 Image(systemName: "hand.raised.fill")
                     .font(.system(size: 64))
                     .foregroundStyle(.secondary)
-                Text("您已拒绝使用条款")
+                Text("利用規約に同意しませんでした")
                     .font(.title2.bold())
-                Text("请关闭应用。")
+                Text("アプリを終了してください。")
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -310,7 +310,7 @@ struct RootView: View {
                 AppSettings.shared.avatar = avatar
             }
         } catch {
-            debugLog("[RootView] 获取用户资料失败: \(error)")
+            debugLog("[RootView] ユーザー情報の取得に失敗: \(error)")
         }
 
         // 3. ExH 可达性检测
@@ -334,7 +334,7 @@ struct RootView: View {
                 }
             }
         } catch {
-            debugLog("[RootView] ExHentai 检测失败: \(error)")
+            debugLog("[RootView] ExHentai の検出に失敗: \(error)")
         }
     }
 

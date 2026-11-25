@@ -145,9 +145,9 @@ public enum GalleryDetailParser {
 
         public var errorDescription: String? {
             switch self {
-            case .offensive: return "该画廊包含攻击性内容，需确认后访问"
-            case .pining: return "该画廊已被删除 (pining for the fjords)"
-            case .galleryUnavailable: return "该画廊不可用"
+            case .offensive: return "このギャラリーには攻撃的な内容が含まれています。確認後にアクセスしてください"
+            case .pining: return "このギャラリーは削除されました (pining for the fjords)"
+            case .galleryUnavailable: return "このギャラリーは利用できません"
             case .serverMessage(let msg): return msg
             }
         }

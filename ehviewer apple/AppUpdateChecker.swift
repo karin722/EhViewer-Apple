@@ -60,8 +60,8 @@ enum AppUpdatePlatform {
 
     var installationHint: String {
         switch self {
-        case .iOS: "可通过 AltStore / SideStore 更新，或下载 IPA 后自行重签安装。"
-        case .macOS: "可下载适用于 Mac 的安装包。"
+        case .iOS: "AltStore / SideStore で更新するか、IPA をダウンロードして自分で再署名してインストールしてください。"
+        case .macOS: "Mac 用のインストールパッケージをダウンロードできます。"
         }
     }
 
@@ -121,7 +121,7 @@ enum AppUpdateCatalog {
                   }) else { continue }
             if let best, compare(parts, best.parts) <= 0 { continue }
             best = (parts, AppUpdateInfo(
-                version: version, releaseNotes: release.body ?? "暂无更新说明",
+                version: version, releaseNotes: release.body ?? "更新内容の説明はありません",
                 releaseURL: releaseURL, downloadURL: asset.url
             ))
         }
@@ -220,11 +220,11 @@ final class AppUpdateChecker {
             case .noCompatibleRelease:
                 updateAvailable = nil
                 showUpdateAlert = false
-                if manual { checkError = "暂无适用于此设备的安装包" }
+                if manual { checkError = "このデバイスに対応するインストールパッケージはまだありません" }
             }
             UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "last_update_check_time")
         } catch {
-            if manual { checkError = "检查更新失败: \(error.localizedDescription)" }
+            if manual { checkError = "アップデートの確認に失敗しました: \(error.localizedDescription)" }
         }
     }
 

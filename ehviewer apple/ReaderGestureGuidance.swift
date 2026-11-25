@@ -12,15 +12,15 @@ struct ReaderGestureGuidance {
         }
     }
 
-    var leftPageTitle: String { direction == .rightToLeft ? "下一页" : "上一页" }
-    var rightPageTitle: String { direction == .rightToLeft ? "上一页" : "下一页" }
+    var leftPageTitle: String { direction == .rightToLeft ? "次のページ" : "前のページ" }
+    var rightPageTitle: String { direction == .rightToLeft ? "前のページ" : "次のページ" }
     var showsDoubleTapZoom: Bool { direction != .topToBottom }
 
     func motionTitle(for input: Input) -> String {
-        if direction == .topToBottom { return "上下滚动阅读" }
+        if direction == .topToBottom { return "上下にスクロールして読む" }
         switch input {
-        case .touch: return "左右滑动也可以翻页"
-        case .pointer: return "使用滚轮或触控板翻页"
+        case .touch: return "左右にスワイプしてもページをめくれます"
+        case .pointer: return "ホイールまたはトラックパッドでページをめくる"
         }
     }
 }

@@ -247,7 +247,7 @@ public actor DownloadManager {
                 try? database.updateDownloadState(gid: downloadQueue[i].gallery.gid, state: Self.stateNone)
             }
         }
-        print("[DownloadManager] ⚠️ 所有下载已暂停（磁盘空间不足）")
+        print("[DownloadManager] ⚠️ すべてのダウンロードを一時停止しました（ストレージ容量不足）")
     }
 
     /// 恢复下载
@@ -676,7 +676,7 @@ public actor DownloadManager {
             let filename = imageFilename(index: pageIndex, ext: ext)
             try data.write(to: dir.appendingPathComponent(filename))
         } catch {
-            print("[DownloadManager] 阅读时同步下载失败 p\(pageIndex): \(error)")
+            print("[DownloadManager] 閲覧中の同期ダウンロードに失敗 p\(pageIndex): \(error)")
             return false
         }
 
@@ -871,7 +871,7 @@ actor SpiderInfoUpdater: SpiderDelegate {
     }
 
     func onDiskFull() async {
-        print("[SpiderInfoUpdater] ⚠️ 磁盘空间不足，暂停所有下载")
+        print("[SpiderInfoUpdater] ⚠️ ストレージ容量不足のため、すべてのダウンロードを一時停止します")
         await manager?.reportDiskFull(for: attempt)
     }
 

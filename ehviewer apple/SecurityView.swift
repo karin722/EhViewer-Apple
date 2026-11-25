@@ -45,7 +45,7 @@ struct SecurityView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            Text("请验证身份以继续")
+            Text("続行するには本人確認を行ってください")
                 .font(.headline)
                 .foregroundStyle(.secondary)
             
@@ -73,14 +73,14 @@ struct SecurityView: View {
                     Image(systemName: "exclamationmark.shield")
                         .font(.system(size: 40))
                         .foregroundStyle(.orange)
-                    Text("此设备未设置锁屏密码或生物识别")
+                    Text("このデバイスには画面ロックのパスコードまたは生体認証が設定されていません")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
-                    Text("安全锁定已自动关闭")
+                    Text("セキュリティロックは自動的にオフになりました")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Button("进入应用") {
+                    Button("アプリに入る") {
                         // 自动禁用安全功能，防止下次再卡死
                         AppSettings.shared.enableSecurity = false
                         onAuthenticated()
@@ -95,7 +95,7 @@ struct SecurityView: View {
                     Button(action: authenticateWithBiometrics) {
                         HStack {
                             Image(systemName: biometricSystemImage)
-                            Text("使用 \(biometricName) 解锁")
+                            Text("\(biometricName) でロック解除")
                         }
                         .font(.headline)
                         .frame(maxWidth: .infinity)
@@ -110,7 +110,7 @@ struct SecurityView: View {
                 Button(action: authenticateWithPasscode) {
                     HStack {
                         Image(systemName: "lock.shield")
-                        Text("使用设备密码解锁")
+                        Text("デバイスのパスコードでロック解除")
                     }
                     .font(.subheadline)
                     .frame(maxWidth: .infinity)
@@ -122,7 +122,7 @@ struct SecurityView: View {
                 
                 // 锁定倒计时
                 if isLockedOut && lockoutRemaining > 0 {
-                    Text("生物识别已暂时锁定，\(lockoutRemaining) 秒后可重试")
+                    Text("生体認証は一時的にロックされています。\(lockoutRemaining) 秒後に再試行できます")
                         .font(.callout)
                         .foregroundStyle(.orange)
                         .padding(.top, 4)
@@ -130,7 +130,7 @@ struct SecurityView: View {
                 
                 // 重试计数 (仅生物识别, 密码不限)
                 if retryCount > 0 && retryCount < maxRetries && !isLockedOut {
-                    Text("生物识别剩余尝试: \(maxRetries - retryCount)")
+                    Text("生体認証の残り試行回数: \(maxRetries - retryCount)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -190,7 +190,7 @@ struct SecurityView: View {
     private var biometricName: String {
         switch biometricType {
         case .none:
-            return "密码"
+            return "パスワード"
         case .faceID:
             return "Face ID"
         case .touchID:
@@ -198,7 +198,7 @@ struct SecurityView: View {
         case .opticID:
             return "Optic ID"
         @unknown default:
-            return "生物识别"
+            return "生体認証"
         }
     }
     
@@ -247,13 +247,13 @@ struct SecurityView: View {
         authError = nil
         
         let context = LAContext()
-        context.localizedCancelTitle = "取消"
+        context.localizedCancelTitle = "キャンセル"
         // 不显示系统的 "输入密码" 回退按钮, 由我们自己的按钮处理
         context.localizedFallbackTitle = ""
         
         context.evaluatePolicy(
             .deviceOwnerAuthenticationWithBiometrics,
-            localizedReason: "验证身份以访问 EhViewer"
+            localizedReason: "EhViewer にアクセスするには本人確認を行ってください"
         ) { success, authenticationError in
             DispatchQueue.main.async {
                 isAuthenticating = false
@@ -276,11 +276,11 @@ struct SecurityView: View {
         authError = nil
         
         let context = LAContext()
-        context.localizedCancelTitle = "取消"
+        context.localizedCancelTitle = "キャンセル"
         
         context.evaluatePolicy(
             .deviceOwnerAuthentication,
-            localizedReason: "验证身份以访问 EhViewer"
+            localizedReason: "EhViewer にアクセスするには本人確認を行ってください"
         ) { success, authenticationError in
             DispatchQueue.main.async {
                 isAuthenticating = false
@@ -293,9 +293,9 @@ struct SecurityView: View {
                     onAuthenticated()
                 } else {
                     if let laError = authenticationError as? LAError, laError.code == .userCancel {
-                        authError = "认证已取消"
+                        authError = "認証がキャンセルされました"
                     } else {
-                        authError = authenticationError?.localizedDescription ?? "密码认证失败"
+                        authError = authenticationError?.localizedDescription ?? "パスコード認証に失敗しました"
                     }
                 }
             }
@@ -316,24 +316,24 @@ struct SecurityView: View {
         case .userCancel:
             // 用户取消不算重试
             retryCount -= 1
-            authError = "认证已取消，请点击按钮重试"
+            authError = "認証がキャンセルされました。ボタンをタップして再試行してください"
         case .userFallback:
             // 用户选择使用密码
             retryCount -= 1
             authenticateWithPasscode()
         case .biometryNotAvailable:
-            authError = "生物识别不可用，请使用密码解锁"
+            authError = "生体認証が利用できません。パスコードでロック解除してください"
         case .biometryNotEnrolled:
-            authError = "未设置生物识别，请使用密码解锁"
+            authError = "生体認証が設定されていません。パスコードでロック解除してください"
         case .biometryLockout:
             // Fix F1-2: 生物识别被系统锁定 — 引导使用密码
-            authError = "生物识别已锁定，请使用下方密码解锁"
+            authError = "生体認証がロックされています。下のパスコードでロック解除してください"
             startLockout()
         case .authenticationFailed:
             if retryCount >= maxRetries {
                 startLockout()
             } else {
-                authError = "认证失败，请重试"
+                authError = "認証に失敗しました。再試行してください"
             }
         default:
             authError = laError.localizedDescription
@@ -346,7 +346,7 @@ struct SecurityView: View {
     private func startLockout() {
         isLockedOut = true
         lockoutRemaining = lockoutDuration
-        authError = "生物识别重试次数过多，请使用密码解锁或等待 \(lockoutDuration) 秒"
+        authError = "生体認証の試行回数が多すぎます。パスコードでロック解除するか、\(lockoutDuration) 秒お待ちください"
         
         lockoutTimer?.invalidate()
         lockoutTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in

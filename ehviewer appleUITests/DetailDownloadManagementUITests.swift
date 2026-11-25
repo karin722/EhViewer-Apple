@@ -13,20 +13,20 @@ final class DetailDownloadManagementUITests: XCTestCase {
         row.tap()
         let manage = app.buttons["gallery-detail-download"].firstMatch
         XCTAssertTrue(manage.waitForExistence(timeout: 8))
-        let ready = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label == %@", "管理下载，已下载"), object: manage)
+        let ready = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label == %@", "ダウンロードを管理、ダウンロード済み"), object: manage)
         XCTAssertEqual(XCTWaiter.wait(for: [ready], timeout: 6), .completed)
         manage.tap()
-        let remove = app.buttons["移除离线文件…"].firstMatch
+        let remove = app.buttons["オフラインファイルを削除…"].firstMatch
         XCTAssertTrue(remove.waitForExistence(timeout: 5))
         remove.tap()
-        let confirm = app.alerts["移除离线文件？"]
+        let confirm = app.alerts["オフラインファイルを削除しますか？"]
         XCTAssertTrue(confirm.waitForExistence(timeout: 6))
-        XCTAssertTrue(confirm.buttons["移除下载文件"].exists)
-        confirm.buttons["取消"].tap()
+        XCTAssertTrue(confirm.buttons["ダウンロードファイルを削除"].exists)
+        confirm.buttons["キャンセル"].tap()
         XCTAssertTrue(manage.waitForExistence(timeout: 6))
-        XCTAssertEqual(manage.label, "管理下载，已下载", "Cancelling must keep the download.")
+        XCTAssertEqual(manage.label, "ダウンロードを管理、ダウンロード済み", "Cancelling must keep the download.")
         manage.tap()
-        let offline = app.buttons["离线阅读"].firstMatch
+        let offline = app.buttons["オフラインで読む"].firstMatch
         XCTAssertTrue(offline.waitForExistence(timeout: 5))
         offline.tap()
         XCTAssertTrue(app.buttons["reader-close"].waitForExistence(timeout: 8))

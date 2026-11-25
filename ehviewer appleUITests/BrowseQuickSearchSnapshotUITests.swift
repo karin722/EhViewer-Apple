@@ -8,7 +8,7 @@ final class BrowseQuickSearchSnapshotUITests: XCTestCase {
         app.launchEnvironment["EH_FIXTURE_SEARCH_SCOPE"] = "1"
         app.launch()
         XCTAssertTrue(app.staticTexts["Synthetic Gallery"].firstMatch.waitForExistence(timeout: 8))
-        app.buttons["订阅"].firstMatch.tap()
+        app.buttons["購読"].firstMatch.tap()
         XCTAssertTrue(app.staticTexts["Synthetic subscription origin"].waitForExistence(timeout: 8))
 
         let visibleField = app.textFields.allElementsBoundByIndex.first { $0.isHittable }
@@ -24,14 +24,14 @@ final class BrowseQuickSearchSnapshotUITests: XCTestCase {
         XCTAssertTrue(save.waitForExistence(timeout: 6))
         XCTAssertTrue(save.isEnabled)
         save.tap()
-        let firstSaved = app.buttons.matching(NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@", "offlineparity", "订阅")).firstMatch
+        let firstSaved = app.buttons.matching(NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@", "offlineparity", "購読")).firstMatch
         XCTAssertTrue(firstSaved.waitForExistence(timeout: 6))
 
         app.terminate()
         app.launch()
         XCTAssertTrue(app.staticTexts["Synthetic Gallery"].firstMatch.waitForExistence(timeout: 8))
         openDrawer(in: app)
-        let reopened = app.buttons.matching(NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@", "offlineparity", "订阅")).firstMatch
+        let reopened = app.buttons.matching(NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@", "offlineparity", "購読")).firstMatch
         XCTAssertTrue(reopened.waitForExistence(timeout: 6))
         reopened.tap()
         XCTAssertTrue(app.staticTexts["Scoped fixture result"].waitForExistence(timeout: 8))
@@ -42,6 +42,6 @@ final class BrowseQuickSearchSnapshotUITests: XCTestCase {
         let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.984, dy: 0.58))
         let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.58))
         start.press(forDuration: 0.06, thenDragTo: end, withVelocity: .fast, thenHoldForDuration: 0.15)
-        XCTAssertTrue(app.staticTexts["快速搜索"].firstMatch.waitForExistence(timeout: 6))
+        XCTAssertTrue(app.staticTexts["クイック検索"].firstMatch.waitForExistence(timeout: 6))
     }
 }

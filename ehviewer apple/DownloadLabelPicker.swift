@@ -38,7 +38,7 @@ struct DownloadLabelPicker: View {
                     HStack {
                         Image(systemName: "tray")
                             .foregroundStyle(.secondary)
-                        Text("默认分组").foregroundStyle(.primary)
+                        Text("デフォルトグループ").foregroundStyle(.primary)
                         Spacer()
                     }
                 }
@@ -57,19 +57,19 @@ struct DownloadLabelPicker: View {
                 }
 
                 Section {
-                    Toggle("记住这个标签，下次不再询问", isOn: $remember)
+                    Toggle("このラベルを記憶し、次回から確認しない", isOn: $remember)
                         .tint(EhColor.accentFill)
                 } footer: {
-                    Text("可以在「下载 › 更多 › 下载标签」里改回每次询问。")
+                    Text("「ダウンロード › その他 › ダウンロードラベル」で毎回確認する設定に戻せます。")
                 }
             }
-            .navigationTitle("下载到")
+            .navigationTitle("ダウンロード先")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消", action: onCancel)
+                    Button("キャンセル", action: onCancel)
                 }
             }
             .task {

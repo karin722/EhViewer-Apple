@@ -15,14 +15,14 @@ struct FilterView: View {
     var body: some View {
         List {
             Section {
-                Text("命中规则的画廊会从所有列表里挡掉——首页、搜索、订阅、排行都算。"
-                     + "规则只在本机生效，不会同步到 E-Hentai 账号。")
+                Text("ルールに一致したギャラリーはすべてのリスト（ホーム、検索、購読、ランキング）から非表示になります。"
+                     + "ルールはこのデバイスでのみ有効で、E-Hentai アカウントには同期されません。")
                     .font(EhFont.caption)
                     .foregroundStyle(EhColor.secondaryLabel)
             }
 
             // 快速屏蔽 (对齐 Android BlackListActivity)
-            Section("常用屏蔽") {
+            Section("よく使うブロック") {
                 ForEach(vm.quickBlockPresets, id: \.tag) { preset in
                     Button {
                         vm.toggleQuickBlock(tag: preset.tag)
@@ -69,7 +69,7 @@ struct FilterView: View {
 
             if vm.filters.isEmpty {
                 Section {
-                    Text("还没有任何规则。右上角加一条，或者在画廊详情页长按标签选「屏蔽这个标签」。")
+                    Text("ルールはまだありません。右上から追加するか、ギャラリーの詳細画面でタグを長押しして「このタグをブロック」を選んでください。")
                         .font(EhFont.caption)
                         .foregroundStyle(EhColor.secondaryLabel)
                 }
@@ -78,14 +78,14 @@ struct FilterView: View {
         #if os(iOS)
         .listStyle(.insetGrouped)
         #endif
-        .navigationTitle("过滤器")
+        .navigationTitle("フィルター")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { showAddSheet = true } label: { Image(systemName: "plus") }
-                    .accessibilityLabel("新增规则")
+                    .accessibilityLabel("ルールを追加")
             }
         }
         .sheet(isPresented: $showAddSheet) {
@@ -98,13 +98,13 @@ struct FilterView: View {
 
     static func modeTitle(_ mode: Int) -> String {
         switch mode {
-        case 0: return "标题包含"
-        case 1: return "上传者"
-        case 2: return "标签"
-        case 3: return "标签命名空间"
-        case 4: return "上传者标签"
-        case 5: return "语言"
-        default: return "其它"
+        case 0: return "タイトルに含む"
+        case 1: return "アップローダー"
+        case 2: return "ラベル"
+        case 3: return "タグの名前空間"
+        case 4: return "アップローダータグ"
+        case 5: return "言語"
+        default: return "その他"
         }
     }
 }
@@ -142,21 +142,21 @@ struct AddFilterSheet: View {
     @State private var filterMode = 2  // 默认标签过滤
 
     private let filterModes: [(Int, String)] = [
-        (0, "标题"),
-        (1, "上传者"),
-        (2, "标签"),
-        (3, "标签命名空间"),
-        (4, "上传者标签"),
-        (5, "语言")
+        (0, "タイトル"),
+        (1, "アップローダー"),
+        (2, "ラベル"),
+        (3, "タグの名前空間"),
+        (4, "アップローダータグ"),
+        (5, "言語")
     ]
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("过滤内容") {
-                    TextField("输入要过滤的文本", text: $filterText)
+                Section("フィルター内容") {
+                    TextField("フィルターするテキストを入力", text: $filterText)
 
-                    Picker("过滤类型", selection: $filterMode) {
+                    Picker("フィルターの種類", selection: $filterMode) {
                         ForEach(filterModes, id: \.0) { mode, name in
                             Text(name).tag(mode)
                         }
@@ -169,16 +169,16 @@ struct AddFilterSheet: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("添加过滤器")
+            .navigationTitle("フィルターを追加")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("キャンセル") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("添加") {
+                    Button("追加") {
                         vm.addFilter(text: filterText, mode: filterMode)
                         dismiss()
                     }
@@ -190,12 +190,12 @@ struct AddFilterSheet: View {
 
     private var filterDescription: String {
         switch filterMode {
-        case 0: return "含有此文本的标题将被过滤"
-        case 1: return "此上传者的画廊将被过滤"
-        case 2: return "含有此标签的画廊将被过滤 (格式: namespace:tag)"
-        case 3: return "含有此命名空间下任何标签的画廊将被过滤"
-        case 4: return "含有此上传者标签的画廊将被过滤"
-        case 5: return "此语言的画廊将被过滤"
+        case 0: return "このテキストを含むタイトルはフィルターされます"
+        case 1: return "このアップローダーのギャラリーはフィルターされます"
+        case 2: return "このタグを含むギャラリーはフィルターされます (形式: namespace:tag)"
+        case 3: return "この名前空間のタグを含むギャラリーはフィルターされます"
+        case 4: return "このアップローダータグを含むギャラリーはフィルターされます"
+        case 5: return "この言語のギャラリーはフィルターされます"
         default: return ""
         }
     }
@@ -214,12 +214,12 @@ class FilterViewModel {
     }
 
     let quickBlockPresets: [QuickBlockPreset] = [
-        QuickBlockPreset(displayName: "扶她 (Futanari)", tag: "female:futanari"),
-        QuickBlockPreset(displayName: "R-18G (猎奇)", tag: "mixed:guro"),
-        QuickBlockPreset(displayName: "人兽 (Bestiality)", tag: "female:bestiality"),
-        QuickBlockPreset(displayName: "兽人 (Furry)", tag: "male:furry"),
-        QuickBlockPreset(displayName: "NTR (寝取)", tag: "female:netorare"),
-        QuickBlockPreset(displayName: "药物 (Drug)", tag: "female:drugs"),
+        QuickBlockPreset(displayName: "ふたなり (Futanari)", tag: "female:futanari"),
+        QuickBlockPreset(displayName: "R-18G (猟奇)", tag: "mixed:guro"),
+        QuickBlockPreset(displayName: "獣姦 (Bestiality)", tag: "female:bestiality"),
+        QuickBlockPreset(displayName: "ケモノ (Furry)", tag: "male:furry"),
+        QuickBlockPreset(displayName: "NTR (寝取られ)", tag: "female:netorare"),
+        QuickBlockPreset(displayName: "薬物 (Drug)", tag: "female:drugs"),
     ]
 
     func isTagBlocked(_ tag: String) -> Bool {
@@ -233,7 +233,7 @@ class FilterViewModel {
             if let id = existing.id { try? EhDatabase.shared.deleteFilter(id: id) }
             loadFilters()
             notifyChanged()
-            EhToast.info("已取消屏蔽「\(tag)」")
+            EhToast.info("「\(tag)」のブロックを解除しました")
         } else {
             addFilter(text: tag, mode: 2)
         }
@@ -253,9 +253,9 @@ class FilterViewModel {
             try EhDatabase.shared.insertFilter(record)
             loadFilters()
             notifyChanged()
-            EhToast.success("已添加规则")
+            EhToast.success("ルールを追加しました")
         } catch {
-            EhToast.failure("添加规则失败")
+            EhToast.failure("ルールの追加に失敗しました")
             debugLog("Failed to add filter: \(error)")
         }
     }
@@ -269,7 +269,7 @@ class FilterViewModel {
             loadFilters()
             notifyChanged()
         } catch {
-            EhToast.failure("改不动这条规则")
+            EhToast.failure("このルールは変更できません")
             debugLog("Failed to toggle filter: \(error)")
         }
     }

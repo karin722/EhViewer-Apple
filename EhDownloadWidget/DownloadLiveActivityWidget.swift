@@ -108,7 +108,7 @@ struct DownloadLiveActivityWidget: Widget {
                 .tint(.blue)
 
             HStack {
-                Text("\(context.state.downloadedPages)/\(context.state.totalPages) 页")
+                Text("\(context.state.downloadedPages)/\(context.state.totalPages) ページ")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                 Spacer()

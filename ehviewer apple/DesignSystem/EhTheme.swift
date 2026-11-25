@@ -204,9 +204,9 @@ enum EhAppTheme: Int, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .system: return "跟随系统"
-        case .light:  return "浅色"
-        case .dark:   return "深色"
+        case .system: return "システムに合わせる"
+        case .light:  return "ライト"
+        case .dark:   return "ダーク"
         }
     }
 

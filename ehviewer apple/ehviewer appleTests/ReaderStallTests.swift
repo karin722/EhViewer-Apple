@@ -324,7 +324,7 @@ struct ReaderDownloadedPageIOTests {
         await vm.loadDownloadedPage(0, from: url, source: url.absoluteString)
         #expect(vm.cachedImages[0] == nil)
         #expect(vm.errorPages.contains(0))
-        #expect(vm.errorMessages[0] == "本地文件读取失败")
+        #expect(vm.errorMessages[0] == "ローカルファイルの読み込みに失敗しました")
     }
 }
 

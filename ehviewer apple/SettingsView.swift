@@ -46,15 +46,15 @@ struct SettingsView: View {
 
         var title: String {
             switch self {
-            case .all:           return "设置"
-            case .appearance:    return "外观"
-            case .listThumbnail: return "列表与缩略图"
-            case .downloads:     return "下载与存储"
-            case .reading:       return "阅读"
-            case .favorites:     return "收藏"
-            case .privacy:       return "隐私与锁定"
-            case .network:       return "网络与容灾"
-            case .tagDatabase:   return "标签翻译数据库"
+            case .all:           return "設定"
+            case .appearance:    return "外観"
+            case .listThumbnail: return "リストとサムネイル"
+            case .downloads:     return "ダウンロードとストレージ"
+            case .reading:       return "読む"
+            case .favorites:     return "お気に入り"
+            case .privacy:       return "プライバシーとロック"
+            case .network:       return "ネットワークと障害対策"
+            case .tagDatabase:   return "タグ翻訳データベース"
             }
         }
     }
@@ -83,7 +83,7 @@ struct SettingsView: View {
     private var settingsInnerContent: some View {
         #if os(macOS)
         macSettingsContent
-            .navigationTitle("设置")
+            .navigationTitle("設定")
             .onAppear { vm.checkLoginState() }
         #else
         Form {
@@ -133,17 +133,17 @@ struct SettingsView: View {
     @State private var selectedSettingsTab: SettingsTab = .account
 
     private enum SettingsTab: String, CaseIterable, Identifiable {
-        case account = "账号"
-        case site = "站点"
-        case display = "外观"
-        case favorites = "收藏"
-        case network = "网络"
-        case reading = "阅读"
-        case download = "下载"
-        case cache = "缓存"
-        case security = "隐私安全"
-        case advanced = "高级"
-        case about = "关于"
+        case account = "アカウント"
+        case site = "サイト"
+        case display = "外観"
+        case favorites = "お気に入り"
+        case network = "ネットワーク"
+        case reading = "読む"
+        case download = "ダウンロード"
+        case cache = "キャッシュ"
+        case security = "プライバシーとセキュリティ"
+        case advanced = "詳細"
+        case about = "このアプリについて"
 
         var id: String { rawValue }
 
@@ -220,7 +220,7 @@ struct SettingsView: View {
     // MARK: - Account
 
     private var accountSection: some View {
-        Section("账号") {
+        Section("アカウント") {
             if vm.isLoggedIn {
                 HStack(spacing: 12) {
                     // 用户头像 (对齐 Android: 从论坛资料页获取)
@@ -252,7 +252,7 @@ struct SettingsView: View {
                             Text(name)
                                 .font(.subheadline.bold())
                         } else {
-                            Text("已登录")
+                            Text("ログイン済み")
                                 .font(.subheadline.bold())
                         }
                         HStack(spacing: 8) {
@@ -261,7 +261,7 @@ struct SettingsView: View {
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
-                            Text(vm.hasExAccess ? "ExHentai 可用" : "仅 E-Hentai (未登录)")
+                            Text(vm.hasExAccess ? "ExHentai が利用可能です" : "E-Hentai のみ (未ログイン)")
                                 .font(.caption)
                                 .foregroundStyle(vm.hasExAccess ? Color.green : .secondary)
                         }
@@ -269,21 +269,21 @@ struct SettingsView: View {
                 }
 
                 // 身份 Cookies (对齐 Android: identity_cookie)
-                NavigationLink("身份 Cookies") {
+                NavigationLink("認証 Cookie") {
                     identityCookiesView
                 }
 
-                Button("注销", role: .destructive) {
+                Button("ログアウト", role: .destructive) {
                     vm.showLogoutConfirm = true
                 }
             } else {
-                Button("登录") {
+                Button("ログイン") {
                     vm.showLogin = true
                 }
             }
         }
-        .confirmationDialog("确认注销？", isPresented: $vm.showLogoutConfirm, titleVisibility: .visible) {
-            Button("注销", role: .destructive) {
+        .confirmationDialog("ログアウトしますか？", isPresented: $vm.showLogoutConfirm, titleVisibility: .visible) {
+            Button("ログアウト", role: .destructive) {
                 vm.logout()
             }
         }
@@ -295,8 +295,8 @@ struct SettingsView: View {
     // MARK: - Site
 
     private var siteSection: some View {
-        Section("站点") {
-            Picker("默认站点", selection: $vm.gallerySite) {
+        Section("サイト") {
+            Picker("デフォルトのサイト", selection: $vm.gallerySite) {
                 Text("E-Hentai").tag(0)
                 Text("ExHentai").tag(1)
             }
@@ -310,7 +310,7 @@ struct SettingsView: View {
                 openURL(URL(string: url)!)
             } label: {
                 HStack {
-                    Text("EH 站点设置")
+                    Text("EH サイト設定")
                     Spacer()
                     Image(systemName: "arrow.up.right.square")
                         .font(.caption)
@@ -319,43 +319,43 @@ struct SettingsView: View {
             }
 
             // 账号资料 + 图片配额 (对齐 Android GetProfileScene)
-            NavigationLink("账号资料与配额") {
+            NavigationLink("アカウント情報と閲覧上限") {
                 ProfileView()
             }
 
             // 我的标签 (对齐 Android MyTagsActivity) —— 原生页面，不再跳浏览器
-            NavigationLink("我的标签") {
+            NavigationLink("マイタグ") {
                 MyTagsView()
             }
 
             // 站内公告 (对齐 Android NewsScene)
-            NavigationLink("站内公告") {
+            NavigationLink("サイトのお知らせ") {
                 EhNewsView()
             }
 
-            Picker("列表模式", selection: $vm.listMode) {
-                Text("列表").tag(0)
-                Text("紧凑").tag(1)
-                Text("网格").tag(2)
+            Picker("リスト表示モード", selection: $vm.listMode) {
+                Text("リスト").tag(0)
+                Text("コンパクト").tag(1)
+                Text("グリッド").tag(2)
             }
 
             // 详情页封面大小 (对齐 Android Settings.KEY_DETAIL_SIZE)
-            Picker("详情页封面", selection: Binding(
+            Picker("詳細画面のカバー", selection: Binding(
                 get: { AppSettings.shared.detailSize },
                 set: { AppSettings.shared.detailSize = $0 }
             )) {
-                Text("常规").tag(0)
-                Text("大号").tag(1)
+                Text("標準").tag(0)
+                Text("大きめ").tag(1)
             }
 
-            Toggle("显示日文标题", isOn: $vm.showJpnTitle)
+            Toggle("日本語タイトルを表示", isOn: $vm.showJpnTitle)
 
             // 标签翻译设置
-            Toggle("显示标签翻译", isOn: $vm.showTagTranslations)
+            Toggle("タグの翻訳を表示", isOn: $vm.showTagTranslations)
             
             if vm.showTagTranslations {
                 HStack {
-                    Text("标签数据库")
+                    Text("タグデータベース")
                     Spacer()
                     if vm.isUpdatingTagDb {
                         ProgressView()
@@ -371,7 +371,7 @@ struct SettingsView: View {
                     Task { await vm.updateTagDatabase() }
                 } label: {
                     HStack {
-                        Text("更新标签翻译数据库")
+                        Text("タグ翻訳データベースを更新")
                         Spacer()
                         if vm.tagDbUpdateSuccess {
                             Image(systemName: "checkmark.circle.fill")
@@ -386,7 +386,7 @@ struct SettingsView: View {
                     openURL(URL(string: "https://github.com/EhTagTranslation")!)
                 } label: {
                     HStack {
-                        Text("补充翻译（由 EhTagTranslator 提供）")
+                        Text("追加翻訳（EhTagTranslator 提供）")
                         Spacer()
                         Image(systemName: "arrow.up.right.square")
                             .font(.caption)
@@ -395,17 +395,17 @@ struct SettingsView: View {
                 }
             }
 
-            NavigationLink("标签过滤") {
+            NavigationLink("タグフィルター") {
                 FilterView()
             }
 
             // 屏蔽列表 (对齐 Android: BlackListActivity)
-            NavigationLink("屏蔽列表") {
+            NavigationLink("ブロックリスト") {
                 FilterView()
             }
 
             // 移动网络提醒 (对齐 Android Settings.KEY_CELLULAR_NETWORK_WARNING)
-            Toggle("移动网络下载前提醒", isOn: Binding(
+            Toggle("モバイル通信でのダウンロード前に確認", isOn: Binding(
                 get: { AppSettings.shared.cellularNetworkWarning },
                 set: { AppSettings.shared.cellularNetworkWarning = $0 }
             ))
@@ -416,42 +416,42 @@ struct SettingsView: View {
     // 这三项是服务端配置，通过 uconfig Cookie 下发 —— 改完立即重新同步
     private var filterSection: some View {
         Section {
-            NavigationLink("默认搜索分类") {
+            NavigationLink("デフォルトの検索カテゴリ") {
                 defaultCategoriesView
                     .onDisappear { EhConfigSync.apply() }
             }
 
-            NavigationLink("排除的标签命名空间") {
+            NavigationLink("除外するタグの名前空間") {
                 excludedNamespacesView
                     .onDisappear { EhConfigSync.apply() }
             }
 
-            NavigationLink("排除的语言") {
+            NavigationLink("除外する言語") {
                 excludedLanguagesView
                     .onDisappear { EhConfigSync.apply() }
             }
         } header: {
-            Text("搜索过滤")
+            Text("検索フィルター")
         } footer: {
-            Text("保存在 E-Hentai 账号的服务端配置里，对网页端同样生效。")
+            Text("E-Hentai アカウントのサーバー側設定に保存され、Web 版にも反映されます。")
         }
     }
 
     // MARK: - Network
 
     private var networkSection: some View {
-        Section("网络") {
+        Section("ネットワーク") {
             // App 内代理 (对齐 Android advanced_settings.xml 的 ProxyPreference)。
             // 此前只能被动显示系统代理，没法给 App 单独指一个。
-            Picker("代理", selection: $vm.proxyMode) {
-                Text("跟随系统").tag(0)
-                Text("手动 HTTP").tag(1)
+            Picker("プロキシ", selection: $vm.proxyMode) {
+                Text("システムに合わせる").tag(0)
+                Text("手動 HTTP").tag(1)
             }
             .pickerStyle(.segmented)
 
             if vm.proxyMode == 1 {
                 HStack {
-                    Text("地址")
+                    Text("アドレス")
                     TextField("127.0.0.1", text: $vm.proxyHost)
                         .multilineTextAlignment(.trailing)
                         .autocorrectionDisabled()
@@ -460,39 +460,39 @@ struct SettingsView: View {
                         #endif
                 }
                 HStack {
-                    Text("端口")
+                    Text("ポート")
                     TextField("7890", value: $vm.proxyPort, format: .number.grouping(.never))
                         .multilineTextAlignment(.trailing)
                         #if os(iOS)
                         .keyboardType(.numberPad)
                         #endif
                 }
-                Button("应用代理设置") {
+                Button("プロキシ設定を適用") {
                     Task { await EhAPI.shared.applyProxySettings() }
                     EhToast.success(AppSettings.shared.manualProxyIsUsable
-                                    ? "已切换到 \(AppSettings.shared.proxyHost):\(AppSettings.shared.proxyPort)"
-                                    : "地址或端口不完整，仍按跟随系统处理")
+                                    ? "\(AppSettings.shared.proxyHost):\(AppSettings.shared.proxyPort) に切り替えました"
+                                    : "アドレスまたはポートが不完全なため、引き続きシステム設定に従います")
                 }
-                Text("只支持 HTTP/HTTPS 代理。URLSession 不支持 SOCKS，"
-                     + "所以这里没有 SOCKS 选项——给一个点了没用的开关更糟。"
-                     + "地址或端口填不全时按「跟随系统」处理，不会把网络配死。")
+                Text("HTTP/HTTPS プロキシのみ対応しています。URLSession は SOCKS に対応していないため、"
+                     + "ここには SOCKS の選択肢はありません。押しても効かないスイッチを置くよりはましです。"
+                     + "アドレスまたはポートが未入力の場合は「システムに合わせる」として扱われ、ネットワークが使えなくなることはありません。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
-            Toggle("域名前置", isOn: $vm.domainFronting)
+            Toggle("ドメインフロンティング", isOn: $vm.domainFronting)
 
             Toggle("DNS over HTTPS", isOn: $vm.dnsOverHttps)
 
-            Toggle("内置 Hosts", isOn: $vm.builtInHosts)
+            Toggle("内蔵 Hosts", isOn: $vm.builtInHosts)
 
-            Toggle("内置 ExH Hosts", isOn: Binding(
+            Toggle("内蔵 ExH Hosts", isOn: Binding(
                 get: { AppSettings.shared.builtExHosts },
                 set: { AppSettings.shared.builtExHosts = $0 }
             ))
 
             // 自定义 Hosts (对齐 Android HostsActivity)
-            NavigationLink("自定义 Hosts") {
+            NavigationLink("カスタム Hosts") {
                 HostsView()
             }
             
@@ -501,7 +501,7 @@ struct SettingsView: View {
                 vm.runNetworkDiagnostics()
             } label: {
                 HStack {
-                    Text("网络诊断")
+                    Text("ネットワーク診断")
                     Spacer()
                     if vm.isDiagnosing {
                         ProgressView()
@@ -525,41 +525,41 @@ struct SettingsView: View {
     // MARK: - Display (对齐 Android Settings: 外观)
 
     private var displaySection: some View {
-        Section("外观") {
+        Section("外観") {
             // 深色模式 (对齐 Android Settings.KEY_THEME)
-            Picker("主题", selection: Binding(
+            Picker("テーマ", selection: Binding(
                 get: { AppSettings.shared.theme },
                 set: { AppSettings.shared.theme = $0 }
             )) {
-                Text("跟随系统").tag(0)
-                Text("浅色").tag(1)
-                Text("深色").tag(2)
+                Text("システムに合わせる").tag(0)
+                Text("ライト").tag(1)
+                Text("ダーク").tag(2)
             }
 
             // 启动页面 (对齐 Android Settings.KEY_LAUNCH_PAGE)
-            Picker("启动页面", selection: Binding(
+            Picker("起動時の画面", selection: Binding(
                 get: { AppSettings.shared.launchPage },
                 set: { AppSettings.shared.launchPage = $0 }
             )) {
-                Text("首页").tag(0)
-                Text("热门").tag(1)
-                Text("排行榜").tag(2)
-                Text("收藏").tag(3)
-                Text("下载").tag(4)
-                Text("历史").tag(5)
+                Text("ホーム").tag(0)
+                Text("人気").tag(1)
+                Text("ランキング").tag(2)
+                Text("お気に入り").tag(3)
+                Text("ダウンロード").tag(4)
+                Text("履歴").tag(5)
             }
 
-            Toggle("显示画廊页数", isOn: Binding(
+            Toggle("ギャラリーのページ数を表示", isOn: Binding(
                 get: { AppSettings.shared.showGalleryPages },
                 set: { AppSettings.shared.showGalleryPages = $0 }
             ))
 
-            Toggle("显示评论区", isOn: Binding(
+            Toggle("コメント欄を表示", isOn: Binding(
                 get: { AppSettings.shared.showGalleryComment },
                 set: { AppSettings.shared.showGalleryComment = $0 }
             ))
 
-            Toggle("显示评分", isOn: Binding(
+            Toggle("評価を表示", isOn: Binding(
                 get: { AppSettings.shared.showGalleryRating },
                 set: { AppSettings.shared.showGalleryRating = $0 }
             ))
@@ -567,17 +567,17 @@ struct SettingsView: View {
             // 这两项对齐 Android show_eh_limits / show_eh_events。
             // 此前只在 AppSettings 里声明过，没有任何界面读它们，
             // 也没有开关——「我的」页的配额卡片和站内公告入口一直是写死显示的。
-            Toggle("显示图片配额", isOn: Binding(
+            Toggle("画像の閲覧上限を表示", isOn: Binding(
                 get: { AppSettings.shared.showEhLimits },
                 set: { AppSettings.shared.showEhLimits = $0 }
             ))
 
-            Toggle("显示站内公告入口", isOn: Binding(
+            Toggle("サイトのお知らせへの入口を表示", isOn: Binding(
                 get: { AppSettings.shared.showEhEvents },
                 set: { AppSettings.shared.showEhEvents = $0 }
             ))
 
-            Toggle("显示阅读进度", isOn: Binding(
+            Toggle("閲覧の進捗を表示", isOn: Binding(
                 get: { AppSettings.shared.showReadProgress },
                 set: { AppSettings.shared.showReadProgress = $0 }
             ))
@@ -590,8 +590,8 @@ struct SettingsView: View {
     /// 理由是缩略图大小同时影响列表与详情；但那条理由对用户不成立——
     /// 他点「列表与缩略图」就是想调列表，不该先滚过一堆主题与显示开关。
     private var listThumbnailSection: some View {
-        Section("列表与缩略图") {
-            Picker("缩略图大小", selection: Binding(
+        Section("リストとサムネイル") {
+            Picker("サムネイルのサイズ", selection: Binding(
                 get: { AppSettings.shared.thumbSize },
                 set: { AppSettings.shared.thumbSize = $0 }
             )) {
@@ -601,30 +601,30 @@ struct SettingsView: View {
             }
 
             // 缩略图分辨率 —— 走 uconfig Cookie (tp)
-            Picker("缩略图分辨率", selection: Binding(
+            Picker("サムネイルの解像度", selection: Binding(
                 get: { AppSettings.shared.thumbResolution },
                 set: {
                     AppSettings.shared.thumbResolution = $0
                     EhConfigSync.apply()
                 }
             )) {
-                Text("普通").tag(0)
-                Text("高清").tag(1)
+                Text("標準").tag(0)
+                Text("高画質").tag(1)
             }
 
             // 已接入: GalleryListView 读取并传给 GalleryRow
-            Toggle("修复缩略图链接", isOn: Binding(
+            Toggle("サムネイルのリンクを修正", isOn: Binding(
                 get: { AppSettings.shared.fixThumbUrl },
                 set: { AppSettings.shared.fixThumbUrl = $0 }
             ))
 
             // 大屏幕列表布局 (对齐 Android: 全宽单列表布局选项)
-            Picker("宽屏布局", selection: Binding(
+            Picker("ワイド画面レイアウト", selection: Binding(
                 get: { AppSettings.shared.wideScreenListMode },
                 set: { AppSettings.shared.wideScreenListMode = $0 }
             )) {
-                Text("双栏 (列表+详情)").tag(0)
-                Text("全宽单列表").tag(1)
+                Text("2 カラム (リスト+詳細)").tag(0)
+                Text("全幅のシングルリスト").tag(1)
             }
         }
     }
@@ -632,22 +632,22 @@ struct SettingsView: View {
     // MARK: - Favorites (对齐 Android Settings: 收藏)
 
     private var favoritesSection: some View {
-        Section("收藏") {
+        Section("お気に入り") {
             // 默认收藏夹 (对齐 Android Settings.KEY_DEFAULT_FAV_SLOT)
-            Picker("默认收藏夹", selection: Binding(
+            Picker("デフォルトのお気に入りフォルダー", selection: Binding(
                 get: { AppSettings.shared.defaultFavSlot },
                 set: { AppSettings.shared.defaultFavSlot = $0 }
             )) {
-                Text("每次询问").tag(-2)
+                Text("毎回確認").tag(-2)
                 // 本地收藏 (slot -1)。收藏对话框一直支持它，
                 // 这个 Picker 却漏了，导致「默认放本地收藏」设不出来。
-                Text("本地收藏").tag(-1)
+                Text("ローカルお気に入り").tag(-1)
                 ForEach(0..<10) { slot in
                     Text(AppSettings.shared.favCatName(slot)).tag(slot)
                 }
             }
 
-            NavigationLink("收藏夹名称") {
+            NavigationLink("お気に入りフォルダー名") {
                 favCatNamesView
             }
 
@@ -659,10 +659,10 @@ struct SettingsView: View {
         List {
             ForEach(0..<10, id: \.self) { slot in
                 HStack {
-                    Text("收藏夹 \(slot)")
+                    Text("お気に入りフォルダー \(slot)")
                         .foregroundStyle(.secondary)
                     Spacer()
-                    TextField("名称", text: Binding(
+                    TextField("名前", text: Binding(
                         get: { AppSettings.shared.favCatName(slot) },
                         set: { AppSettings.shared.setFavCatName(slot, $0) }
                     ))
@@ -670,14 +670,14 @@ struct SettingsView: View {
                 }
             }
         }
-        .navigationTitle("收藏夹名称")
+        .navigationTitle("お気に入りフォルダー名")
     }
 
     // MARK: - Reading
 
     private var readingSection: some View {
-        Section("阅读") {
-            Picker("阅读方向", selection: Binding(
+        Section("読む") {
+            Picker("閲覧方向", selection: Binding(
                 get: { ReadingDirection(persistedRawValue: AppSettings.shared.readingDirection) },
                 set: { direction in
                     guard let value = direction.persistedUpdate(from: AppSettings.shared.readingDirection) else { return }
@@ -690,32 +690,32 @@ struct SettingsView: View {
             }
 
             // 页面缩放 (对齐 Android Settings.KEY_PAGE_SCALING)
-            Picker("页面缩放", selection: Binding(
+            Picker("ページの拡大縮小", selection: Binding(
                 get: { AppSettings.shared.pageScaling },
                 set: { AppSettings.shared.pageScaling = $0 }
             )) {
-                Text("适合屏幕").tag(0)
-                Text("适合宽度").tag(1)
-                Text("适合高度").tag(2)
-                Text("原始大小").tag(3)
-                Text("等比缩放").tag(4)
+                Text("画面に合わせる").tag(0)
+                Text("幅に合わせる").tag(1)
+                Text("高さに合わせる").tag(2)
+                Text("元のサイズ").tag(3)
+                Text("縦横比を維持").tag(4)
             }
 
             // 起始位置 (对齐 Android Settings.KEY_START_POSITION)
-            Picker("起始位置", selection: Binding(
+            Picker("開始位置", selection: Binding(
                 get: { AppSettings.shared.startPosition },
                 set: { AppSettings.shared.startPosition = $0 }
             )) {
-                Text("默认").tag(0)
-                Text("顶部").tag(1)
+                Text("デフォルト").tag(0)
+                Text("上").tag(1)
                 Text("右上").tag(2)
-                Text("底部").tag(3)
+                Text("下").tag(3)
                 Text("右下").tag(4)
-                Text("居中").tag(5)
+                Text("中央").tag(5)
             }
 
             // 屏幕旋转 (对齐 Android Settings.KEY_SCREEN_ROTATION)
-            Picker("屏幕旋转", selection: Binding(
+            Picker("画面の回転", selection: Binding(
                 get: { AppSettings.shared.screenRotation },
                 set: { newValue in
                     AppSettings.shared.screenRotation = newValue
@@ -725,48 +725,48 @@ struct SettingsView: View {
                     #endif
                 }
             )) {
-                Text("跟随系统").tag(0)
-                Text("竖屏锁定").tag(1)
-                Text("横屏锁定").tag(2)
+                Text("システムに合わせる").tag(0)
+                Text("縦向きに固定").tag(1)
+                Text("横向きに固定").tag(2)
             }
 
-            Stepper("预加载页数: \(vm.preloadImage)", value: $vm.preloadImage, in: 1...10)
+            Stepper("先読みページ数: \(vm.preloadImage)", value: $vm.preloadImage, in: 1...10)
 
-            Toggle("保持屏幕常亮", isOn: $vm.keepScreenOn)
+            Toggle("画面を常にオンにする", isOn: $vm.keepScreenOn)
 
-            Toggle("全屏阅读", isOn: Binding(
+            Toggle("フルスクリーンで読む", isOn: Binding(
                 get: { AppSettings.shared.readingFullscreen },
                 set: { AppSettings.shared.readingFullscreen = $0 }
             ))
 
-            Toggle("显示时钟", isOn: Binding(
+            Toggle("時計を表示", isOn: Binding(
                 get: { AppSettings.shared.showClock },
                 set: { AppSettings.shared.showClock = $0 }
             ))
 
-            Toggle("显示进度", isOn: Binding(
+            Toggle("進捗を表示", isOn: Binding(
                 get: { AppSettings.shared.showProgress },
                 set: { AppSettings.shared.showProgress = $0 }
             ))
 
-            Toggle("显示电量", isOn: Binding(
+            Toggle("バッテリー残量を表示", isOn: Binding(
                 get: { AppSettings.shared.showBattery },
                 set: { AppSettings.shared.showBattery = $0 }
             ))
 
-            Toggle("显示页间距", isOn: Binding(
+            Toggle("ページ間隔を表示", isOn: Binding(
                 get: { AppSettings.shared.showPageInterval },
                 set: { AppSettings.shared.showPageInterval = $0 }
             ))
 
             #if DEBUG && os(iOS)
-            Toggle("音量键翻页", isOn: Binding(
+            Toggle("音量ボタンでページ送り", isOn: Binding(
                 get: { AppSettings.shared.volumePage },
                 set: { AppSettings.shared.volumePage = $0 }
             ))
 
             if AppSettings.shared.volumePage {
-                Toggle("反转音量键方向", isOn: Binding(
+                Toggle("音量ボタンの方向を反転", isOn: Binding(
                     get: { AppSettings.shared.reverseVolumePage },
                     set: { AppSettings.shared.reverseVolumePage = $0 }
                 ))
@@ -774,7 +774,7 @@ struct SettingsView: View {
             #endif
 
             // 自定义亮度 (对齐 Android Settings.KEY_CUSTOM_SCREEN_LIGHTNESS)
-            Toggle("自定义亮度", isOn: Binding(
+            Toggle("カスタム明るさ", isOn: Binding(
                 get: { AppSettings.shared.customScreenLightness },
                 set: { AppSettings.shared.customScreenLightness = $0 }
             ))
@@ -784,27 +784,27 @@ struct SettingsView: View {
                     get: { Double(AppSettings.shared.screenLightness) },
                     set: { AppSettings.shared.screenLightness = Int($0) }
                 ), in: 0...100, step: 1) {
-                    Text("亮度: \(AppSettings.shared.screenLightness)%")
+                    Text("明るさ: \(AppSettings.shared.screenLightness)%")
                 }
             }
 
             // 自动翻页间隔 (对齐 Android Settings.KEY_AUTO_PAGE_INTERVAL)
-            Stepper("自动翻页间隔: \(vm.autoPageInterval)s", value: $vm.autoPageInterval, in: AppSettings.autoPageIntervalRange)
+            Stepper("自動ページ送りの間隔: \(vm.autoPageInterval)s", value: $vm.autoPageInterval, in: AppSettings.autoPageIntervalRange)
 
             // 色彩滤镜 (对齐 Android Settings.KEY_COLOR_FILTER)
-            Toggle("色彩滤镜 (护眼)", isOn: Binding(
+            Toggle("カラーフィルター (目の保護)", isOn: Binding(
                 get: { AppSettings.shared.colorFilter },
                 set: { AppSettings.shared.colorFilter = $0 }
             ))
 
             if AppSettings.shared.colorFilter {
-                Picker("滤镜强度", selection: Binding(
+                Picker("フィルターの強度", selection: Binding(
                     get: { AppSettings.shared.colorFilterColor },
                     set: { AppSettings.shared.colorFilterColor = $0 }
                 )) {
-                    Text("轻").tag(0x14000000)
+                    Text("弱").tag(0x14000000)
                     Text("中").tag(0x20000000)
-                    Text("强").tag(0x40000000)
+                    Text("強").tag(0x40000000)
                 }
             }
         }
@@ -813,32 +813,32 @@ struct SettingsView: View {
     // MARK: - Download
 
     private var downloadSection: some View {
-        Section("下载") {
+        Section("ダウンロード") {
             #if os(macOS)
             // macOS: 自定义下载路径
             HStack {
-                Text("下载位置")
+                Text("ダウンロード先")
                 Spacer()
                 Text(vm.downloadPath)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
                     .truncationMode(.middle)
-                Button("更改...") {
+                Button("変更...") {
                     vm.chooseDownloadPath()
                 }
                 .buttonStyle(.link)
             }
             #endif
 
-            Stepper("并发线程: \(vm.multiThread)", value: $vm.multiThread, in: 1...5)
+            Stepper("同時接続数: \(vm.multiThread)", value: $vm.multiThread, in: 1...5)
 
-            Stepper("超时 (秒): \(vm.downloadTimeout)", value: $vm.downloadTimeout, in: 10...120, step: 10)
+            Stepper("タイムアウト (秒): \(vm.downloadTimeout)", value: $vm.downloadTimeout, in: 10...120, step: 10)
 
             // 下载延迟 (对齐 Android Settings.KEY_DOWNLOAD_DELAY)
-            Stepper("下载延迟: \(vm.downloadDelay) ms", value: $vm.downloadDelay, in: 0...2000, step: 100)
+            Stepper("ダウンロード間隔: \(vm.downloadDelay) ms", value: $vm.downloadDelay, in: 0...2000, step: 100)
 
             // 图片分辨率 —— 走 uconfig Cookie (xr)，改完立即同步
-            Picker("图片分辨率", selection: Binding(
+            Picker("画像の解像度", selection: Binding(
                 get: { AppSettings.shared.imageResolution },
                 set: {
                     AppSettings.shared.imageResolution = $0
@@ -851,28 +851,28 @@ struct SettingsView: View {
             }
 
             // 下载原图 (对齐 Android Settings.KEY_DOWNLOAD_ORIGIN_IMAGE)
-            Toggle("下载原始图片", isOn: Binding(
+            Toggle("オリジナル画像をダウンロード", isOn: Binding(
                 get: { AppSettings.shared.downloadOriginImage },
                 set: { AppSettings.shared.downloadOriginImage = $0 }
             ))
 
             // 阅读时同步下载 (对齐 Android 上游 2026-06-16 sync_download_while_reading)
-            Toggle("阅读时自动下载", isOn: Binding(
+            Toggle("閲覧時に自動ダウンロード", isOn: Binding(
                 get: { AppSettings.shared.syncDownloadWhileReading },
                 set: { AppSettings.shared.syncDownloadWhileReading = $0 }
             ))
             // 这行字此前写的是「顺手存进下载目录」，读起来像一种缓存优化，
             // 但它的实际后果是每翻一本都进下载列表、占用永久空间、不受缓存
             // 上限约束。开关的名字和说明都要把这件事讲清楚。
-            Text("每看过一页就存进下载目录，画廊会出现在下载列表里，"
-                 + "占用的是永久空间，不受下面的阅读缓存上限约束。"
-                 + "只想省流量的话不需要开——阅读缓存已经会自动复用看过的图。")
+            Text("閲覧したページをダウンロードフォルダーに保存し、ギャラリーがダウンロードリストに表示されます。"
+                 + "永続的な容量を使用し、下の閲覧キャッシュの上限は適用されません。"
+                 + "通信量を節約したいだけならオンにする必要はありません。閲覧キャッシュが閲覧済みの画像を自動的に再利用します。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
             #if os(iOS)
             // 灵动岛 (Live Activity) 下载进度显示
-            Toggle("灵动岛显示下载进度", isOn: Binding(
+            Toggle("Dynamic Island にダウンロード進捗を表示", isOn: Binding(
                 get: { AppSettings.shared.showLiveActivity },
                 set: { AppSettings.shared.showLiveActivity = $0 }
             ))
@@ -884,7 +884,7 @@ struct SettingsView: View {
                 vm.restoreDownloadItems()
             } label: {
                 HStack {
-                    Text("恢复下载项目")
+                    Text("ダウンロード項目を復元")
                     Spacer()
                     if vm.isRestoring {
                         ProgressView()
@@ -905,7 +905,7 @@ struct SettingsView: View {
                 vm.cleanRedundancy()
             } label: {
                 HStack {
-                    Text("清除下载冗余数据")
+                    Text("ダウンロードの不要なデータを消去")
                     Spacer()
                     if vm.isCleaning {
                         ProgressView()
@@ -915,14 +915,14 @@ struct SettingsView: View {
             }
             .disabled(vm.isCleaning)
             .confirmationDialog(
-                "发现 \(vm.cleanOrphanCount) 个冗余目录 (\(vm.cleanOrphanSize))，确认删除？",
+                "\(vm.cleanOrphanCount) 個の不要なフォルダー (\(vm.cleanOrphanSize)) が見つかりました。削除しますか？",
                 isPresented: $vm.showCleanConfirm,
                 titleVisibility: .visible
             ) {
-                Button("删除", role: .destructive) {
+                Button("削除", role: .destructive) {
                     vm.confirmCleanRedundancy()
                 }
-                Button("取消", role: .cancel) {
+                Button("キャンセル", role: .cancel) {
                     vm.cancelClean()
                 }
             }
@@ -938,9 +938,9 @@ struct SettingsView: View {
     // MARK: - Cache
 
     private var cacheSection: some View {
-        Section("缓存") {
+        Section("キャッシュ") {
             // 阅读缓存大小 (对齐 Android Settings.KEY_READ_CACHE_SIZE)
-            Picker("阅读缓存大小", selection: Binding(
+            Picker("閲覧キャッシュのサイズ", selection: Binding(
                 get: { AppSettings.shared.readCacheSize },
                 set: { AppSettings.shared.readCacheSize = $0 }
             )) {
@@ -954,37 +954,37 @@ struct SettingsView: View {
                 Text("640 MB").tag(640)
             }
 
-            Text("看过的图片会存进阅读缓存，同一本再看不必重新下载。"
-                 + "超出上限时自动淘汰最旧的，系统空间紧张时也会整体回收。")
+            Text("閲覧した画像は閲覧キャッシュに保存され、同じギャラリーを再度読むときに再ダウンロードは不要です。"
+                 + "上限を超えると古いものから自動的に削除され、システムの空き容量が少ないときはまとめて回収されます。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
             HStack {
-                Text("阅读缓存已用")
+                Text("閲覧キャッシュの使用量")
                 Spacer()
                 Text(vm.readCacheUsage)
                     .foregroundStyle(.secondary)
             }
 
-            Button("清空阅读缓存") {
+            Button("閲覧キャッシュを消去") {
                 SpiderDen.clearReadCache()
                 vm.refreshCacheSizes()
-                EhToast.success("已清空阅读缓存")
+                EhToast.success("閲覧キャッシュを消去しました")
             }
 
             HStack {
-                Text("磁盘缓存")
+                Text("ディスクキャッシュ")
                 Spacer()
                 Text(vm.diskCacheSize)
                     .foregroundStyle(.secondary)
             }
 
             // 清除内存缓存 (对齐 Android: clear_memory_cache)
-            Button("清除内存缓存") {
+            Button("メモリキャッシュを消去") {
                 vm.clearMemoryCache()
             }
 
-            Button("清除磁盘缓存") {
+            Button("ディスクキャッシュを消去") {
                 vm.clearCache()
             }
         }
@@ -993,32 +993,32 @@ struct SettingsView: View {
     // MARK: - Security
 
     private var securitySection: some View {
-        Section("隐私与安全") {
+        Section("プライバシーとセキュリティ") {
             // 隐私遮罩（对齐 Android enable_secure）
-            Toggle("切到后台时隐藏内容", isOn: Binding(
+            Toggle("バックグラウンド時に内容を隠す", isOn: Binding(
                 get: { AppSettings.shared.enableSecureScreen },
                 set: { AppSettings.shared.enableSecureScreen = $0 }
             ))
-            Text("离开 App 时立刻盖住界面，这样 App 切换器里的预览图不会露出正在看的内容。"
-                 + "iOS 不允许 App 禁止截屏，所以这一项挡不住主动截屏。")
+            Text("アプリを離れるとすぐに画面を覆い、App スイッチャーのプレビューに閲覧中の内容が表示されないようにします。"
+                 + "iOS ではアプリがスクリーンショットを禁止できないため、この設定では意図的なスクリーンショットは防げません。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            Toggle("启用应用锁", isOn: Binding(
+            Toggle("アプリロックを有効にする", isOn: Binding(
                 get: { AppSettings.shared.enableSecurity },
                 set: { AppSettings.shared.enableSecurity = $0 }
             ))
 
             if AppSettings.shared.enableSecurity {
-                Picker("解锁延迟", selection: Binding(
+                Picker("ロックまでの時間", selection: Binding(
                     get: { AppSettings.shared.securityDelay },
                     set: { AppSettings.shared.securityDelay = $0 }
                 )) {
-                    Text("立即").tag(0)
+                    Text("すぐに").tag(0)
                     Text("30 秒").tag(30)
-                    Text("1 分钟").tag(60)
-                    Text("5 分钟").tag(300)
-                    Text("15 分钟").tag(900)
+                    Text("1 分").tag(60)
+                    Text("5 分").tag(300)
+                    Text("15 分").tag(900)
                 }
             }
         }
@@ -1027,23 +1027,23 @@ struct SettingsView: View {
     // MARK: - Advanced (对齐 Android Settings: 高级)
 
     private var advancedSection: some View {
-        Section("高级") {
+        Section("詳細") {
             // 历史记录容量 (对齐 Android Settings.KEY_HISTORY_INFO_SIZE)
-            Stepper("历史记录上限: \(vm.historyInfoSize)", value: $vm.historyInfoSize, in: 100...2000, step: 100)
+            Stepper("履歴の上限: \(vm.historyInfoSize)", value: $vm.historyInfoSize, in: 100...2000, step: 100)
 
             // 解析失败时把原始 HTML 存进日志目录，方便反馈问题
-            Toggle("保存解析错误现场", isOn: Binding(
+            Toggle("解析エラーの状況を保存", isOn: Binding(
                 get: { AppSettings.shared.saveParseErrorBody },
                 set: { AppSettings.shared.saveParseErrorBody = $0 }
             ))
 
             // 导出数据 (对齐 Android: export_data)
-            Button("导出 Apple 端设置（JSON）") {
+            Button("Apple 版の設定をエクスポート（JSON）") {
                 exportSettingsBackup()
             }
 
             // 导入数据 (对齐 Android: import_data)
-            Button("导入 Apple 端设置（JSON）") {
+            Button("Apple 版の設定をインポート（JSON）") {
                 settingsBackupImportMessage = nil
                 showSettingsBackupImportPicker = true
             }
@@ -1078,7 +1078,7 @@ struct SettingsView: View {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.json]
         panel.nameFieldStringValue = "ehviewer_settings.json"
-        panel.title = "导出设置"
+        panel.title = "設定をエクスポート"
         if panel.runModal() == .OK, let url = panel.url {
             try? jsonData.write(to: url)
         }
@@ -1089,7 +1089,7 @@ struct SettingsView: View {
         guard case .success(let urls) = result, let url = urls.first else { return }
 
         guard url.startAccessingSecurityScopedResource() else {
-            settingsBackupImportMessage = "无法访问所选备份文件，未更改任何设置。"
+            settingsBackupImportMessage = "選択したバックアップファイルにアクセスできないため、設定は変更されていません。"
             return
         }
         defer { url.stopAccessingSecurityScopedResource() }
@@ -1100,39 +1100,39 @@ struct SettingsView: View {
             var message: String
             if report.appliedCount > 0 {
                 vm.reloadSettingsAfterBackupImport()
-                message = "已导入 \(report.appliedCount) 项设置。"
+                message = "\(report.appliedCount) 項目の設定をインポートしました。"
             } else {
-                message = "没有可恢复的设置，未更改现有设置。"
+                message = "復元できる設定がないため、既存の設定は変更されていません。"
             }
             if report.skippedObsoleteMediaScan {
-                message += "\n已跳过旧版媒体扫描设置，Apple 端没有对应功能。"
+                message += "\n旧バージョンのメディアスキャン設定はスキップしました。Apple 版には対応する機能がありません。"
             }
             if report.skippedUnknownCount > 0 {
-                message += "\n已跳过 \(report.skippedUnknownCount) 个无法识别的字段。"
+                message += "\n認識できない \(report.skippedUnknownCount) 個のフィールドをスキップしました。"
             }
             settingsBackupImportMessage = message
         } catch SettingsBackup.RestoreError.invalidValue(_) {
-            settingsBackupImportMessage = "备份里有设置值格式不正确，未更改任何设置。"
+            settingsBackupImportMessage = "バックアップに不正な形式の設定値があるため、設定は変更されていません。"
         } catch {
-            settingsBackupImportMessage = "无法读取有效的 Apple 设置备份，未更改任何设置。"
+            settingsBackupImportMessage = "有効な Apple 版設定のバックアップを読み込めないため、設定は変更されていません。"
         }
     }
 
     // MARK: - About
 
     private var aboutSection: some View {
-        Section("关于") {
+        Section("このアプリについて") {
             // 免责声明（对齐 Android about_settings.xml 的 declaration）。
             // 这条是法律意义上的声明，不是装饰：这个 App 不是 E-Hentai 官方的，
             // 用户该知道自己在用谁做的东西。
-            Text("本应用与 E-Hentai.org 无任何隶属或合作关系，"
-                 + "是基于公开网页接口的第三方客户端。内容全部来自 E-Hentai，"
-                 + "本应用不托管、不生产任何内容。")
+            Text("本アプリは E-Hentai.org とは一切の提携・協力関係がなく、"
+                 + "公開 Web インターフェースに基づくサードパーティ製クライアントです。コンテンツはすべて E-Hentai によるもので、"
+                 + "本アプリはいかなるコンテンツもホスト・制作していません。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
             HStack {
-                Text("版本")
+                Text("バージョン")
                 Spacer()
                 Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
                     .foregroundStyle(.secondary)
@@ -1151,7 +1151,7 @@ struct SettingsView: View {
                 AppUpdateChecker.shared.checkManually()
             } label: {
                 HStack {
-                    Text("检查更新")
+                    Text("アップデートを確認")
                     Spacer()
                     if AppUpdateChecker.shared.isChecking {
                         ProgressView()
@@ -1160,11 +1160,11 @@ struct SettingsView: View {
             }
             .disabled(AppUpdateChecker.shared.isChecking)
 
-            Button("源代码") {
+            Button("ソースコード") {
                 openURL(URL(string: "https://github.com/felixchaos/EhViewer-Apple")!)
             }
 
-            NavigationLink("开源协议") {
+            NavigationLink("オープンソースライセンス") {
                 licensesView
             }
         }
@@ -1176,19 +1176,19 @@ struct SettingsView: View {
             // 因为 @Observable 宏使 didSet 在 init() 中也会触发，导致 GalleryListView 误刷新
             NotificationCenter.default.post(name: GalleryActionService.siteChangedNotification, object: nil)
         }
-        .alert("发现新版本", isPresented: Bindable(AppUpdateChecker.shared).showUpdateAlert) {
+        .alert("新しいバージョンがあります", isPresented: Bindable(AppUpdateChecker.shared).showUpdateAlert) {
             if let info = AppUpdateChecker.shared.updateAvailable {
-                Button("前往下载") {
+                Button("ダウンロードへ") {
                     openURL(info.downloadURL)
                 }
-                Button("取消", role: .cancel) {}
+                Button("キャンセル", role: .cancel) {}
             }
         } message: {
             if let info = AppUpdateChecker.shared.updateAvailable {
                 Text("v\(info.version)\n\n\(AppUpdatePlatform.current.installationHint)\n\n\(info.releaseNotes)")
             }
         }
-        .alert("检查更新", isPresented: .init(
+        .alert("アップデートを確認", isPresented: .init(
             get: {
                 if let err = AppUpdateChecker.shared.checkError {
                     return err != ""
@@ -1199,10 +1199,10 @@ struct SettingsView: View {
                 if !newValue { AppUpdateChecker.shared.checkError = nil }
             }
         )) {
-            Button("确定", role: .cancel) {}
+            Button("OK", role: .cancel) {}
         } message: {
             if AppUpdateChecker.shared.checkError == "already_latest" {
-                Text("当前没有适用的新版（v\(AppUpdateChecker.shared.currentVersion)）")
+                Text("現在、利用可能な新しいバージョンはありません（v\(AppUpdateChecker.shared.currentVersion)）")
             } else {
                 Text(AppUpdateChecker.shared.checkError ?? "")
             }
@@ -1243,7 +1243,7 @@ limitations under the License.
                 }
                 .padding(.vertical, 4)
             } header: {
-                Text("本项目")
+                Text("本プロジェクト")
             }
 
             // 致谢
@@ -1251,19 +1251,19 @@ limitations under the License.
                 VStack(alignment: .leading, spacing: 4) {
                     Text("EhViewer")
                         .font(.subheadline.bold())
-                    Text("原始 Android EhViewer 项目")
+                    Text("オリジナルの Android 版 EhViewer プロジェクト")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     Text("EhViewer_CN_SXJ")
                         .font(.subheadline.bold())
-                    Text("EhViewer 中文分支，本项目参考了其 UI 设计与功能逻辑")
+                    Text("EhViewer 中国語フォーク。本プロジェクトはその UI デザインと機能ロジックを参考にしています")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             } header: {
-                Text("致谢")
+                Text("謝辞")
             }
 
             // 第三方库
@@ -1286,10 +1286,10 @@ limitations under the License.
                     }
                 }
             } header: {
-                Text("第三方开源库")
+                Text("サードパーティのオープンソースライブラリ")
             }
         }
-        .navigationTitle("开源协议")
+        .navigationTitle("オープンソースライセンス")
     }
 
     private struct LicensedLibrary {
@@ -1398,7 +1398,7 @@ SOFTWARE.
 
         let geometryPreferences = UIWindowScene.GeometryPreferences.iOS(interfaceOrientations: orientations)
         windowScene.requestGeometryUpdate(geometryPreferences) { error in
-            debugLog("[SettingsView] 旋转更新错误: \(error.localizedDescription)")
+            debugLog("[SettingsView] 回転更新エラー: \(error.localizedDescription)")
         }
     }
     #endif
@@ -1421,7 +1421,7 @@ SOFTWARE.
                             .lineLimit(2)
                     }
                     .contextMenu {
-                        Button("复制") {
+                        Button("コピー") {
                             #if os(iOS)
                             UIPasteboard.general.string = "\(cookie.name)=\(cookie.value)"
                             #else
@@ -1432,7 +1432,7 @@ SOFTWARE.
                     }
                 }
                 if ehCookies.isEmpty {
-                    Text("无 Cookie")
+                    Text("Cookie なし")
                         .foregroundStyle(.secondary)
                 }
             }
@@ -1448,7 +1448,7 @@ SOFTWARE.
                             .lineLimit(2)
                     }
                     .contextMenu {
-                        Button("复制") {
+                        Button("コピー") {
                             #if os(iOS)
                             UIPasteboard.general.string = "\(cookie.name)=\(cookie.value)"
                             #else
@@ -1459,28 +1459,28 @@ SOFTWARE.
                     }
                 }
                 if exCookies.isEmpty {
-                    Text("无 Cookie")
+                    Text("Cookie なし")
                         .foregroundStyle(.secondary)
                 }
             }
         }
-        .navigationTitle("身份 Cookies")
+        .navigationTitle("認証 Cookie")
     }
 
     // MARK: - Default Categories View (对齐 Android: DefaultCategoryActivity)
 
     private var defaultCategoriesView: some View {
         let allCategories: [(String, Int)] = [
-            ("同人志 (Doujinshi)", 1),
+            ("同人誌 (Doujinshi)", 1),
             ("漫画 (Manga)", 2),
-            ("画师CG (Artist CG)", 4),
-            ("游戏CG (Game CG)", 8),
-            ("欧美 (Western)", 512),
-            ("非H (Non-H)", 256),
-            ("图集 (Image Set)", 16),
+            ("イラスト CG (Artist CG)", 4),
+            ("ゲーム CG (Game CG)", 8),
+            ("洋物 (Western)", 512),
+            ("非エロ (Non-H)", 256),
+            ("画像セット (Image Set)", 16),
             ("Cosplay", 32),
-            ("亚洲 (Asian Porn)", 64),
-            ("杂项 (Misc)", 128),
+            ("アジア (Asian Porn)", 64),
+            ("その他 (Misc)", 128),
         ]
 
         return List {
@@ -1498,7 +1498,7 @@ SOFTWARE.
                 ))
             }
         }
-        .navigationTitle("默认搜索分类")
+        .navigationTitle("デフォルトの検索カテゴリ")
     }
 
     // MARK: - Excluded Tag Namespaces View (对齐 Android: ExcludedTagNamespacesActivity)
@@ -1521,7 +1521,7 @@ SOFTWARE.
 
         return List {
             Section {
-                Text("已选中的命名空间将从搜索结果的标签列表中排除")
+                Text("選択した名前空間は検索結果のタグ一覧から除外されます")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -1540,7 +1540,7 @@ SOFTWARE.
                 ))
             }
         }
-        .navigationTitle("排除的标签命名空间")
+        .navigationTitle("除外するタグの名前空間")
     }
 
     // MARK: - Excluded Languages View (对齐 Android: ExcludedLanguagesActivity)
@@ -1555,7 +1555,7 @@ SOFTWARE.
 
         return List {
             Section {
-                Text("已选中的语言将从搜索结果中排除")
+                Text("選択した言語は検索結果から除外されます")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -1578,7 +1578,7 @@ SOFTWARE.
                 ))
             }
         }
-        .navigationTitle("排除的语言")
+        .navigationTitle("除外する言語")
     }
 }
 
@@ -1621,11 +1621,11 @@ class SettingsViewModel {
         let db = EhTagDatabase.shared
         if db.isLoaded {
             if let version = db.version {
-                return "已加载 (\(version.prefix(10)))"
+                return "読み込み済み (\(version.prefix(10)))"
             }
-            return "已加载"
+            return "読み込み済み"
         }
-        return "未加载"
+        return "未読み込み"
     }
     
     func updateTagDatabase() async {
@@ -1702,11 +1702,11 @@ class SettingsViewModel {
     var diagnosisResult = ""
     var diagnosisSuccess = false
 
-    var diskCacheSize: String = "计算中..."
+    var diskCacheSize: String = "計算中..."
     /// 阅读缓存（Caches/spider_image）已用空间。
     /// 此前设置里只显示 URLCache 的占用，而阅读器的图根本不在那儿，
     /// 所以「缓存大小」这一项和用户实际感受到的占用对不上。
-    var readCacheUsage: String = "计算中..."
+    var readCacheUsage: String = "計算中..."
 
     func calculateCacheSize() {
         let byteFormatter = ByteCountFormatter()
@@ -1739,8 +1739,8 @@ class SettingsViewModel {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.title = "选择下载目录"
-        panel.prompt = "选择"
+        panel.title = "ダウンロード先フォルダーを選択"
+        panel.prompt = "選択"
 
         if panel.runModal() == .OK, let url = panel.url {
             UserDefaults.standard.set(url.path, forKey: "downloadPath")
@@ -1825,7 +1825,7 @@ class SettingsViewModel {
                     self.isFetchingProfile = false
                 }
             } catch {
-                debugLog("[SettingsVM] 获取用户资料失败: \(error)")
+                debugLog("[SettingsVM] ユーザー情報の取得に失敗: \(error)")
                 await MainActor.run {
                     self.isFetchingProfile = false
                 }
@@ -1885,7 +1885,7 @@ class SettingsViewModel {
                         results.append("✓ \(host) → \(ip)")
                     }
                 } else {
-                    results.append("✗ \(host) DNS 解析失败")
+                    results.append("✗ \(host) DNS の解決に失敗")
                     allSuccess = false
                 }
             }
@@ -1901,7 +1901,7 @@ class SettingsViewModel {
                     let (_, response) = try await URLSession.shared.data(for: request)
                     if let httpResponse = response as? HTTPURLResponse {
                         if httpResponse.statusCode == 200 || httpResponse.statusCode == 302 {
-                            results.append("✓ \(host) HTTPS 连接正常")
+                            results.append("✓ \(host) HTTPS 接続は正常")
                         } else {
                             results.append("⚠ \(host) HTTP \(httpResponse.statusCode)")
                         }
@@ -1910,18 +1910,18 @@ class SettingsViewModel {
                     if error.domain == NSURLErrorDomain {
                         switch error.code {
                         case NSURLErrorTimedOut:
-                            results.append("✗ \(host) 连接超时")
+                            results.append("✗ \(host) 接続タイムアウト")
                         case NSURLErrorCannotConnectToHost:
-                            results.append("✗ \(host) 无法连接")
+                            results.append("✗ \(host) 接続できません")
                         case NSURLErrorSecureConnectionFailed:
-                            results.append("✗ \(host) TLS 错误 (可能被阻断)")
+                            results.append("✗ \(host) TLS エラー (ブロックされている可能性)")
                         case NSURLErrorServerCertificateUntrusted:
-                            results.append("✗ \(host) 证书不受信任")
+                            results.append("✗ \(host) 証明書が信頼されていません")
                         default:
-                            results.append("✗ \(host) 错误: \(error.localizedDescription)")
+                            results.append("✗ \(host) エラー: \(error.localizedDescription)")
                         }
                     } else {
-                        results.append("✗ \(host) 错误: \(error.localizedDescription)")
+                        results.append("✗ \(host) エラー: \(error.localizedDescription)")
                     }
                     allSuccess = false
                 }
@@ -1931,7 +1931,7 @@ class SettingsViewModel {
             #if os(iOS)
             let proxySettings = CFNetworkCopySystemProxySettings()?.takeRetainedValue() as? [String: Any]
             if let httpProxy = proxySettings?["HTTPProxy"] as? String, !httpProxy.isEmpty {
-                results.append("ℹ 检测到 HTTP 代理: \(httpProxy)")
+                results.append("ℹ HTTP プロキシを検出: \(httpProxy)")
             }
             #endif
             
@@ -1972,7 +1972,7 @@ class SettingsViewModel {
                 options: [.skipsHiddenFiles]
             ) else {
                 await MainActor.run {
-                    self.restoreResultMessage = "无法读取下载目录"
+                    self.restoreResultMessage = "ダウンロードフォルダーを読み込めません"
                     self.isRestoring = false
                 }
                 return
@@ -1985,7 +1985,7 @@ class SettingsViewModel {
                 existingGids = Set(records.map { $0.gid })
             } catch {
                 await MainActor.run {
-                    self.restoreResultMessage = "数据库读取失败: \(error.localizedDescription)"
+                    self.restoreResultMessage = "データベースの読み込みに失敗: \(error.localizedDescription)"
                     self.isRestoring = false
                 }
                 return
@@ -2044,9 +2044,9 @@ class SettingsViewModel {
 
             await MainActor.run {
                 if restoredCount > 0 {
-                    self.restoreResultMessage = "成功恢复 \(restoredCount) 个下载项目" + (errorCount > 0 ? " (\(errorCount) 个失败)" : "")
+                    self.restoreResultMessage = "\(restoredCount) 件のダウンロード項目を復元しました" + (errorCount > 0 ? " (\(errorCount) 件失敗)" : "")
                 } else {
-                    self.restoreResultMessage = "没有需要恢复的下载项目"
+                    self.restoreResultMessage = "復元が必要なダウンロード項目はありません"
                 }
                 self.isRestoring = false
             }
@@ -2069,7 +2069,7 @@ class SettingsViewModel {
                 options: [.skipsHiddenFiles]
             ) else {
                 await MainActor.run {
-                    self.cleanResultMessage = "无法读取下载目录"
+                    self.cleanResultMessage = "ダウンロードフォルダーを読み込めません"
                     self.isCleaning = false
                 }
                 return
@@ -2082,7 +2082,7 @@ class SettingsViewModel {
                 dbGids = Set(records.map { $0.gid })
             } catch {
                 await MainActor.run {
-                    self.cleanResultMessage = "数据库读取失败"
+                    self.cleanResultMessage = "データベースの読み込みに失敗しました"
                     self.isCleaning = false
                 }
                 return
@@ -2117,7 +2117,7 @@ class SettingsViewModel {
 
             await MainActor.run {
                 if orphanDirs.isEmpty {
-                    self.cleanResultMessage = "没有冗余数据"
+                    self.cleanResultMessage = "不要なデータはありません"
                     self.isCleaning = false
                 } else {
                     self.cleanOrphanCount = orphanDirs.count
@@ -2140,7 +2140,7 @@ class SettingsViewModel {
                 options: [.skipsHiddenFiles]
             ) else {
                 await MainActor.run {
-                    self.cleanResultMessage = "清除失败"
+                    self.cleanResultMessage = "消去に失敗しました"
                     self.isCleaning = false
                 }
                 return
@@ -2152,7 +2152,7 @@ class SettingsViewModel {
                 dbGids = Set(records.map { $0.gid })
             } catch {
                 await MainActor.run {
-                    self.cleanResultMessage = "清除失败"
+                    self.cleanResultMessage = "消去に失敗しました"
                     self.isCleaning = false
                 }
                 return
@@ -2170,7 +2170,7 @@ class SettingsViewModel {
             }
 
             await MainActor.run {
-                self.cleanResultMessage = "已清除 \(deletedCount) 个冗余目录"
+                self.cleanResultMessage = "\(deletedCount) 個の不要なフォルダーを消去しました"
                 self.isCleaning = false
             }
         }

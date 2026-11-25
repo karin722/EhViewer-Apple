@@ -83,7 +83,7 @@ struct GalleryListView: View {
     private var initialSavedSearch: GalleryBrowseSearch?
 
     static let toplistPeriods: [(tl: Int, title: String)] = [
-        (15, "全部时间"), (13, "过去一年"), (12, "过去一月"), (11, "昨天"),
+        (15, "全期間"), (13, "過去 1 年"), (12, "過去 1 か月"), (11, "昨日"),
     ]
 
     private var selectionBinding: Binding<GalleryInfo?> {
@@ -230,7 +230,7 @@ struct GalleryListView: View {
                         GalleryDetailView(gallery: gallery)
                             .id(gallery.gid)  // 强制在选择变更时重新创建视图，修复封面不刷新问题
                     } else {
-                        ContentUnavailableView("选择画廊", systemImage: "photo.stack", description: Text("从左侧列表选择一个画廊"))
+                        ContentUnavailableView("ギャラリーを選択", systemImage: "photo.stack", description: Text("左側のリストからギャラリーを選択してください"))
                     }
                 }
                 .environment(\.tagNavigationAction, TagNavigationAction { tag in
@@ -408,7 +408,7 @@ struct GalleryListView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
-                    Button("完成") { isSearchFocused = false }
+                    Button("完了") { isSearchFocused = false }
                 }
             }
             #endif
@@ -465,13 +465,13 @@ struct GalleryListView: View {
         .sheet(isPresented: $viewModel.showJumpDialog) {
             jumpSheet
         }
-        .alert("跳页", isPresented: $viewModel.showGoToDialog) {
-            TextField("页码", text: $viewModel.goToPageInput)
+        .alert("ページ移動", isPresented: $viewModel.showGoToDialog) {
+            TextField("ページ番号", text: $viewModel.goToPageInput)
                 #if os(iOS)
                 .keyboardType(.numberPad)
                 #endif
-            Button("取消", role: .cancel) { viewModel.goToPageInput = "" }
-            Button("确定") {
+            Button("キャンセル", role: .cancel) { viewModel.goToPageInput = "" }
+            Button("OK") {
                 if let page = Int(viewModel.goToPageInput), page >= 1,
                    page <= viewModel.totalPages {
                     viewModel.goToPage(page - 1, mode: effectiveMode)
@@ -479,7 +479,7 @@ struct GalleryListView: View {
                 viewModel.goToPageInput = ""
             }
         } message: {
-            Text("输入页码 (1-\(viewModel.totalPages))")
+            Text("ページ番号を入力 (1-\(viewModel.totalPages))")
         }
     }
 
@@ -506,7 +506,7 @@ struct GalleryListView: View {
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button("完成") { isSearchFocused = false }
+                Button("完了") { isSearchFocused = false }
             }
         }
         #endif
@@ -538,13 +538,13 @@ struct GalleryListView: View {
         .sheet(isPresented: $viewModel.showJumpDialog) {
             jumpSheet
         }
-        .alert("跳页", isPresented: $viewModel.showGoToDialog) {
-            TextField("页码", text: $viewModel.goToPageInput)
+        .alert("ページ移動", isPresented: $viewModel.showGoToDialog) {
+            TextField("ページ番号", text: $viewModel.goToPageInput)
                 #if os(iOS)
                 .keyboardType(.numberPad)
                 #endif
-            Button("取消", role: .cancel) { viewModel.goToPageInput = "" }
-            Button("确定") {
+            Button("キャンセル", role: .cancel) { viewModel.goToPageInput = "" }
+            Button("OK") {
                 if let page = Int(viewModel.goToPageInput), page >= 1,
                    page <= viewModel.totalPages {
                     viewModel.goToPage(page - 1, mode: effectiveMode)
@@ -552,19 +552,19 @@ struct GalleryListView: View {
                 viewModel.goToPageInput = ""
             }
         } message: {
-            Text("输入页码 (1-\(viewModel.totalPages))")
+            Text("ページ番号を入力 (1-\(viewModel.totalPages))")
         }
     }
 
     private var navigationTitle: String {
         switch mode {
         case .home: return AppSettings.shared.gallerySite == .exHentai ? "ExHentai" : "E-Hentai"
-        case .subscription: return "订阅"
-        case .popular: return "热门"
-        case .toplist: return "排行"
-        case .search(let kw): return "搜索: \(kw)"
-        case .tag: return "标签搜索"  // 对齐 Android: 标签关键字显示在搜索框而非标题
-        case .favorites: return "收藏"
+        case .subscription: return "購読"
+        case .popular: return "人気"
+        case .toplist: return "ランキング"
+        case .search(let kw): return "検索: \(kw)"
+        case .tag: return "タグ検索"  // 对齐 Android: 标签关键字显示在搜索框而非标题
+        case .favorites: return "お気に入り"
         }
     }
 
@@ -597,7 +597,7 @@ struct GalleryListView: View {
             if viewModel.isLoading && viewModel.galleries.isEmpty {
                 VStack(spacing: 8) {
                     ProgressView()
-                    Text("正在加载…")
+                    Text("読み込み中…")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -654,7 +654,7 @@ struct GalleryListView: View {
                     Button {
                         requestDownload(gallery)
                     } label: {
-                        Label("下载", systemImage: "arrow.down.circle")
+                        Label("ダウンロード", systemImage: "arrow.down.circle")
                     }
                     .tint(.blue)
 
@@ -662,7 +662,7 @@ struct GalleryListView: View {
                     Button {
                         toggleFavorite(gallery)
                     } label: {
-                        Label(isFavorited(gallery) ? "取消收藏" : "收藏",
+                        Label(isFavorited(gallery) ? "お気に入りを解除" : "お気に入り",
                               systemImage: isFavorited(gallery) ? "heart.slash" : "heart")
                     }
                     .tint(isFavorited(gallery) ? .gray : .red)
@@ -730,7 +730,7 @@ struct GalleryListView: View {
                         if viewModel.isLoading && viewModel.galleries.isEmpty {
                             VStack(spacing: 8) {
                                 ProgressView()
-                                Text("正在加载…")
+                                Text("読み込み中…")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -771,7 +771,7 @@ struct GalleryListView: View {
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button("完成") { isSearchFocused = false }
+                Button("完了") { isSearchFocused = false }
             }
         }
         #endif
@@ -798,13 +798,13 @@ struct GalleryListView: View {
         .sheet(isPresented: $viewModel.showJumpDialog) {
             jumpSheet
         }
-        .alert("跳页", isPresented: $viewModel.showGoToDialog) {
-            TextField("页码", text: $viewModel.goToPageInput)
+        .alert("ページ移動", isPresented: $viewModel.showGoToDialog) {
+            TextField("ページ番号", text: $viewModel.goToPageInput)
                 #if os(iOS)
                 .keyboardType(.numberPad)
                 #endif
-            Button("取消", role: .cancel) { viewModel.goToPageInput = "" }
-            Button("确定") {
+            Button("キャンセル", role: .cancel) { viewModel.goToPageInput = "" }
+            Button("OK") {
                 if let page = Int(viewModel.goToPageInput), page >= 1,
                    page <= viewModel.totalPages {
                     viewModel.goToPage(page - 1, mode: effectiveMode)
@@ -812,7 +812,7 @@ struct GalleryListView: View {
                 viewModel.goToPageInput = ""
             }
         } message: {
-            Text("输入页码 (1-\(viewModel.totalPages))")
+            Text("ページ番号を入力 (1-\(viewModel.totalPages))")
         }
     }
 
@@ -854,7 +854,7 @@ struct GalleryListView: View {
         EhSearchBar(
             text: $searchFieldText,
             tokens: $searchTokens,
-            placeholder: searchesSubscriptions ? "搜索订阅" : "搜索标签或标题",
+            placeholder: searchesSubscriptions ? "購読を検索" : "タグまたはタイトルを検索",
             showsClearForEmpty: initialSavedSearch?.query.isEmpty == true && initialSavedSearch?.explicitFilters != nil,
             isFocused: $isSearchFocused,
             // 右侧不再放小图标：15pt 的点按目标远低于 HIG 的 44pt，手机上按不中。
@@ -1179,10 +1179,10 @@ struct GalleryListView: View {
                 Button(role: .destructive) {
                     viewModel.clearSearchHistory()
                 } label: {
-                    Label("清除搜索历史", systemImage: "trash")
+                    Label("検索履歴を消去", systemImage: "trash")
                 }
             } header: {
-                Text("搜索历史")
+                Text("検索履歴")
             }
         }
         // 标签建议
@@ -1195,9 +1195,9 @@ struct GalleryListView: View {
 
     /// 快捷跳转节点 (对齐 Android JumpDateSelector DATE_NODE_TYPE)
     private static let jumpNodes: [(label: String, value: String)] = [
-        ("1 天", "1d"), ("3 天", "3d"),
-        ("1 周", "1w"), ("2 周", "2w"),
-        ("1 月", "1m"), ("6 月", "6m"),
+        ("1 日", "1d"), ("3 日", "3d"),
+        ("1 週間", "1w"), ("2 週間", "2w"),
+        ("1 か月", "1m"), ("6 か月", "6m"),
         ("1 年", "1y"), ("2 年", "2y"),
     ]
     @State private var selectedJumpNode: String = "1d"
@@ -1227,8 +1227,8 @@ struct GalleryListView: View {
                     // 模式切换 (对齐 Android JumpDateSelector 的 toggle 按钮)
                     EhSegmented(
                         items: viewModel.totalPages > 0
-                            ? [(0, "快捷"), (1, "按日期"), (2, "按页码")]
-                            : [(0, "快捷"), (1, "按日期")],
+                            ? [(0, "クイック"), (1, "日付で"), (2, "ページ番号で")]
+                            : [(0, "クイック"), (1, "日付で")],
                         selection: $jumpMode
                     )
                     .padding(.horizontal, EhSpacing.page)
@@ -1237,7 +1237,7 @@ struct GalleryListView: View {
                     if jumpMode == 0 {
                         // 快捷节点 (对齐 Android JumpDateSelector RadioGroup)
                         VStack(spacing: 12) {
-                            Text("选择时间范围快速跳转")
+                            Text("期間を選んでジャンプ")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
 
@@ -1288,12 +1288,12 @@ struct GalleryListView: View {
                         }
                     } else if jumpMode == 1 {
                         // 日期选择器 (对齐 Android JumpDateSelector DATE_PICKER_TYPE)
-                        Text("选择日期跳转到对应时间的画廊")
+                        Text("日付を選んでその時期のギャラリーへジャンプ")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
 
                         DatePicker(
-                            "跳转日期",
+                            "日付へジャンプ",
                             selection: $viewModel.jumpDate,
                             in: ...Date(),
                             displayedComponents: .date
@@ -1303,11 +1303,11 @@ struct GalleryListView: View {
                     } else if jumpMode == 2 {
                         // 页码跳转
                         VStack(spacing: 12) {
-                            Text("输入页码跳转 (1-\(viewModel.totalPages))")
+                            Text("ページ番号を入力してジャンプ (1-\(viewModel.totalPages))")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
 
-                            TextField("页码", text: $viewModel.goToPageInput)
+                            TextField("ページ番号", text: $viewModel.goToPageInput)
                                 #if os(iOS)
                                 .keyboardType(.numberPad)
                                 #endif
@@ -1326,7 +1326,7 @@ struct GalleryListView: View {
                                     viewModel.showJumpDialog = false
                                     viewModel.goToFavoritesHref(prevHref, mode: effectiveMode)
                                 } label: {
-                                    Label("上一页", systemImage: "chevron.left")
+                                    Label("前のページ", systemImage: "chevron.left")
                                 }
                                 .buttonStyle(.bordered)
                             }
@@ -1335,7 +1335,7 @@ struct GalleryListView: View {
                                     viewModel.showJumpDialog = false
                                     viewModel.goToFavoritesHref(nextHref, mode: effectiveMode)
                                 } label: {
-                                    Label("下一页", systemImage: "chevron.right")
+                                    Label("次のページ", systemImage: "chevron.right")
                                 }
                                 .buttonStyle(.bordered)
                             }
@@ -1344,16 +1344,16 @@ struct GalleryListView: View {
                 }
                 .padding(.bottom, 16)
             }
-            .navigationTitle("跳页")
+            .navigationTitle("ページ移動")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { viewModel.showJumpDialog = false }
+                    Button("キャンセル") { viewModel.showJumpDialog = false }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("跳转") {
+                    Button("ジャンプ") {
                         viewModel.showJumpDialog = false
                         if jumpMode == 0 {
                             viewModel.goToJump("jump=\(selectedJumpNode)", mode: effectiveMode)
@@ -1403,7 +1403,7 @@ struct GalleryListView: View {
 
     /// 当前错误是不是 IP 封禁 (issue #1: 以前这种情况只显示一片空白)
     private var isIPBanned: Bool {
-        viewModel.errorMessage?.contains("临时封禁") == true
+        viewModel.errorMessage?.contains("一時的にアクセス禁止") == true
     }
 
     /// 空结果态。按当前模式给出对应的下一步，而不是一句笼统的「暂无内容」。
@@ -1413,24 +1413,24 @@ struct GalleryListView: View {
         case .favorites:
             EhStateView(kind: .empty(
                 symbol: "heart",
-                title: "这个收藏夹是空的",
-                message: "在画廊详情页点 ♡ 就能加进来；云收藏夹需要登录后才会同步"
+                title: "このお気に入りフォルダーは空です",
+                message: "ギャラリーの詳細画面で ♡ をタップすると追加できます。クラウドお気に入りはログイン後に同期されます"
             ))
         case .subscription:
             EhStateView(kind: .empty(
                 symbol: "bell",
-                title: "订阅里还没有内容",
-                message: "在「我的 → 订阅标签」里加几个标签，符合的画廊会出现在这里"
+                title: "購読にはまだ何もありません",
+                message: "「マイページ → 購読タグ」でタグを追加すると、条件に合うギャラリーがここに表示されます"
             ))
         case .search, .tag:
             EhStateView(
                 kind: .empty(
                     symbol: "magnifyingglass",
-                    title: "没有符合条件的画廊",
-                    message: "换个关键词，或放宽高级搜索里的筛选条件"
+                    title: "条件に一致するギャラリーはありません",
+                    message: "キーワードを変えるか、詳細検索の絞り込み条件を緩めてください"
                 ),
                 primaryAction: advancedSearch.isEnabled
-                    ? ("清除筛选条件", {
+                    ? ("絞り込み条件をクリア", {
                         if let applied = initialSavedSearch, applied.explicitFilters != nil, let onSearchSubmit {
                             onSearchSubmit(applied.clearingAppliedFilters)
                         } else {
@@ -1445,13 +1445,13 @@ struct GalleryListView: View {
             EhStateView(
                 kind: .empty(
                     symbol: "tray",
-                    title: "这里暂时没有内容",
-                    message: "下拉可以重新加载"
+                    title: "ここにはまだ何もありません",
+                    message: "下に引っ張って再読み込みできます"
                 ),
                 // effectiveMode 而不是 mode：有搜索词时用 mode 会悄悄把搜索丢掉，
                 // 按钮写着「重新加载」，实际做的是「退回首页列表」。
                 // 隔壁 errorView 的「重试」一直是对的，这里漏了。
-                primaryAction: ("重新加载", { viewModel.refresh(mode: effectiveMode) })
+                primaryAction: ("再読み込み", { viewModel.refresh(mode: effectiveMode) })
             )
         }
     }
@@ -1461,7 +1461,7 @@ struct GalleryListView: View {
             Image(systemName: isIPBanned ? "hand.raised.slash" : "wifi.exclamationmark")
                 .font(.system(size: 44, weight: .light))
                 .foregroundStyle(isIPBanned ? EhColor.warning : EhColor.danger)
-            Text(viewModel.errorMessage ?? "加载失败")
+            Text(viewModel.errorMessage ?? "読み込みに失敗しました")
                 .font(EhFont.caption)
                 .foregroundStyle(EhColor.secondaryLabel)
                 .multilineTextAlignment(.center)
@@ -1470,9 +1470,9 @@ struct GalleryListView: View {
             // IP 封禁 —— 换节点是唯一有效动作，单独给一组提示
             if isIPBanned {
                 VStack(alignment: .leading, spacing: 6) {
-                    Label("这是 E-Hentai 的限制，与 App 无关", systemImage: "info.circle")
-                    Label("换一个 VPN 节点通常立即恢复", systemImage: "arrow.triangle.2.circlepath")
-                    Label("同一节点被多人共用时最容易触发", systemImage: "person.2")
+                    Label("これは E-Hentai 側の制限で、アプリとは関係ありません", systemImage: "info.circle")
+                    Label("VPN の接続先を変えると通常すぐに回復します", systemImage: "arrow.triangle.2.circlepath")
+                    Label("同じ接続先を多人数で共有していると発生しやすくなります", systemImage: "person.2")
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -1481,18 +1481,18 @@ struct GalleryListView: View {
 
             // 网络提示
             if let msg = viewModel.errorMessage, !isIPBanned,
-               msg.contains("超时") || msg.contains("timed out") || msg.contains("连接") || msg.contains("域名") || msg.contains("DNS") {
+               msg.contains("タイムアウト") || msg.contains("timed out") || msg.contains("接続") || msg.contains("ドメイン") || msg.contains("DNS") {
                 VStack(alignment: .leading, spacing: 6) {
-                    Label("请确认 VPN / 代理已开启", systemImage: "lock.shield")
-                    Label("可在设置中尝试开启域名前置", systemImage: "server.rack")
-                    Label("检查 DNS 是否被污染", systemImage: "globe")
+                    Label("VPN / プロキシが有効になっているか確認してください", systemImage: "lock.shield")
+                    Label("設定でドメインフロンティングを有効にしてみてください", systemImage: "server.rack")
+                    Label("DNS が汚染されていないか確認してください", systemImage: "globe")
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 32)
             }
 
-            Button("重试") {
+            Button("再試行") {
                 viewModel.loadGalleries(mode: effectiveMode)
             }
             .buttonStyle(.bordered)
@@ -1579,7 +1579,7 @@ struct GalleryRow: View {
                 Button {
                     onRequestRead(gallery)
                 } label: {
-                    Label("直接阅读", systemImage: "book")
+                    Label("すぐに読む", systemImage: "book")
                 }
                 .accessibilityIdentifier("gallery-row-read-directly")
             }
@@ -1588,7 +1588,7 @@ struct GalleryRow: View {
             Button {
                 onRequestDownload(gallery)
             } label: {
-                Label("下载", systemImage: "arrow.down.circle")
+                Label("ダウンロード", systemImage: "arrow.down.circle")
             }
 
             // 收藏 / 取消收藏
@@ -1596,7 +1596,7 @@ struct GalleryRow: View {
                 onRequestFavorite(gallery)
             } label: {
                 let favorited = GalleryStatusCache.shared.isFavorited(gallery)
-                Label(favorited ? "取消收藏" : "收藏",
+                Label(favorited ? "お気に入りを解除" : "お気に入り",
                       systemImage: favorited ? "heart.slash" : "heart")
             }
 
@@ -1606,13 +1606,13 @@ struct GalleryRow: View {
             Button {
                 GalleryActionService.shared.copyLink(gid: gallery.gid, token: gallery.token)
             } label: {
-                Label("复制链接", systemImage: "doc.on.doc")
+                Label("リンクをコピー", systemImage: "doc.on.doc")
             }
 
             // 分享 (仅 iOS)
             #if os(iOS)
             ShareLink(item: URL(string: GalleryActionService.shared.galleryURL(gid: gallery.gid, token: gallery.token))!) {
-                Label("分享", systemImage: "square.and.arrow.up")
+                Label("共有", systemImage: "square.and.arrow.up")
             }
             #endif
         }
@@ -1893,7 +1893,7 @@ class GalleryListViewModel {
                 if requestEpoch == self.listEpoch && self.isLoading && self.galleries.isEmpty {
                     fetchTask.cancel()
                     self.isLoading = false
-                    self.errorMessage = "网络请求超时，请检查网络连接或 VPN 设置后重试"
+                    self.errorMessage = "ネットワークリクエストがタイムアウトしました。ネットワーク接続または VPN 設定を確認してから再試行してください"
                     print("[EhVM] loadGalleries: TIMEOUT after 20s")
                 }
             }

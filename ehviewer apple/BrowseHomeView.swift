@@ -15,11 +15,11 @@ import EhModels
 extension BrowseSource {
     var title: String {
         switch self {
-        case .home:         return "首页"
-        case .search:       return "搜索"
-        case .subscription: return "订阅"
-        case .popular:      return "热门"
-        case .toplist:      return "排行"
+        case .home:         return "ホーム"
+        case .search:       return "検索"
+        case .subscription: return "購読"
+        case .popular:      return "人気"
+        case .toplist:      return "ランキング"
         }
     }
 

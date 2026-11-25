@@ -54,7 +54,7 @@ struct CommentComposerView: View {
                             .disabled(isLoadingOriginal)
 
                         if text.isEmpty && !isLoadingOriginal {
-                            Text("说点什么…")
+                            Text("何か書いてください…")
                                 .foregroundStyle(.tertiary)
                                 .padding(.top, 8)
                                 .padding(.leading, 5)
@@ -65,13 +65,13 @@ struct CommentComposerView: View {
                     if isLoadingOriginal {
                         HStack(spacing: 8) {
                             ProgressView().controlSize(.small)
-                            Text("正在取回原文…").foregroundStyle(.secondary)
+                            Text("原文を取得中…").foregroundStyle(.secondary)
                         }
                     }
                 } header: {
-                    Text(isEditing ? "编辑评论" : "发表评论")
+                    Text(isEditing ? "コメントを編集" : "コメントを投稿")
                 } footer: {
-                    Text("支持 BBCode，例如 [b]加粗[/b]、[url=…]链接[/url]。至少 10 个字符，否则服务端会拒绝。")
+                    Text("BBCode に対応しています。例：[b]太字[/b]、[url=…]リンク[/url]。10 文字以上必要です。それ未満はサーバーに拒否されます。")
                 }
 
                 if let errorMessage {
@@ -82,19 +82,19 @@ struct CommentComposerView: View {
                     }
                 }
             }
-            .navigationTitle(isEditing ? "编辑评论" : "发表评论")
+            .navigationTitle(isEditing ? "コメントを編集" : "コメントを投稿")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("キャンセル") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     if isSubmitting {
                         ProgressView().controlSize(.small)
                     } else {
-                        Button(isEditing ? "保存" : "发表") {
+                        Button(isEditing ? "保存" : "投稿") {
                             Task { await submit() }
                         }
                         .disabled(!canSubmit)
@@ -126,8 +126,8 @@ struct CommentComposerView: View {
             text = original.comment
         } catch {
             // 取不回原文时不要静默塞入渲染过的 HTML —— 那样用户会把自己的 BBCode 改没
-            errorMessage = "取不回评论原文（\(EhError.localizedMessage(for: error))），"
-                + "现在提交会覆盖掉原有格式。"
+            errorMessage = "コメントの原文を取得できません（\(EhError.localizedMessage(for: error))）、"
+                + "今送信すると元の書式が上書きされます。"
         }
     }
 

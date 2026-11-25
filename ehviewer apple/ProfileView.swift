@@ -36,7 +36,7 @@ struct ProfileView: View {
                 }
             }
         }
-        .navigationTitle("账号资料")
+        .navigationTitle("アカウント情報")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -51,7 +51,7 @@ struct ProfileView: View {
         if let name = profile?.displayName ?? AppSettings.shared.displayName, !name.isEmpty {
             return name
         }
-        return EhCookieManager.shared.isSignedIn ? "已登录" : "未登录"
+        return EhCookieManager.shared.isSignedIn ? "ログイン済み" : "未ログイン"
     }
 
     private var accountSection: some View {
@@ -111,7 +111,7 @@ struct ProfileView: View {
                         Text("\(quota.totalLimit - quota.currentUsed)")
                             .font(EhFont.display)
                             .foregroundStyle(ratio > 0.9 ? EhColor.danger : EhColor.label)
-                        Text("剩余 / 共 \(quota.totalLimit)")
+                        Text("残り / 全 \(quota.totalLimit)")
                             .font(EhFont.meta)
                             .foregroundStyle(EhColor.tertiaryLabel)
                     }
@@ -128,7 +128,7 @@ struct ProfileView: View {
                     }
                     .frame(height: 6)
 
-                    Text("今日已用 \(quota.currentUsed)")
+                    Text("本日の使用量 \(quota.currentUsed)")
                         .font(EhFont.meta)
                         .foregroundStyle(EhColor.secondaryLabel)
                 }
@@ -139,12 +139,12 @@ struct ProfileView: View {
                         Task { await reset() }
                     } label: {
                         HStack {
-                            Text("重置配额")
+                            Text("上限をリセット")
                             Spacer()
                             if isResetting {
                                 ProgressView().controlSize(.small)
                             } else {
-                                Text("花费 \(quota.resetCost) GP")
+                                Text("\(quota.resetCost) GP 消費")
                                     .font(.caption.monospacedDigit())
                                     .foregroundStyle(.secondary)
                             }
@@ -161,7 +161,7 @@ struct ProfileView: View {
             } else if isLoading {
                 HStack(spacing: 8) {
                     ProgressView().controlSize(.small)
-                    Text("读取配额…").foregroundStyle(.secondary)
+                    Text("閲覧上限を読み込み中…").foregroundStyle(.secondary)
                 }
             } else if quota != nil {
                 // 请求成功但没有数字额度：这个账号用的是基于 IP 的限制，
@@ -171,21 +171,21 @@ struct ProfileView: View {
                 // 这里原本一律显示「读不到配额信息，可能未登录」——把一个
                 // 完全正常的状态说成登录出了问题，白白让人去排查登录。
                 VStack(alignment: .leading, spacing: 6) {
-                    Label("当前无配额限制", systemImage: "checkmark.circle")
+                    Label("現在、閲覧上限はありません", systemImage: "checkmark.circle")
                         .foregroundStyle(EhColor.success)
-                    Text("你的账号使用基于 IP 的限制，E-Hentai 不提供具体数值。"
-                         + "购买 Bronze Star 或 More Pages 后配额会与账号绑定，这里才会显示用量。")
+                    Text("このアカウントは IP ベースの制限を使用しており、E-Hentai は具体的な数値を提供していません。"
+                         + "Bronze Star または More Pages を購入すると上限がアカウントに紐付けられ、ここに使用量が表示されるようになります。")
                         .font(EhFont.caption)
                         .foregroundStyle(EhColor.secondaryLabel)
                 }
             } else {
-                Text("读不到配额信息，检查网络后重试。")
+                Text("閲覧上限の情報を読み込めません。ネットワークを確認してから再試行してください。")
                     .foregroundStyle(.secondary)
             }
         } header: {
-            Text("图片配额")
+            Text("画像の閲覧上限")
         } footer: {
-            Text("浏览图片会消耗配额，用完会出现 509 错误。配额每天自动恢复，也可以花 GP 立即重置。")
+            Text("画像を閲覧すると上限を消費し、使い切ると 509 エラーになります。上限は毎日自動で回復し、GP を使ってすぐにリセットすることもできます。")
         }
     }
 
@@ -208,7 +208,7 @@ struct ProfileView: View {
         if let avatar = p?.avatar, !avatar.isEmpty { AppSettings.shared.avatar = avatar }
 
         if p == nil && q == nil {
-            errorMessage = "请求失败，检查网络或登录状态。"
+            errorMessage = "リクエストに失敗しました。ネットワークまたはログイン状態を確認してください。"
         }
         isLoading = false
     }
@@ -219,7 +219,7 @@ struct ProfileView: View {
         do {
             let updated = try await EhAPI.shared.resetLimit()
             quota = updated
-            resetResult = "已重置，当前 \(updated.currentUsed) / \(updated.totalLimit)"
+            resetResult = "リセットしました。現在 \(updated.currentUsed) / \(updated.totalLimit)"
         } catch {
             errorMessage = EhError.localizedMessage(for: error)
         }

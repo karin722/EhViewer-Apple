@@ -69,7 +69,7 @@ struct ContinueReadingCard: View {
                 )
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("继续阅读").ehSectionHeader()
+                    Text("続きを読む").ehSectionHeader()
                         .foregroundStyle(EhColor.accent)
 
                     Text(record.titleJpn ?? record.title)
@@ -80,7 +80,7 @@ struct ContinueReadingCard: View {
                     if let progress = snapshot.progress, record.pages > 0 {
                         let page = progress + 1
                         let percent = Int(Double(page) / Double(record.pages) * 100)
-                        Text("\(page) / \(record.pages) 页 · \(percent)%")
+                        Text("\(page) / \(record.pages) ページ · \(percent)%")
                             .font(EhFont.mono(11))
                             .foregroundStyle(EhColor.secondaryLabel)
                     }

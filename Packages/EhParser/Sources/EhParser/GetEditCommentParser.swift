@@ -59,8 +59,8 @@ public enum GetEditCommentParser {
 
         public var errorDescription: String? {
             switch self {
-            case .invalidJSON:      return "无法解析可编辑评论响应"
-            case .commentNotFound:  return "响应中找不到可编辑的评论内容"
+            case .invalidJSON:      return "編集可能なコメントのレスポンスを解析できません"
+            case .commentNotFound:  return "レスポンスに編集可能なコメント内容が見つかりません"
             case .server(let msg):  return msg
             }
         }

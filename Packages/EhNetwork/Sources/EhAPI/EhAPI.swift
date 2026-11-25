@@ -222,19 +222,19 @@ public actor EhAPI {
 
         // 如果没有内置 IP (forceDomainFronting 返回原始请求)，直接抛原始错误
         guard frontedRequest.url != request.url else {
-            print("[EhAPI] 无内置 IP 可用于域名前置，抛出原始错误")
+            print("[EhAPI] ドメインフロンティングに使える内蔵 IP がないため、元のエラーをスローします")
             throw originalError
         }
 
         let host = request.url?.host ?? "unknown"
         let ip = frontedRequest.url?.host ?? "unknown"
-        print("[EhAPI] 主要请求失败 (\(originalError.localizedDescription))，尝试域名前置直连: \(host) → \(ip)")
+        print("[EhAPI] メインリクエスト失敗 (\(originalError.localizedDescription))、ドメインフロンティングで直接接続を試行: \(host) → \(ip)")
 
         do {
             return try await fallbackSession.data(for: frontedRequest)
         } catch {
             // 域名前置也失败了，抛出原始错误 (用户更容易理解)
-            print("[EhAPI] 域名前置也失败: \(error.localizedDescription)")
+            print("[EhAPI] ドメインフロンティングも失敗: \(error.localizedDescription)")
             throw originalError
         }
     }
@@ -317,7 +317,7 @@ public actor EhAPI {
         guard let cachedResponse = URLCache.shared.cachedResponse(for: request) else {
             return nil
         }
-        print("[EhAPI] 📴 离线模式: 从缓存返回 \(request.url?.lastPathComponent ?? "unknown")")
+        print("[EhAPI] 📴 オフラインモード: キャッシュから返却 \(request.url?.lastPathComponent ?? "unknown")")
         return (cachedResponse.data, cachedResponse.response)
     }
 
@@ -1304,7 +1304,7 @@ private final class DomainFrontingDelegate: NSObject, URLSessionTaskDelegate, @u
             completionHandler(.useCredential, URLCredential(trust: serverTrust))
         } else {
             // 证书对原始域名无效 (可能是共享 IP 返回了错误证书)
-            print("[EhAPI] 域名前置 TLS: 证书不匹配 '\(originalHost)' (连接到 \(challenge.protectionSpace.host))")
+            print("[EhAPI] ドメインフロンティング TLS: 証明書が一致しません '\(originalHost)' (接続先 \(challenge.protectionSpace.host))")
             completionHandler(.cancelAuthenticationChallenge, nil)
         }
     }
@@ -1350,25 +1350,25 @@ public enum EhError: LocalizedError, Sendable {
 
     public var errorDescription: String? {
         switch self {
-        case .invalidUrl: return "无效的链接"
-        case .sadPanda: return "Sad Panda — 请登录或检查 Cookie"
-        case .kokomade: return "今回はここまで — 访问受限"
-        case .httpError(let code, _): return "HTTP 错误 \(code)"
-        case .cloudflare403: return "Cloudflare 安全验证拦截 — 请使用下方「网页登录」通过验证后登录"
-        case .parseError(let msg): return "解析失败: \(msg)"
-        case .networkError(let msg): return "网络错误: \(msg)"
-        case .imageLimitReached: return "509 — 图片配额已用尽"
-        case .noHathClient: return "没有可用的 H@H 客户端"
-        case .cancelled: return "请求已取消"
-        case .igneousWrong: return "igneous cookie 无效，请重新登录或检查 ExHentai 权限"
-        case .offensive: return "该画廊包含攻击性内容，需确认后访问"
-        case .pining: return "该画廊已被删除 (pining for the fjords)"
-        case .galleryUnavailable: return "该画廊不可用"
+        case .invalidUrl: return "無効なリンク"
+        case .sadPanda: return "Sad Panda — ログインするか Cookie を確認してください"
+        case .kokomade: return "今回はここまで — アクセス制限中"
+        case .httpError(let code, _): return "HTTP エラー \(code)"
+        case .cloudflare403: return "Cloudflare のセキュリティ確認でブロックされました — 下の「Web ログイン」で確認を通過してからログインしてください"
+        case .parseError(let msg): return "解析失敗: \(msg)"
+        case .networkError(let msg): return "ネットワークエラー: \(msg)"
+        case .imageLimitReached: return "509 — 画像の閲覧上限に達しました"
+        case .noHathClient: return "利用可能な H@H クライアントがありません"
+        case .cancelled: return "リクエストがキャンセルされました"
+        case .igneousWrong: return "igneous Cookie が無効です。再ログインするか ExHentai の権限を確認してください"
+        case .offensive: return "このギャラリーには攻撃的な内容が含まれています。確認後にアクセスしてください"
+        case .pining: return "このギャラリーは削除されました (pining for the fjords)"
+        case .galleryUnavailable: return "このギャラリーは利用できません"
         case .serverError(let msg): return msg
         case .ipBanned(let detail):
             return detail.isEmpty
-                ? "当前 IP 被 E-Hentai 临时封禁。换一个 VPN 节点，或等待封禁自动解除。"
-                : "当前 IP 被 E-Hentai 临时封禁（\(detail)）。换一个 VPN 节点，或等待解除。"
+                ? "現在の IP は E-Hentai により一時的にアクセス禁止されています。VPN の接続先を変えるか、禁止が自動解除されるまでお待ちください。"
+                : "現在の IP は E-Hentai により一時的にアクセス禁止されています（\(detail)）。VPN の接続先を変えるか、解除されるまでお待ちください。"
         }
     }
 
@@ -1380,25 +1380,25 @@ public enum EhError: LocalizedError, Sendable {
         if let urlError = error as? URLError {
             switch urlError.code {
             case .timedOut:
-                return "请求超时 — 请检查网络连接或代理设置"
+                return "リクエストがタイムアウトしました — ネットワーク接続またはプロキシ設定を確認してください"
             case .notConnectedToInternet:
-                return "无网络连接 — 请检查网络设置"
+                return "ネットワークに接続されていません — ネットワーク設定を確認してください"
             case .cannotConnectToHost:
-                return "无法连接到服务器 — 请检查代理/VPN 设置"
+                return "サーバーに接続できません — プロキシ/VPN の設定を確認してください"
             case .cannotFindHost, .dnsLookupFailed:
-                return "域名解析失败 — 请检查 DNS 或开启代理/VPN"
+                return "ドメイン名の解決に失敗しました — DNS を確認するか、プロキシ/VPN を有効にしてください"
             case .networkConnectionLost:
-                return "网络连接中断 — 请稍后重试"
+                return "ネットワーク接続が切断されました — しばらくしてから再試行してください"
             case .secureConnectionFailed:
-                return "安全连接失败 — 请检查代理/VPN 设置"
+                return "安全な接続に失敗しました — プロキシ/VPN の設定を確認してください"
             case .serverCertificateUntrusted, .serverCertificateHasBadDate, .serverCertificateHasUnknownRoot:
-                return "证书验证失败 — 请检查代理设置或关闭域名前置"
+                return "証明書の検証に失敗しました — プロキシ設定を確認するか、ドメインフロンティングをオフにしてください"
             case .cancelled:
-                return "请求已取消"
+                return "リクエストがキャンセルされました"
             case .dataNotAllowed:
-                return "蜂窝数据不可用 — 请检查设置"
+                return "モバイルデータ通信が利用できません — 設定を確認してください"
             default:
-                return "网络错误 (\(urlError.code.rawValue))"
+                return "ネットワークエラー (\(urlError.code.rawValue))"
             }
         }
         return error.localizedDescription

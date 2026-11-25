@@ -28,29 +28,29 @@ struct MyTagsView: View {
     var body: some View {
         Group {
             if isLoading && tags.isEmpty {
-                ProgressView("读取订阅标签…")
+                ProgressView("購読タグを読み込み中…")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let errorMessage, tags.isEmpty {
                 ContentUnavailableView {
-                    Label("读不到订阅标签", systemImage: "tag.slash")
+                    Label("購読タグを読み込めません", systemImage: "tag.slash")
                 } description: {
                     Text(errorMessage)
                 } actions: {
-                    Button("重试") { Task { await load() } }
+                    Button("再試行") { Task { await load() } }
                 }
             } else if tags.isEmpty {
                 ContentUnavailableView {
-                    Label("还没有订阅标签", systemImage: "tag")
+                    Label("購読タグはまだありません", systemImage: "tag")
                 } description: {
-                    Text("订阅标签后，「订阅」列表只会显示带这些标签的新画廊。")
+                    Text("タグを購読すると、「購読」リストにはそのタグが付いた新しいギャラリーのみが表示されます。")
                 } actions: {
-                    Button("添加标签") { showAddSheet = true }
+                    Button("タグを追加") { showAddSheet = true }
                 }
             } else {
                 list
             }
         }
-        .navigationTitle("我的标签")
+        .navigationTitle("マイタグ")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -59,7 +59,7 @@ struct MyTagsView: View {
                 Button {
                     showAddSheet = true
                 } label: {
-                    Label("添加标签", systemImage: "plus")
+                    Label("タグを追加", systemImage: "plus")
                 }
             }
         }
@@ -91,7 +91,7 @@ struct MyTagsView: View {
                     }
                 }
             } footer: {
-                Text("共 \(tags.count) 个标签。左滑删除。")
+                Text("全 \(tags.count) 個のタグ。左スワイプで削除。")
             }
         }
     }

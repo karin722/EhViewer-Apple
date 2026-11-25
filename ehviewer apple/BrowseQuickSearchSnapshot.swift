@@ -16,7 +16,7 @@ nonisolated enum BrowseQuickSearchSnapshot {
         // Other Browse sources are not represented by a list-search snapshot.
         guard browse.showsResults, supports(filters.mode) else { return nil }
         var record = QuickSearchRecord(
-            name: browse.query.isEmpty ? (filters.mode == .subscription ? "订阅筛选" : "画廊筛选") : nil,
+            name: browse.query.isEmpty ? (filters.mode == .subscription ? "購読フィルター" : "ギャラリーフィルター") : nil,
             mode: filters.mode.rawValue,
             category: filters.category,
             keyword: browse.query
@@ -49,8 +49,8 @@ nonisolated enum BrowseQuickSearchSnapshot {
     static func scopeTitle(_ saved: QuickSearchRecord) -> String? {
         guard saved.browseSnapshotVersion == storageVersion else { return nil }
         switch ListUrlBuilder.Mode(rawValue: saved.mode) {
-        case .normal: return "全站"
-        case .subscription: return "订阅"
+        case .normal: return "全体"
+        case .subscription: return "購読"
         default: return nil
         }
     }

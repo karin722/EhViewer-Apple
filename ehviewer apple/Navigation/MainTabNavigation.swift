@@ -3,16 +3,16 @@ import EhModels
 
 // Stable app destinations. The legacy labels remain notification payloads and UI titles.
 enum MainTab: String, CaseIterable {
-    case home = "首页"
-    case subscription = "订阅"
-    case popular = "热门"
-    case toplist = "排行榜"
-    case favorites = "收藏"
-    case downloads = "下载"
-    case history = "历史"
-    case settings = "设置"
-    case more = "更多"
-    case profile = "我的"
+    case home = "ホーム"
+    case subscription = "購読"
+    case popular = "人気"
+    case toplist = "ランキング"
+    case favorites = "お気に入り"
+    case downloads = "ダウンロード"
+    case history = "履歴"
+    case settings = "設定"
+    case more = "その他"
+    case profile = "マイページ"
 
     static let bottomTabs: [Self] = [.home, .favorites, .downloads, .history, .profile]
     static let sidebarTabs = allCases.filter { $0 != .more }

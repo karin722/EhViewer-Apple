@@ -27,21 +27,21 @@ struct TorrentListView: View {
         NavigationStack {
             Group {
                 if isLoading {
-                    ProgressView("读取种子列表…")
+                    ProgressView("トレント一覧を読み込み中…")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let loadError {
                     ContentUnavailableView {
-                        Label("读不到种子列表", systemImage: "arrow.down.doc")
+                        Label("トレント一覧を読み込めません", systemImage: "arrow.down.doc")
                     } description: {
                         Text(loadError)
                     } actions: {
-                        Button("重试") { Task { await load() } }
+                        Button("再試行") { Task { await load() } }
                     }
                 } else if torrents.isEmpty {
                     ContentUnavailableView(
-                        "没有种子",
+                        "トレントはありません",
                         systemImage: "arrow.down.doc",
-                        description: Text("这本画廊还没有人上传种子。")
+                        description: Text("このギャラリーにはまだ誰もトレントをアップロードしていません。")
                     )
                 } else {
                     List(torrents) { torrent in
@@ -49,19 +49,19 @@ struct TorrentListView: View {
                     }
                 }
             }
-            .navigationTitle("种子")
+            .navigationTitle("トレント")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭") { dismiss() }
+                    Button("閉じる") { dismiss() }
                 }
             }
             .task { await load() }
             .overlay(alignment: .bottom) {
                 if copied {
-                    Text("链接已复制")
+                    Text("リンクをコピーしました")
                         .font(.footnote)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
@@ -90,16 +90,16 @@ struct TorrentListView: View {
                     Button {
                         openURL(url)
                     } label: {
-                        Label("下载", systemImage: "arrow.down.circle")
+                        Label("ダウンロード", systemImage: "arrow.down.circle")
                     }
                     ShareLink(item: url) {
-                        Label("分享", systemImage: "square.and.arrow.up")
+                        Label("共有", systemImage: "square.and.arrow.up")
                     }
                 }
                 Button {
                     copy(torrent.url)
                 } label: {
-                    Label("复制链接", systemImage: "doc.on.doc")
+                    Label("リンクをコピー", systemImage: "doc.on.doc")
                 }
             }
             .font(.caption)

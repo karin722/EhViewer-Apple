@@ -114,7 +114,7 @@ public final class LogManager: Sendable {
         // 单份最多 1MB，避免异常页面把缓存目录撑爆
         let capped = body.count > 1_000_000 ? String(body.prefix(1_000_000)) : body
         try? capped.write(to: file, atomically: true, encoding: .utf8)
-        warning("解析失败，已保存现场: \(file.lastPathComponent)", category: "Parser")
+        warning("解析に失敗しました。状況を保存しました: \(file.lastPathComponent)", category: "Parser")
     }
 
     public func allLogFiles() -> [URL] {
@@ -141,10 +141,10 @@ public final class LogManager: Sendable {
 
         var combined = """
         ═══════════════════════════════════════
-        EhViewer Apple — 诊断日志
-        导出时间: \(ISO8601DateFormatter().string(from: Date()))
-        系统: \(systemInfo())
-        App 版本: \(appVersion())
+        EhViewer Apple — 診断ログ
+        エクスポート日時: \(ISO8601DateFormatter().string(from: Date()))
+        システム: \(systemInfo())
+        App バージョン: \(appVersion())
         ═══════════════════════════════════════\n\n
         """
 

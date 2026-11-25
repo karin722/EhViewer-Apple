@@ -26,7 +26,7 @@ struct WarningView: View {
                 .padding(.bottom, 20)
 
             // 标题
-            Text("本应用包含成人内容")
+            Text("本アプリには成人向けコンテンツが含まれます")
                 .font(.system(size: 26, weight: .bold))
                 .foregroundStyle(EhColor.label)
                 .multilineTextAlignment(.center)
@@ -34,7 +34,7 @@ struct WarningView: View {
 
             // 设计稿这版比原先的项目符号列表短得多，而且补上了「不托管内容」
             // 这句免责——原文案通篇在描述内容形态，反而漏了这个更要紧的事实。
-            Text("继续使用表示你已满足所在地区的法定年龄要求，并自行承担浏览责任。本应用不托管任何内容，仅作为 E-Hentai / ExHentai 的第三方客户端。")
+            Text("続行することで、お住まいの地域の法定年齢に達しており、閲覧に関する責任を自ら負うことに同意したものとみなされます。本アプリはコンテンツをホストしておらず、E-Hentai / ExHentai のサードパーティ製クライアントにすぎません。")
                 .font(EhFont.body)
                 .foregroundStyle(EhColor.secondaryLabel)
                 .multilineTextAlignment(.center)
@@ -46,10 +46,10 @@ struct WarningView: View {
             
             // 按钮区域
             VStack(spacing: 12) {
-                Button("我已满 18 岁，继续", action: onAccept)
+                Button("18 歳以上です。続行する", action: onAccept)
                     .buttonStyle(EhFilledButtonStyle(height: EhSize.actionButtonHeight))
 
-                Button("退出", action: onReject)
+                Button("終了", action: onReject)
                     .buttonStyle(EhTintedButtonStyle(height: EhSize.actionButtonHeight))
             }
             .padding(.horizontal, 32)

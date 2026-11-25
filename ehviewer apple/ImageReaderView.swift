@@ -164,8 +164,8 @@ struct ImageReaderView: View {
                     if vm.totalPages == 0 {
                         if failedToOpen {
                             VStack(spacing: 14) {
-                                Text("无法加载画廊")
-                                Button("重试") {
+                                Text("ギャラリーを読み込めません")
+                                Button("再試行") {
                                     failedToOpen = false
                                     openAttempt += 1
                                 }
@@ -285,7 +285,7 @@ struct ImageReaderView: View {
                       contentTypes: [pageExport?.type ?? .image],
                       defaultFilename: pageExport?.basename) { result in
             pageExport = nil
-            if case .failure = result { EhToast.failure("无法存储图片") }
+            if case .failure = result { EhToast.failure("画像を保存できません") }
         } onCancellation: {
             pageExport = nil
         }
@@ -865,7 +865,7 @@ struct ImageReaderView: View {
                 spreadImageView(presentation)
                     #if EH_OFFLINE_UI_FIXTURE && targetEnvironment(simulator)
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(presentation.displayedPage.map { "第 \($0 + 1) 页图片" } ?? "双页图片")
+                    .accessibilityLabel(presentation.displayedPage.map { "\($0 + 1) ページ目の画像" } ?? "見開き画像")
                     .accessibilityIdentifier(presentation.displayedPage.map { "reader-drawn-page-\($0 + 1)" }
                                              ?? "reader-drawn-spread")
                     #endif
@@ -874,8 +874,8 @@ struct ImageReaderView: View {
                             pageMenu(index: page)
                         } else if let second = spread.secondaryPage {
                             let first = spread.primaryPage
-                            Menu("第 \(first + 1) 页") { pageMenu(index: first) }
-                            Menu("第 \(second + 1) 页") { pageMenu(index: second) }
+                            Menu("\(first + 1) ページ目") { pageMenu(index: first) }
+                            Menu("\(second + 1) ページ目") { pageMenu(index: second) }
                         } else {
                             pageMenu(index: spread.primaryPage)
                         }
@@ -936,13 +936,13 @@ struct ImageReaderView: View {
                     .font(.title3)
                     .foregroundStyle(.white)
                 ForEach(failures, id: \.self) { index in
-                    let error = vm.errorMessages[index] ?? "加载失败"
-                    Text(pages.count > 1 ? "第 \(index + 1) 页：\(error)" : error)
+                    let error = vm.errorMessages[index] ?? "読み込みに失敗しました"
+                    Text(pages.count > 1 ? "\(index + 1) ページ目：\(error)" : error)
                         .font(.caption)
                         .foregroundStyle(.white.opacity(0.7))
                         .multilineTextAlignment(.center)
                 }
-                Button("重新加载") {
+                Button("再読み込み") {
                     Task {
                         await withTaskGroup(of: Void.self) { group in
                             for index in failures {
@@ -976,12 +976,12 @@ struct ImageReaderView: View {
                         .tint(.white)
                         .frame(width: 48, height: 48)
                     if let retry, retry > 0 {
-                        Text("重试 \(retry)/5").font(.caption2).foregroundStyle(.white.opacity(0.6))
+                        Text("再試行 \(retry)/5").font(.caption2).foregroundStyle(.white.opacity(0.6))
                     }
                 }
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(pages.count > 1 ? "正在加载双页图片" : "正在加载图片")
+            .accessibilityLabel(pages.count > 1 ? "見開き画像を読み込み中" : "画像を読み込み中")
             .accessibilityValue(progress.map { "\(min(99, Int($0 * 100)))%" } ?? "")
             .accessibilityIdentifier("reader-image-loading")
         } else {
@@ -1152,25 +1152,25 @@ struct ImageReaderView: View {
         Button {
             Task { await vm.retryLoadPage(index) }
         } label: {
-            Label("刷新本页", systemImage: "arrow.clockwise")
+            Label("このページを更新", systemImage: "arrow.clockwise")
         }
 
         #if os(iOS)
         Button {
             exportPage(index, to: .share)
         } label: {
-            Label("分享", systemImage: "square.and.arrow.up")
+            Label("共有", systemImage: "square.and.arrow.up")
         }
         Button {
             exportPage(index, to: .photos)
         } label: {
-            Label("保存到相册", systemImage: "photo.badge.arrow.down")
+            Label("写真に保存", systemImage: "photo.badge.arrow.down")
         }
         #endif
         Button {
             exportPage(index, to: .file)
         } label: {
-            Label("存储到文件", systemImage: "folder.badge.plus")
+            Label("ファイルに保存", systemImage: "folder.badge.plus")
         }
     }
 
@@ -1181,7 +1181,7 @@ struct ImageReaderView: View {
             let source = await vm.pageExport(index)
             guard !Task.isCancelled else { return }
             guard let source else {
-                EhToast.failure("原始图片不在本机。刷新本页后再试。")
+                EhToast.failure("元の画像がこのデバイスにありません。このページを更新してから再試行してください。")
                 return
             }
             switch destination {
@@ -1308,7 +1308,7 @@ struct ImageReaderView: View {
             VStack(spacing: 8) {
                 Image(systemName: "hand.tap")
                     .font(.title)
-                Text("单击: 显示/隐藏工具栏")
+                Text("タップ: ツールバーの表示/非表示")
                     .font(.caption.bold())
                 if guidance.showsDoubleTapZoom {
                     Divider()
@@ -1322,7 +1322,7 @@ struct ImageReaderView: View {
                                 .offset(x: 2, y: 2)
                                 .opacity(0.5)
                         )
-                    Text("双击: 放大/复原")
+                    Text("ダブルタップ: 拡大/元に戻す")
                         .font(.caption.bold())
                 }
             }
@@ -1340,13 +1340,13 @@ struct ImageReaderView: View {
             .position(x: w - sideW / 2, y: h / 2)
 
             // 上方死区标注
-            Text("此区单击无操作")
+            Text("この領域はタップしても何もしません")
                 .font(.caption2)
                 .foregroundStyle(.white.opacity(0.5))
                 .position(x: w / 2, y: deadH / 2)
 
             // 下方死区标注
-            Text("此区单击无操作")
+            Text("この領域はタップしても何もしません")
                 .font(.caption2)
                 .foregroundStyle(.white.opacity(0.5))
                 .position(x: w / 2, y: h - deadH / 2)
@@ -1370,7 +1370,7 @@ struct ImageReaderView: View {
                     }
                     UserDefaults.standard.set(true, forKey: "reader_tutorial_shown")
                 } label: {
-                    Text("我知道了")
+                    Text("わかりました")
                         .font(.headline)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 32)
@@ -1440,7 +1440,7 @@ struct ImageReaderView: View {
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(EhReaderChrome.label)
                 }
-                .accessibilityLabel("返回")
+                .accessibilityLabel("戻る")
                 .accessibilityIdentifier("reader-close")
 
                 if let title = readerTitle {
@@ -1465,7 +1465,7 @@ struct ImageReaderView: View {
                     Image(systemName: "square.grid.2x2")
                         .foregroundStyle(EhReaderChrome.label)
                 }
-                .accessibilityLabel("页面目录")
+                .accessibilityLabel("ページ一覧")
                 .accessibilityIdentifier("reader-pages")
 
                 // 齿轮。这里原来画的是 sun.max，点开却是整个阅读设置面板——
@@ -1474,7 +1474,7 @@ struct ImageReaderView: View {
                     Image(systemName: "gearshape")
                         .foregroundStyle(EhReaderChrome.label)
                 }
-                .accessibilityLabel("阅读设置")
+                .accessibilityLabel("閲覧設定")
                 .accessibilityIdentifier("reader-settings")
             }
             .font(.system(size: 15, weight: .medium))
@@ -1551,7 +1551,7 @@ struct ImageReaderView: View {
             // 这四项在阅读中随时可能要改，此前分散在设置面板与顶栏菜单里，
             // 每改一次都要中断阅读。
             HStack(spacing: 6) {
-                modeBlock("双页", isOn: vm.isDoublePageEnabled) {
+                modeBlock("見開き", isOn: vm.isDoublePageEnabled) {
                     vm.toggleDoublePage()
                 }
                 modeBlock(ReaderGestureGuidance(direction: readingDirection).directionTitle,
@@ -1559,7 +1559,7 @@ struct ImageReaderView: View {
                     readingDirection = readingDirection == .rightToLeft ? .leftToRight : .rightToLeft
                     AppSettings.shared.readingDirection = readingDirection.rawValue
                 }
-                modeBlock("自动", isOn: autoPageEnabled) { toggleAutoPage() }
+                modeBlock("自動", isOn: autoPageEnabled) { toggleAutoPage() }
                 // 护眼滤镜留在设置面板里。它是「设一次就不动」的偏好，
                 // 不该和翻页方向这类阅读中随时要改的东西抢同一排位置。
             }
@@ -1660,7 +1660,7 @@ struct ReaderSettingsSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("阅读方向") {
+                Section("閲覧方向") {
                     Picker("方向", selection: $readingDirection) {
                         ForEach(ReadingDirection.allCases, id: \.rawValue) { dir in
                             Label(dir.label, systemImage: dir.icon).tag(dir)
@@ -1671,8 +1671,8 @@ struct ReaderSettingsSheet: View {
                     }
                 }
 
-                Section("缩放模式") {
-                    Picker("缩放", selection: $scaleMode) {
+                Section("拡大縮小モード") {
+                    Picker("拡大縮小", selection: $scaleMode) {
                         ForEach(ScaleMode.allCases, id: \.rawValue) { mode in
                             Text(mode.label).tag(mode)
                         }
@@ -1682,7 +1682,7 @@ struct ReaderSettingsSheet: View {
                     }
                 }
 
-                Section("起始位置") {
+                Section("開始位置") {
                     Picker("位置", selection: $startPosition) {
                         ForEach(StartPosition.allCases, id: \.rawValue) { pos in
                             Text(pos.label).tag(pos)
@@ -1693,20 +1693,20 @@ struct ReaderSettingsSheet: View {
                     }
                 }
 
-                Section("显示") {
-                    Toggle("显示时钟", isOn: Binding(
+                Section("表示") {
+                    Toggle("時計を表示", isOn: Binding(
                         get: { AppSettings.shared.showClock },
                         set: { AppSettings.shared.showClock = $0 }
                     ))
-                    Toggle("显示进度", isOn: Binding(
+                    Toggle("進捗を表示", isOn: Binding(
                         get: { AppSettings.shared.showProgress },
                         set: { AppSettings.shared.showProgress = $0 }
                     ))
-                    Toggle("显示电量", isOn: Binding(
+                    Toggle("バッテリー残量を表示", isOn: Binding(
                         get: { AppSettings.shared.showBattery },
                         set: { AppSettings.shared.showBattery = $0 }
                     ))
-                    Toggle("页面间距", isOn: Binding(
+                    Toggle("ページ間隔", isOn: Binding(
                         get: { AppSettings.shared.showPageInterval },
                         set: { AppSettings.shared.showPageInterval = $0 }
                     ))
@@ -1715,7 +1715,7 @@ struct ReaderSettingsSheet: View {
                 // Android dialog_gallery_menu.xml 里有而我们缺的三项：
                 // 屏幕方向、音量键翻页、护眼滤镜。前两项一直没有入口，
                 // 护眼滤镜的开关此前只在底栏那排模式块里。
-                Section("屏幕方向") {
+                Section("画面の向き") {
                     Picker("方向", selection: Binding(
                         get: { AppSettings.shared.screenRotation },
                         set: {
@@ -1723,15 +1723,15 @@ struct ReaderSettingsSheet: View {
                             applyScreenRotation($0)
                         }
                     )) {
-                        Text("跟随系统").tag(0)
-                        Text("锁定竖屏").tag(1)
-                        Text("锁定横屏").tag(2)
+                        Text("システムに合わせる").tag(0)
+                        Text("縦向きに固定").tag(1)
+                        Text("横向きに固定").tag(2)
                     }
                     .pickerStyle(.segmented)
                 }
 
-                Section("护眼滤镜") {
-                    Toggle("启用", isOn: Binding(
+                Section("ブルーライトフィルター") {
+                    Toggle("有効にする", isOn: Binding(
                         get: { AppSettings.shared.colorFilter },
                         set: { AppSettings.shared.colorFilter = $0 }
                     ))
@@ -1739,7 +1739,7 @@ struct ReaderSettingsSheet: View {
                         // 存的是 ARGB，这里只让调不透明度——色相固定为暖黄，
                         // 和 Android 默认的 0x20000000 语义一致
                         HStack {
-                            Text("强度").font(EhFont.caption)
+                            Text("強度").font(EhFont.caption)
                             Slider(value: Binding(
                                 get: {
                                     Double((AppSettings.shared.colorFilterColor >> 24) & 0xFF)
@@ -1753,30 +1753,30 @@ struct ReaderSettingsSheet: View {
                     }
                 }
 
-                Section("行为") {
+                Section("動作") {
                     #if os(iOS)
-                    Toggle("音量键翻页", isOn: Binding(
+                    Toggle("音量ボタンでページ送り", isOn: Binding(
                         get: { AppSettings.shared.volumePage },
                         set: { AppSettings.shared.volumePage = $0 }
                     ))
                     if AppSettings.shared.volumePage {
-                        Toggle("反转音量键方向", isOn: Binding(
+                        Toggle("音量ボタンの方向を反転", isOn: Binding(
                             get: { AppSettings.shared.reverseVolumePage },
                             set: { AppSettings.shared.reverseVolumePage = $0 }
                         ))
                     }
                     #endif
-                    Toggle("屏幕常亮", isOn: Binding(
+                    Toggle("画面を常にオン", isOn: Binding(
                         get: { AppSettings.shared.keepScreenOn },
                         set: { AppSettings.shared.keepScreenOn = $0 }
                     ))
-                    Toggle("全屏模式", isOn: Binding(
+                    Toggle("フルスクリーンモード", isOn: Binding(
                         get: { AppSettings.shared.readingFullscreen },
                         set: { AppSettings.shared.readingFullscreen = $0 }
                     ))
 
                     #if os(iOS)
-                    Toggle("自定义亮度", isOn: Binding(
+                    Toggle("カスタム明るさ", isOn: Binding(
                         get: { AppSettings.shared.customScreenLightness },
                         set: { AppSettings.shared.customScreenLightness = $0 }
                     ))
@@ -1797,9 +1797,9 @@ struct ReaderSettingsSheet: View {
                     #endif
                 }
 
-                Section("自动翻页") {
+                Section("自動ページ送り") {
                     Stepper(
-                        "间隔: \(AppSettings.shared.autoPageInterval) 秒",
+                        "間隔: \(AppSettings.shared.autoPageInterval) 秒",
                         value: Binding(
                             get: { AppSettings.shared.autoPageInterval },
                             set: { AppSettings.shared.autoPageInterval = $0 }
@@ -1808,13 +1808,13 @@ struct ReaderSettingsSheet: View {
                     )
                 }
             }
-            .navigationTitle("阅读设置")
+            .navigationTitle("閲覧設定")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("完成") { dismiss() }
+                    Button("完了") { dismiss() }
                 }
             }
         }
@@ -2208,13 +2208,13 @@ struct ReaderPageGrid: View {
                 }
             }
             .background(EhColor.background)
-            .navigationTitle("跳转到第 \(current + 1) 页")
+            .navigationTitle("\(current + 1) ページ目へジャンプ")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("完成") { dismiss() }
+                    Button("完了") { dismiss() }
                 }
             }
         }

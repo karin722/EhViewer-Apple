@@ -30,7 +30,7 @@ struct ProfileHomeView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: EhSpacing.section) {
-                    EhPageHeader(title: "我的")
+                    EhPageHeader(title: "マイページ")
                         .padding(.horizontal, -EhSpacing.page)  // 页头自带页边距
 
                     // 更新提示放「我的」而不是首页：首页是每天要看很多次的地方，
@@ -102,12 +102,12 @@ struct ProfileHomeView: View {
                 // 此前不论登录与否都指向账号资料页，访客点进去是一片空白
                 if appState.isSignedIn {
                     NavigationLink(value: ProfileRoute.account) {
-                        capsuleLabel("账号", filled: false)
+                        capsuleLabel("アカウント", filled: false)
                     }
                     .buttonStyle(.plain)
                 } else {
                     Button { showLogin = true } label: {
-                        capsuleLabel("登录", filled: true)
+                        capsuleLabel("ログイン", filled: true)
                     }
                     .buttonStyle(.plain)
                 }
@@ -121,21 +121,21 @@ struct ProfileHomeView: View {
                 // 这个设置一直只有声明、没有任何地方读它，配额卡片无条件显示。
                 if AppSettings.shared.showEhLimits {
                     statColumn(
-                        title: "图片配额",
+                        title: "画像の閲覧上限",
                         value: quotaValueText,
                         footnote: quotaFootnote,
                         progress: quotaProgress
                     )
                 }
                 statColumn(
-                    title: "缓存",
+                    title: "キャッシュ",
                     value: Self.formatBytes(cacheBytes),
                     footnote: nil,
                     progress: nil
                 )
                 statColumn(
-                    title: "已下载",
-                    value: "\(downloadCount) 本",
+                    title: "ダウンロード済み",
+                    value: "\(downloadCount) 件",
                     footnote: Self.formatBytes(downloadBytes),
                     progress: nil
                 )
@@ -180,15 +180,15 @@ struct ProfileHomeView: View {
         HStack(spacing: 10) {
             // 「我的标签」→「订阅标签」：顶部切页叫「订阅」，这里管理的正是
             // 它背后的标签列表，两处用同一个词才对得上
-            quickEntry(.myTags, symbol: "bell", title: "订阅标签")
+            quickEntry(.myTags, symbol: "bell", title: "購読タグ")
             // 「过滤器」而非「筛选器」：这里管理的是**屏蔽**规则（把不想看的挡掉），
             // 「筛选」在中文里更像是从结果里挑出想要的，方向相反。
             // 图标同样换成表示"挡掉"的斜杠眼，不用漏斗。
-            quickEntry(.filters, symbol: "eye.slash", title: "过滤器")
+            quickEntry(.filters, symbol: "eye.slash", title: "フィルター")
             quickEntry(.hosts, symbol: "globe", title: "Hosts")
             // 站内公告受 showEhEvents 控制（对齐 Android show_eh_events）
             if AppSettings.shared.showEhEvents {
-                quickEntry(.news, symbol: "envelope", title: "站内公告")
+                quickEntry(.news, symbol: "envelope", title: "サイトのお知らせ")
             }
         }
     }
@@ -221,7 +221,7 @@ struct ProfileHomeView: View {
 
     private var settingsList: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("设置").ehSectionHeader()
+            Text("設定").ehSectionHeader()
                 .padding(.leading, 4)
 
             VStack(spacing: 0) {
@@ -280,9 +280,9 @@ struct ProfileHomeView: View {
 
     private var displayName: String {
         if appState.isSignedIn {
-            return AppSettings.shared.displayName ?? "已登录"
+            return AppSettings.shared.displayName ?? "ログイン済み"
         }
-        return appState.isGuest ? "访客" : "未登录"
+        return appState.isGuest ? "ゲスト" : "未ログイン"
     }
 
     private var initial: String {
@@ -291,8 +291,8 @@ struct ProfileHomeView: View {
 
     private var siteStatusText: String {
         let site = AppSettings.shared.gallerySite == .exHentai ? "ExHentai" : "E-Hentai"
-        if appState.isSignedIn { return "\(site) · 已登录" }
-        return "\(site) · 可本地收藏，登录后使用云端收藏与配额"
+        if appState.isSignedIn { return "\(site) · ログイン済み" }
+        return "\(site) · ローカルお気に入りが利用可能。ログインするとクラウドお気に入りと閲覧上限が使えます"
     }
 
     private var quotaValueText: String {
@@ -302,7 +302,7 @@ struct ProfileHomeView: View {
 
     private var quotaFootnote: String? {
         guard let quota, quota.totalLimit > 0 else { return nil }
-        return "剩余 / \(quota.totalLimit)"
+        return "残り / \(quota.totalLimit)"
     }
 
     private var quotaProgress: Double? {
@@ -387,25 +387,25 @@ private struct SettingsEntry {
     let value: () -> String?
 
     static let all: [SettingsEntry] = [
-        .init(route: .appearance, symbol: "circle.lefthalf.filled", title: "外观", tint: EhColor.info) {
+        .init(route: .appearance, symbol: "circle.lefthalf.filled", title: "外観", tint: EhColor.info) {
             EhAppTheme(rawValue: AppSettings.shared.theme)?.title
         },
-        .init(route: .listAndThumbnail, symbol: "square.grid.2x2", title: "列表与缩略图", tint: EhColor.info) {
+        .init(route: .listAndThumbnail, symbol: "square.grid.2x2", title: "リストとサムネイル", tint: EhColor.info) {
             ["小", "中", "大"][safe: AppSettings.shared.thumbSize] ?? nil
         },
-        .init(route: .downloads, symbol: "arrow.down.circle", title: "下载", tint: EhColor.success) { nil },
-        .init(route: .reading, symbol: "book", title: "阅读", tint: EhColor.accent) { nil },
+        .init(route: .downloads, symbol: "arrow.down.circle", title: "ダウンロード", tint: EhColor.success) { nil },
+        .init(route: .reading, symbol: "book", title: "読む", tint: EhColor.accent) { nil },
         // 默认收藏夹在这里改：收藏对话框里勾了「记住」之后，
         // 用户需要一个地方能改回「每次询问」
-        .init(route: .favorites, symbol: "heart", title: "收藏", tint: EhColor.danger) {
+        .init(route: .favorites, symbol: "heart", title: "お気に入り", tint: EhColor.danger) {
             let slot = AppSettings.shared.defaultFavSlot
-            if slot == -2 { return "每次询问" }
-            if slot == -1 { return "本地收藏" }
+            if slot == -2 { return "毎回確認" }
+            if slot == -1 { return "ローカルお気に入り" }
             return AppSettings.shared.favCatName(slot)
         },
-        .init(route: .privacy, symbol: "lock", title: "隐私与锁定", tint: EhColor.danger) { nil },
-        .init(route: .network, symbol: "network", title: "网络与容灾", tint: EhColor.warning) { nil },
-        .init(route: .tagDatabase, symbol: "character.book.closed", title: "标签翻译数据库", tint: EhColor.info) { nil },
+        .init(route: .privacy, symbol: "lock", title: "プライバシーとロック", tint: EhColor.danger) { nil },
+        .init(route: .network, symbol: "network", title: "ネットワークと障害対策", tint: EhColor.warning) { nil },
+        .init(route: .tagDatabase, symbol: "character.book.closed", title: "タグ翻訳データベース", tint: EhColor.info) { nil },
     ]
 }
 
@@ -438,7 +438,7 @@ struct UpdateBanner: View {
                 .foregroundStyle(EhColor.accent)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("有新版本 \(info.version)")
+                Text("新しいバージョン \(info.version) があります")
                     .font(EhFont.body.weight(.semibold))
                     .foregroundStyle(EhColor.label)
                 Text(AppUpdatePlatform.current.installationHint)
@@ -452,7 +452,7 @@ struct UpdateBanner: View {
             Button {
                 openURL(info.releaseURL)
             } label: {
-                Text("查看")
+                Text("表示")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(EhColor.onAccentFill)
                     .padding(.horizontal, 12)

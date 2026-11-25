@@ -6,7 +6,7 @@ final class ReaderLoadingIndicatorUITests: XCTestCase {
         let active = app.descendants(matching: .any).matching(identifier: "reader-image-loading")
         let indicator = active.firstMatch
         XCTAssertTrue(indicator.waitForExistence(timeout: 5))
-        XCTAssertEqual(indicator.label, "正在加载双页图片")
+        XCTAssertEqual(indicator.label, "見開き画像を読み込み中")
         XCTAssertEqual(active.count, 1)
         XCTAssertTrue(waitForValue("50%", of: indicator, timeout: 10))
         XCTAssertEqual(active.count, 1)
@@ -34,13 +34,13 @@ final class ReaderLoadingIndicatorUITests: XCTestCase {
     @MainActor func testPrimaryFailureRetainsSecondImageAndOffersOneRetry() throws {
         let app = try openReader(mode: "spread-error")
         let second = app.descendants(matching: .any)["reader-drawn-page-3"].firstMatch
-        let retry = app.buttons.matching(identifier: "重新加载")
+        let retry = app.buttons.matching(identifier: "再読み込み")
         XCTAssertTrue(second.waitForExistence(timeout: 18))
         XCTAssertTrue(retry.firstMatch.waitForExistence(timeout: 10))
         XCTAssertTrue(second.exists)
         XCTAssertEqual(retry.count, 1)
         XCTAssertFalse(app.descendants(matching: .any)["reader-image-loading"].exists)
-        XCTAssertTrue(app.staticTexts["第 2 页：合成测试图片读取失败"].exists)
+        XCTAssertTrue(app.staticTexts["2 ページ目：合成テスト画像の読み込みに失敗しました"].exists)
         retry.firstMatch.tap()
         let loading = app.descendants(matching: .any).matching(identifier: "reader-image-loading")
         XCTAssertTrue(loading.firstMatch.waitForExistence(timeout: 5))
@@ -69,7 +69,7 @@ final class ReaderLoadingIndicatorUITests: XCTestCase {
         XCTAssertTrue(row.waitForExistence(timeout: 8))
         row.tap()
         let first = app.descendants(matching: .any).matching(
-            NSPredicate(format: "label == %@", "第 1 页预览")).firstMatch
+            NSPredicate(format: "label == %@", "1 ページ目のプレビュー")).firstMatch
         for _ in 0..<4 {
             if first.exists, first.frame.midY > 0, first.frame.midY < app.frame.height * 0.85 { break }
             app.swipeUp()
@@ -85,7 +85,7 @@ final class ReaderLoadingIndicatorUITests: XCTestCase {
         let active = app.descendants(matching: .any).matching(identifier: "reader-image-loading")
         let indicator = active.firstMatch
         XCTAssertTrue(indicator.waitForExistence(timeout: 5))
-        XCTAssertEqual(indicator.label, "正在加载图片")
+        XCTAssertEqual(indicator.label, "画像を読み込み中")
         XCTAssertEqual(active.count, 1)
         XCTAssertTrue(waitForValue("20%", of: indicator, timeout: 10))
         XCTAssertEqual(active.count, 1)

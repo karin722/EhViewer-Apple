@@ -67,7 +67,7 @@ struct GalleryPreviewsView: View {
             .padding(.horizontal, 8)
             .padding(.vertical)
         }
-        .navigationTitle("预览 (\(galleryPages)张)")
+        .navigationTitle("プレビュー (\(galleryPages)枚)")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -79,15 +79,15 @@ struct GalleryPreviewsView: View {
                 } label: {
                     Image(systemName: "arrow.right.to.line")
                 }
-                .accessibilityLabel("跳转到页码")
+                .accessibilityLabel("ページ番号へジャンプ")
             }
         }
-        .alert("跳转到第几张", isPresented: $showJumpSheet) {
+        .alert("何枚目へジャンプ", isPresented: $showJumpSheet) {
             TextField("1 - \(galleryPages)", text: $jumpText)
                 #if os(iOS)
                 .keyboardType(.numberPad)
                 #endif
-            Button("跳转") {
+            Button("ジャンプ") {
                 guard let page = Int(jumpText), page >= 1, page <= galleryPages else { return }
                 // 预览是分页拉的，目标还没加载出来就先把它那一页取回来
                 Task {
@@ -102,7 +102,7 @@ struct GalleryPreviewsView: View {
                     withAnimation { proxy.scrollTo(page - 1, anchor: .top) }
                 }
             }
-            Button("取消", role: .cancel) {}
+            Button("キャンセル", role: .cancel) {}
         }
         .onAppear {
             if vm.allPreviews.isEmpty {
@@ -111,7 +111,7 @@ struct GalleryPreviewsView: View {
         }
         .overlay {
             if vm.isInitialLoading {
-                ProgressView("加载中...")
+                ProgressView("読み込み中...")
             }
         }
         }

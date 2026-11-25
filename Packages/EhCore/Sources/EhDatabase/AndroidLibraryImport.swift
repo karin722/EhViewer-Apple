@@ -8,10 +8,10 @@ public enum AndroidLibraryImportError: LocalizedError, Sendable {
 
     public var errorDescription: String? {
         switch self {
-        case .cannotRead: "无法读取文件。请重新选择安卓端导出的 .db 文件。"
-        case .unsupportedExport: "不是受支持的安卓 .db 导出文件，或文件已损坏。请在安卓端重新导出。"
-        case .tooLarge: "此导出文件过大，无法安全导入。"
-        case .destinationUnavailable: "本地资料库暂时不可写，未导入任何记录。请重新启动应用后再试。"
+        case .cannotRead: "ファイルを読み込めません。Android 版からエクスポートした .db ファイルを選び直してください。"
+        case .unsupportedExport: "対応している Android 版の .db エクスポートファイルではないか、ファイルが破損しています。Android 版で再度エクスポートしてください。"
+        case .tooLarge: "このエクスポートファイルは大きすぎるため、安全にインポートできません。"
+        case .destinationUnavailable: "ローカルライブラリに一時的に書き込めないため、レコードはインポートされませんでした。アプリを再起動してからもう一度お試しください。"
         }
     }
 }

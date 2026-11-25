@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
 
 struct LogExportView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var logContent: String = "加载中..."
+    @State private var logContent: String = "読み込み中..."
     @State private var logSize: String = ""
     @State private var logFiles: [URL] = []
     @State private var showShareSheet = false
@@ -21,7 +21,7 @@ struct LogExportView: View {
             VStack(spacing: 0) {
                 // 状态栏
                 HStack {
-                    Label("日志文件: \(logFiles.count) 个", systemImage: "doc.text")
+                    Label("ログファイル: \(logFiles.count) 個", systemImage: "doc.text")
                     Spacer()
                     Text(logSize)
                         .foregroundStyle(.secondary)
@@ -40,19 +40,19 @@ struct LogExportView: View {
                         .textSelection(.enabled)
                 }
             }
-            .navigationTitle("诊断日志")
+            .navigationTitle("診断ログ")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭") { dismiss() }
+                    Button("閉じる") { dismiss() }
                 }
                 ToolbarItemGroup(placement: .primaryAction) {
                     Button {
                         exportLog()
                     } label: {
-                        Label("导出", systemImage: "square.and.arrow.up")
+                        Label("エクスポート", systemImage: "square.and.arrow.up")
                     }
                     .disabled(logFiles.isEmpty)
 
@@ -60,7 +60,7 @@ struct LogExportView: View {
                         LogManager.shared.clearLogs()
                         loadLogs()
                     } label: {
-                        Label("清除", systemImage: "trash")
+                        Label("クリア", systemImage: "trash")
                     }
                 }
             }
@@ -84,7 +84,7 @@ struct LogExportView: View {
         logSize = formatter.string(fromByteCount: size)
 
         if logFiles.isEmpty {
-            logContent = "(暂无日志)"
+            logContent = "(ログはまだありません)"
             return
         }
 
@@ -93,13 +93,13 @@ struct LogExportView: View {
            let content = try? String(contentsOf: latest, encoding: .utf8) {
             let lines = content.components(separatedBy: "\n")
             if lines.count > 200 {
-                logContent = "… (共 \(lines.count) 行, 显示最新 200 行)\n\n"
+                logContent = "… (全 \(lines.count) 行、最新 200 行を表示)\n\n"
                     + lines.suffix(200).joined(separator: "\n")
             } else {
                 logContent = content
             }
         } else {
-            logContent = "(无法读取日志)"
+            logContent = "(ログを読み込めません)"
         }
     }
 
@@ -113,7 +113,7 @@ struct LogExportView: View {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.plainText]
         panel.nameFieldStringValue = url.lastPathComponent
-        panel.title = "导出诊断日志"
+        panel.title = "診断ログをエクスポート"
         if panel.runModal() == .OK, let dest = panel.url {
             try? FileManager.default.copyItem(at: url, to: dest)
         }

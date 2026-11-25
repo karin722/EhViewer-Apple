@@ -24,7 +24,7 @@ struct MoreTabView: View {
                     }
                 }
             }
-            .navigationTitle("更多")
+            .navigationTitle("その他")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif

@@ -19,13 +19,13 @@ import AppKit
 // MARK: - 状态过滤枚举
 
 enum DownloadStatusFilter: String, CaseIterable, Identifiable {
-    case all = "全部"
-    case active = "进行中"
-    case downloading = "下载中"
-    case waiting = "等待中"
-    case paused = "已暂停"
-    case finished = "已完成"
-    case failed = "失败"
+    case all = "すべて"
+    case active = "進行中"
+    case downloading = "ダウンロード中"
+    case waiting = "待機中"
+    case paused = "一時停止中"
+    case finished = "完了"
+    case failed = "失敗"
 
     var id: String { rawValue }
 
@@ -45,12 +45,12 @@ enum DownloadStatusFilter: String, CaseIterable, Identifiable {
 private extension DownloadListOrder.Key {
     var title: String {
         switch self {
-        case .queue: return "默认顺序"
-        case .galleryID: return "画廊编号"
-        case .created: return "创建时间"
-        case .rating: return "评分"
-        case .title: return "标题"
-        case .fileSize: return "占用空间"
+        case .queue: return "デフォルト順"
+        case .galleryID: return "ギャラリー ID"
+        case .created: return "作成日時"
+        case .rating: return "評価"
+        case .title: return "タイトル"
+        case .fileSize: return "使用容量"
         }
     }
 }
@@ -58,9 +58,9 @@ private extension DownloadListOrder.Key {
 private extension DownloadListCategory {
     var title: String {
         switch self {
-        case .all: return "全部分类"
+        case .all: return "すべてのカテゴリ"
         case .known(let category): return category.displayName
-        case .unknown: return "未知分类"
+        case .unknown: return "不明なカテゴリ"
         }
     }
 }
@@ -147,7 +147,7 @@ struct DownloadsView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 // 紧凑页头：标题与动作同一行，避免系统大标题那条空导航栏带
-                EhPageHeader(title: "下载") {
+                EhPageHeader(title: "ダウンロード") {
                     EhSearchToggleButton(isActive: $isSearching)
                     mainToolbarMenu(base: base, visibleGids: visibleGids, selected: selected)
                 }
@@ -181,7 +181,7 @@ struct DownloadsView: View {
             // 搜索改为按钮形态：设计稿的默认状态顶部只有标题与过滤胶囊，
             // 点放大镜才展开统一搜索框。此前用 .searchable，iOS 26 会把它
             // 渲染在屏幕底部，与浮起导航条重叠。
-            .ehPageSearch(isActive: $isSearching, text: $searchText, placeholder: "搜索标题或标签")
+            .ehPageSearch(isActive: $isSearching, text: $searchText, placeholder: "タイトルまたはタグを検索")
             // 批量移动标签 Sheet
             .sheet(isPresented: $showMoveLabelSheet) {
                 batchMoveLabelSheet
@@ -191,42 +191,42 @@ struct DownloadsView: View {
                 labelManagerSheet
             }
             .confirmationDialog(
-                "重置全部阅读进度？所有下载的画廊都会回到第 1 页，已下载的文件不受影响。",
+                "すべての閲覧位置をリセットしますか？ダウンロード済みのギャラリーはすべて 1 ページ目に戻ります。ダウンロード済みのファイルには影響しません。",
                 isPresented: $showResetProgressConfirm, titleVisibility: .visible
             ) {
-                Button("重置", role: .destructive) { resetAllReadingProgress() }
-                Button("取消", role: .cancel) {}
+                Button("リセット", role: .destructive) { resetAllReadingProgress() }
+                Button("キャンセル", role: .cancel) {}
             }
-            .confirmationDialog("确认删除 \(pendingBatchDeletion?.targets.count ?? 0) 个下载？", isPresented: $showBatchDeleteConfirm, titleVisibility: .visible) {
-                Button("仅删除记录", role: .destructive) { batchDelete(withFiles: false) }
-                Button("删除记录和文件", role: .destructive) { batchDelete(withFiles: true) }
-                Button("取消", role: .cancel) { pendingBatchDeletion = nil }
+            .confirmationDialog("\(pendingBatchDeletion?.targets.count ?? 0) 件のダウンロードを削除しますか？", isPresented: $showBatchDeleteConfirm, titleVisibility: .visible) {
+                Button("記録のみ削除", role: .destructive) { batchDelete(withFiles: false) }
+                Button("記録とファイルを削除", role: .destructive) { batchDelete(withFiles: true) }
+                Button("キャンセル", role: .cancel) { pendingBatchDeletion = nil }
             }
             .confirmationDialog(
-                "删除 \(finishedDeletionRequest?.targets.count ?? 0) 个已完成的下载？",
+                "完了済みの \(finishedDeletionRequest?.targets.count ?? 0) 件のダウンロードを削除しますか？",
                 isPresented: $showClearFinishedConfirm, titleVisibility: .visible
             ) {
-                Button("删除记录和文件", role: .destructive) {
+                Button("記録とファイルを削除", role: .destructive) {
                     guard let request = finishedDeletionRequest else { return }
                     finishedDeletionRequest = nil
                     vm.clearFinished(matching: request.targets, in: request.root)
                 }
-                Button("取消", role: .cancel) {
+                Button("キャンセル", role: .cancel) {
                     finishedDeletionRequest = nil
                 }
             } message: {
-                Text("包含其他标签分组。下载记录和本地文件将被删除，此操作无法撤销。")
+                Text("他のラベルのグループも含まれます。ダウンロード記録とローカルファイルが削除されます。この操作は取り消せません。")
             }
             // 单项删除确认 (Fix: 放在父视图，不受 Timer 刷新影响)
-            .confirmationDialog("确认删除下载？", isPresented: $showSingleDeleteConfirm, titleVisibility: .visible) {
-                Button("仅删除记录", role: .destructive) {
+            .confirmationDialog("ダウンロードを削除しますか？", isPresented: $showSingleDeleteConfirm, titleVisibility: .visible) {
+                Button("記録のみ削除", role: .destructive) {
                     if let gid = deletingTaskGid {
                         vm.deleteTask(gid: gid, withFiles: false)
                         storage.remove(gid: gid, withFiles: false)
                     }
                     deletingTaskGid = nil
                 }
-                Button("删除记录和文件", role: .destructive) {
+                Button("記録とファイルを削除", role: .destructive) {
                     if let gid = deletingTaskGid {
                         vm.deleteTask(gid: gid, withFiles: true)
                         storage.remove(gid: gid, withFiles: true)
@@ -235,19 +235,19 @@ struct DownloadsView: View {
                 }
             }
             // 新建标签
-            .alert("新建标签", isPresented: $showNewLabelAlert) {
-                TextField("标签名称", text: $newLabelName)
-                Button("取消", role: .cancel) { newLabelName = "" }
-                Button("创建") {
+            .alert("新しいラベル", isPresented: $showNewLabelAlert) {
+                TextField("ラベル名", text: $newLabelName)
+                Button("キャンセル", role: .cancel) { newLabelName = "" }
+                Button("作成") {
                     createLabel(newLabelName)
                     newLabelName = ""
                 }
             }
             // 重命名标签
-            .alert("重命名标签", isPresented: $showRenameLabelAlert) {
-                TextField("新名称", text: $renameText)
-                Button("取消", role: .cancel) { renameText = "" }
-                Button("确定") {
+            .alert("ラベル名を変更", isPresented: $showRenameLabelAlert) {
+                TextField("新しい名前", text: $renameText)
+                Button("キャンセル", role: .cancel) { renameText = "" }
+                Button("OK") {
                     if let label = renamingLabel {
                         renameLabel(label, newName: renameText)
                     }
@@ -255,8 +255,8 @@ struct DownloadsView: View {
                 }
             }
             // 删除标签确认
-            .confirmationDialog("确认删除标签「\(deletingLabel?.label ?? "")」？\n该标签下的下载将移至默认分组。", isPresented: $showDeleteLabelConfirm, titleVisibility: .visible) {
-                Button("删除", role: .destructive) {
+            .confirmationDialog("ラベル「\(deletingLabel?.label ?? "")」を削除しますか？\nこのラベルのダウンロードはデフォルトグループに移動されます。", isPresented: $showDeleteLabelConfirm, titleVisibility: .visible) {
+                Button("削除", role: .destructive) {
                     if let label = deletingLabel {
                         deleteLabel(label)
                     }
@@ -275,11 +275,11 @@ struct DownloadsView: View {
         .fileImporter(isPresented: $showOfflineImportPicker, allowedContentTypes: offlineImportMode.types) { result in
             importOfflineImages(result, fromArchive: offlineImportMode == .archive)
         }
-        .alert("无法导入图片", isPresented: Binding(
+        .alert("画像をインポートできません", isPresented: Binding(
             get: { offlineImportError != nil },
             set: { if !$0 { offlineImportError = nil } }
         )) {
-            Button("好", role: .cancel) { offlineImportError = nil }
+            Button("OK", role: .cancel) { offlineImportError = nil }
         } message: {
             Text(offlineImportError ?? "")
         }
@@ -332,12 +332,12 @@ struct DownloadsView: View {
                 if storage.isScanning {
                     ProgressView().controlSize(.mini)
                 } else {
-                    Text("共 \(vm.tasks.count) 本 · \(Self.formatFileSize(storage.total))")
+                    Text("全 \(vm.tasks.count) 件 · \(Self.formatFileSize(storage.total))")
                         .font(EhFont.mono(11))
                         .foregroundStyle(EhColor.secondaryLabel)
                 }
             } else {
-                Text("正在下载 \(active.count) 本")
+                Text("\(active.count) 件をダウンロード中")
                     .font(EhFont.mono(11, weight: .medium))
                     .foregroundStyle(EhColor.accent)
                 if speed > 0 {
@@ -345,12 +345,12 @@ struct DownloadsView: View {
                         .font(EhFont.mono(11))
                         .foregroundStyle(EhColor.secondaryLabel)
                     if remainingBytes > 0 {
-                        Text("· 剩余约 \(Self.formatDuration(seconds: Double(remainingBytes) / Double(speed)))")
+                        Text("· 残り約 \(Self.formatDuration(seconds: Double(remainingBytes) / Double(speed)))")
                             .font(EhFont.mono(11))
                             .foregroundStyle(EhColor.secondaryLabel)
                     }
                 }
-                Text("· \(NetworkReachability.isConstrainedOrCellular ? "蜂窝" : "Wi-Fi")")
+                Text("· \(NetworkReachability.isConstrainedOrCellular ? "モバイル通信" : "Wi-Fi")")
                     .font(EhFont.mono(11))
                     .foregroundStyle(EhColor.tertiaryLabel)
             }
@@ -358,7 +358,7 @@ struct DownloadsView: View {
             Spacer(minLength: 8)
 
             if !active.isEmpty {
-                Button("全部暂停") {
+                Button("すべて一時停止") {
                     Haptics.tap()
                     vm.pauseAll()
                 }
@@ -384,8 +384,8 @@ struct DownloadsView: View {
     private static func formatDuration(seconds: Double) -> String {
         guard seconds.isFinite, seconds > 0 else { return "—" }
         if seconds < 60 { return "\(Int(seconds)) 秒" }
-        if seconds < 3600 { return "\(Int(seconds / 60)) 分钟" }
-        return String(format: "%.1f 小时", seconds / 3600)
+        if seconds < 3600 { return "\(Int(seconds / 60)) 分" }
+        return String(format: "%.1f 時間", seconds / 3600)
     }
 
     // MARK: - 批量操作底栏
@@ -398,23 +398,23 @@ struct DownloadsView: View {
 
             batchButton(
                 symbol: isAll ? "checkmark.circle.fill" : "checkmark.circle",
-                title: isAll ? "取消全选" : "全选",
+                title: isAll ? "選択を解除" : "すべて選択",
                 enabled: !visibleGids.isEmpty
             ) {
                 selectedGids = isAll ? [] : visibleGids
             }
 
-            batchButton(symbol: "play.fill", title: "开始", enabled: !selected.isEmpty) {
+            batchButton(symbol: "play.fill", title: "開始", enabled: !selected.isEmpty) {
                 batchResume(selected)
             }
-            batchButton(symbol: "pause.fill", title: "暂停", enabled: !selected.isEmpty) {
+            batchButton(symbol: "pause.fill", title: "一時停止", enabled: !selected.isEmpty) {
                 batchPause(selected)
             }
-            batchButton(symbol: "tag", title: "标签", enabled: !selected.isEmpty) {
+            batchButton(symbol: "tag", title: "ラベル", enabled: !selected.isEmpty) {
                 showMoveLabelSheet = true
             }
             batchButton(
-                symbol: "trash", title: "删除",
+                symbol: "trash", title: "削除",
                 enabled: !selected.isEmpty, tint: EhColor.danger
             ) {
                 requestBatchDeletion(selected)
@@ -572,16 +572,16 @@ struct DownloadsView: View {
 
     private var emptyTitle: String {
         if selectedLabel != nil || statusFilter != .all || categoryFilter != .all || !searchText.isEmpty {
-            return "无匹配下载"
+            return "一致するダウンロードがありません"
         }
-        return "暂无下载"
+        return "ダウンロードはありません"
     }
 
     private var emptyDescription: String {
         if selectedLabel != nil || statusFilter != .all || categoryFilter != .all || !searchText.isEmpty {
-            return "试试更换筛选条件"
+            return "フィルター条件を変更してみてください"
         }
-        return "在画廊详情页点击下载按钮"
+        return "ギャラリーの詳細画面でダウンロードボタンをタップしてください"
     }
 
     // MARK: - 标签选择栏 (对齐 Android DownloadsScene Label Drawer)
@@ -594,9 +594,9 @@ struct DownloadsView: View {
     private func labelPicker(base: [DownloadTask]) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                statusChip(.all, title: "全部", count: base.count)
-                statusChip(.active, title: "进行中", count: countForFilter(.active, in: base))
-                statusChip(.finished, title: "已完成", count: countForFilter(.finished, in: base))
+                statusChip(.all, title: "すべて", count: base.count)
+                statusChip(.active, title: "進行中", count: countForFilter(.active, in: base))
+                statusChip(.finished, title: "完了", count: countForFilter(.finished, in: base))
 
                 if !labels.isEmpty || selectedLabel != nil {
                     Rectangle()
@@ -605,7 +605,7 @@ struct DownloadsView: View {
                         .padding(.horizontal, 2)
                 }
 
-                labelChip(title: "默认", isSelected: selectedLabel == "") {
+                labelChip(title: "デフォルト", isSelected: selectedLabel == "") {
                     selectedLabel = selectedLabel == "" ? nil : ""
                     exitSelectMode()
                 }
@@ -689,7 +689,7 @@ struct DownloadsView: View {
                     if !categoryFilter.includes(gallery.category) { categoryFilter = .all }
                     searchText = ""
                     isSearching = false
-                    EhToast.success("已导入 \(gallery.pages) 页图片")
+                    EhToast.success("\(gallery.pages) ページの画像をインポートしました")
                     await calculateStorageSizes()
                 } catch is CancellationError {
                     return
@@ -710,7 +710,7 @@ struct DownloadsView: View {
                     selectedGids = selected == visibleGids ? [] : visibleGids
                 } label: {
                     let allSelected = !visibleGids.isEmpty && selected == visibleGids
-                    Label(allSelected ? "取消全选" : "全选", systemImage: allSelected ? "square" : "checkmark.square")
+                    Label(allSelected ? "選択を解除" : "すべて選択", systemImage: allSelected ? "square" : "checkmark.square")
                 }
                 .disabled(visibleGids.isEmpty)
 
@@ -719,14 +719,14 @@ struct DownloadsView: View {
                 Button {
                     batchResume(selected)
                 } label: {
-                    Label("批量开始 (\(selected.count))", systemImage: "play")
+                    Label("一括開始 (\(selected.count))", systemImage: "play")
                 }
                 .disabled(selected.isEmpty)
 
                 Button {
                     batchPause(selected)
                 } label: {
-                    Label("批量暂停 (\(selected.count))", systemImage: "pause")
+                    Label("一括一時停止 (\(selected.count))", systemImage: "pause")
                 }
                 .disabled(selected.isEmpty)
 
@@ -735,7 +735,7 @@ struct DownloadsView: View {
                     Button {
                         showMoveLabelSheet = true
                     } label: {
-                        Label("移动标签 (\(selected.count))", systemImage: "tag")
+                        Label("ラベルを移動 (\(selected.count))", systemImage: "tag")
                     }
                     .disabled(selected.isEmpty)
                 }
@@ -745,7 +745,7 @@ struct DownloadsView: View {
                 Button(role: .destructive) {
                     requestBatchDeletion(selected)
                 } label: {
-                    Label("批量删除 (\(selected.count))", systemImage: "trash")
+                    Label("一括削除 (\(selected.count))", systemImage: "trash")
                 }
                 .disabled(selected.isEmpty)
 
@@ -754,13 +754,13 @@ struct DownloadsView: View {
                 Button {
                     exitSelectMode()
                 } label: {
-                    Label("退出选择", systemImage: "xmark.circle")
+                    Label("選択を終了", systemImage: "xmark.circle")
                 }
             } else {
                 // 普通模式
 
                 // 状态过滤 (对齐 Android DownloadsScene 状态筛选)
-                Picker("状态过滤", selection: $statusFilter) {
+                Picker("状態で絞り込み", selection: $statusFilter) {
                     ForEach(DownloadStatusFilter.allCases) { filter in
                         let count = countForFilter(filter, in: base)
                         if filter == .all {
@@ -772,30 +772,30 @@ struct DownloadsView: View {
                 }
 
                 Menu {
-                    Picker("画廊分类", selection: $categoryFilter) {
+                    Picker("ギャラリーのカテゴリ", selection: $categoryFilter) {
                         ForEach(DownloadListCategory.options, id: \.self) { category in
                             Text(category.title).tag(category)
                         }
                     }
                 } label: {
-                    Label("分类：\(categoryFilter.title)", systemImage: "square.grid.2x2")
+                    Label("カテゴリ：\(categoryFilter.title)", systemImage: "square.grid.2x2")
                 }
                 .accessibilityIdentifier("downloads-category")
 
                 Menu {
-                    Picker("排序依据", selection: $listOrder.key) {
+                    Picker("並べ替え", selection: $listOrder.key) {
                         ForEach(DownloadListOrder.Key.allCases, id: \.self) { key in
                             Text(key.title).tag(key)
                         }
                     }
                     if listOrder.key != .queue {
                         Picker("方向", selection: $listOrder.ascending) {
-                            Text("升序").tag(true)
-                            Text("降序").tag(false)
+                            Text("昇順").tag(true)
+                            Text("降順").tag(false)
                         }
                     }
                 } label: {
-                    Label("排序：\(listOrder.key.title)", systemImage: "arrow.up.arrow.down")
+                    Label("並べ替え：\(listOrder.key.title)", systemImage: "arrow.up.arrow.down")
                 }
                 .accessibilityIdentifier("downloads-order")
 
@@ -805,14 +805,14 @@ struct DownloadsView: View {
                     isSelectMode = true
                     selectedGids.removeAll()
                 } label: {
-                    Label("批量操作", systemImage: "checkmark.circle")
+                    Label("一括操作", systemImage: "checkmark.circle")
                 }
 
                 Button {
                     offlineImportMode = .folder
                     showOfflineImportPicker = true
                 } label: {
-                    Label(isImportingOfflineImages ? "正在导入图片…" : "导入图片文件夹",
+                    Label(isImportingOfflineImages ? "画像をインポート中…" : "画像フォルダーをインポート",
                           systemImage: "folder.badge.plus")
                 }
                 .disabled(isImportingOfflineImages)
@@ -821,7 +821,7 @@ struct DownloadsView: View {
                     offlineImportMode = .archive
                     showOfflineImportPicker = true
                 } label: {
-                    Label("导入 ZIP / CBZ", systemImage: "archivebox")
+                    Label("ZIP / CBZ をインポート", systemImage: "archivebox")
                 }
                 .disabled(isImportingOfflineImages)
 
@@ -831,44 +831,44 @@ struct DownloadsView: View {
                     Button {
                         AppSettings.shared.hasDefaultDownloadLabel = false
                         AppSettings.shared.defaultDownloadLabel = nil
-                        EhToast.info("下载时会重新询问标签")
+                        EhToast.info("ダウンロード時に毎回ラベルを確認します")
                     } label: {
-                        Label("每次询问", systemImage: "questionmark.circle")
+                        Label("毎回確認", systemImage: "questionmark.circle")
                     }
                     Button {
                         AppSettings.shared.hasDefaultDownloadLabel = true
                         AppSettings.shared.defaultDownloadLabel = nil
-                        EhToast.success("默认下载到「默认分组」")
+                        EhToast.success("デフォルトで「デフォルトグループ」にダウンロード")
                     } label: {
-                        Label("默认分组", systemImage: "tray")
+                        Label("デフォルトグループ", systemImage: "tray")
                     }
                     ForEach(labels, id: \.label) { record in
                         Button {
                             AppSettings.shared.hasDefaultDownloadLabel = true
                             AppSettings.shared.defaultDownloadLabel = record.label
-                            EhToast.success("默认下载到「\(record.label)」")
+                            EhToast.success("デフォルトで「\(record.label)」にダウンロード")
                         } label: {
                             Label(record.label, systemImage: "tag")
                         }
                     }
                 } label: {
                     let name = AppSettings.shared.hasDefaultDownloadLabel
-                        ? (AppSettings.shared.defaultDownloadLabel ?? "默认分组")
-                        : "每次询问"
-                    Label("默认下载标签：\(name)", systemImage: "tag")
+                        ? (AppSettings.shared.defaultDownloadLabel ?? "デフォルトグループ")
+                        : "毎回確認"
+                    Label("デフォルトのダウンロードラベル：\(name)", systemImage: "tag")
                 }
 
                 Button {
                     showLabelManager = true
                 } label: {
-                    Label("管理下载标签", systemImage: "tag")
+                    Label("ダウンロードラベルを管理", systemImage: "tag")
                 }
 
                 // 批量重置阅读进度 (对齐 Android action_reset_reading_progress)
                 Button {
                     showResetProgressConfirm = true
                 } label: {
-                    Label("重置全部阅读进度", systemImage: "arrow.counterclockwise")
+                    Label("すべての閲覧位置をリセット", systemImage: "arrow.counterclockwise")
                 }
 
                 Divider()
@@ -876,13 +876,13 @@ struct DownloadsView: View {
                 Button {
                     vm.resumeAll()
                 } label: {
-                    Label("全部开始", systemImage: "play.fill")
+                    Label("すべて開始", systemImage: "play.fill")
                 }
 
                 Button {
                     vm.pauseAll()
                 } label: {
-                    Label("全部暂停", systemImage: "pause.fill")
+                    Label("すべて一時停止", systemImage: "pause.fill")
                 }
 
                 Divider()
@@ -893,7 +893,7 @@ struct DownloadsView: View {
                     finishedDeletionRequest = .init(targets: targets, root: DownloadManager.shared.finishedDeletionRoot)
                     showClearFinishedConfirm = true
                 } label: {
-                    Label("清空已完成", systemImage: "trash")
+                    Label("完了済みを消去", systemImage: "trash")
                 }
                 .disabled(!vm.tasks.contains { $0.state == DownloadManager.stateFinish })
             }
@@ -963,17 +963,17 @@ struct DownloadsView: View {
             if isExporting {
                 VStack(spacing: 10) {
                     ProgressView()
-                    Text("正在打包…").font(.footnote).foregroundStyle(.secondary)
+                    Text("まとめています…").font(.footnote).foregroundStyle(.secondary)
                 }
                 .padding(20)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
             }
         }
-        .alert("分享失败", isPresented: Binding(
+        .alert("共有に失敗しました", isPresented: Binding(
             get: { exportError != nil },
             set: { if !$0 { exportError = nil } }
         )) {
-            Button("好") { exportError = nil }
+            Button("OK") { exportError = nil }
         } message: {
             Text(exportError ?? "")
         }
@@ -1013,7 +1013,7 @@ struct DownloadsView: View {
                     batchChangeLabel(nil)
                     showMoveLabelSheet = false
                 } label: {
-                    Label("默认", systemImage: "tray")
+                    Label("デフォルト", systemImage: "tray")
                 }
 
                 // 具体标签
@@ -1026,13 +1026,13 @@ struct DownloadsView: View {
                     }
                 }
             }
-            .navigationTitle("移动到标签")
+            .navigationTitle("ラベルへ移動")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.large)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { showMoveLabelSheet = false }
+                    Button("キャンセル") { showMoveLabelSheet = false }
                 }
             }
         }
@@ -1061,7 +1061,7 @@ struct DownloadsView: View {
         NavigationStack {
             List {
                 if labels.isEmpty {
-                    Text("还没有标签。在菜单里新建一个，下载时就能分组了。")
+                    Text("ラベルがまだありません。メニューから新規作成すると、ダウンロード時にグループ分けできます。")
                         .font(EhFont.caption)
                         .foregroundStyle(EhColor.secondaryLabel)
                 } else {
@@ -1098,7 +1098,7 @@ struct DownloadsView: View {
                     }
                 }
             }
-            .navigationTitle("下载标签")
+            .navigationTitle("ダウンロードラベル")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -1107,7 +1107,7 @@ struct DownloadsView: View {
                 ToolbarItem(placement: .navigationBarLeading) { EditButton() }
                 #endif
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("完成") { showLabelManager = false }
+                    Button("完了") { showLabelManager = false }
                 }
             }
         }
@@ -1127,7 +1127,7 @@ struct DownloadsView: View {
         }
         Task {
             await loadReadingProgress()
-            EhToast.success("已重置 \(vm.tasks.count) 本的阅读进度")
+            EhToast.success("\(vm.tasks.count) 件の閲覧位置をリセットしました")
         }
     }
 
@@ -1298,13 +1298,13 @@ struct DownloadTaskRow: View {
                 Button {
                     onPause()
                 } label: {
-                    Label("暂停", systemImage: "pause")
+                    Label("一時停止", systemImage: "pause")
                 }
             } else if task.state != DownloadManager.stateFinish {
                 Button {
                     onResume()
                 } label: {
-                    Label("继续", systemImage: "play")
+                    Label("再開", systemImage: "play")
                 }
             }
 
@@ -1313,7 +1313,7 @@ struct DownloadTaskRow: View {
                 Button {
                     onShare()
                 } label: {
-                    Label("分享 (打包为 zip)", systemImage: "square.and.arrow.up")
+                    Label("共有 (zip にまとめる)", systemImage: "square.and.arrow.up")
                 }
             }
 
@@ -1323,7 +1323,7 @@ struct DownloadTaskRow: View {
             Button(role: .destructive) {
                 onRequestDelete()
             } label: {
-                Label("删除", systemImage: "trash")
+                Label("削除", systemImage: "trash")
             }
 
             #if os(macOS)
@@ -1335,7 +1335,7 @@ struct DownloadTaskRow: View {
                         .appendingPathComponent(dirName)
                     NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: dir.path)
                 } label: {
-                    Label("在 Finder 中显示", systemImage: "folder")
+                    Label("Finder で表示", systemImage: "folder")
                 }
             }
             #endif
@@ -1344,7 +1344,7 @@ struct DownloadTaskRow: View {
             Button(role: .destructive) {
                 onRequestDelete()
             } label: {
-                Label("删除", systemImage: "trash")
+                Label("削除", systemImage: "trash")
             }
         }
         .swipeActions(edge: .leading) {
@@ -1352,14 +1352,14 @@ struct DownloadTaskRow: View {
                 Button {
                     onPause()
                 } label: {
-                    Label("暂停", systemImage: "pause")
+                    Label("一時停止", systemImage: "pause")
                 }
                 .tint(.orange)
             } else if task.state != DownloadManager.stateFinish {
                 Button {
                     onResume()
                 } label: {
-                    Label("继续", systemImage: "play")
+                    Label("再開", systemImage: "play")
                 }
                 .tint(.green)
             }
@@ -1419,11 +1419,11 @@ struct DownloadTaskRow: View {
 
     private var statusText: String {
         switch task.state {
-        case DownloadManager.stateDownload: return "下载中"
-        case DownloadManager.stateWait: return "等待中"
-        case DownloadManager.stateFinish: return "已完成"
-        case DownloadManager.stateFailed: return "失败"
-        default: return "已暂停"
+        case DownloadManager.stateDownload: return "ダウンロード中"
+        case DownloadManager.stateWait: return "待機中"
+        case DownloadManager.stateFinish: return "完了"
+        case DownloadManager.stateFailed: return "失敗"
+        default: return "一時停止中"
         }
     }
 

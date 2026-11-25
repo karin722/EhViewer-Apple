@@ -19,7 +19,7 @@ final class OfflineImageArchiveUITests: XCTestCase {
             let candidates = app.buttons.matching(NSPredicate(format: "label == %@", title))
             try XCTUnwrap(candidates.allElementsBoundByIndex.first(where: \.isHittable)).tap()
         }
-        try selectTab("下载")
+        try selectTab("ダウンロード")
         let actions = app.buttons["downloads-actions"].firstMatch
         XCTAssertTrue(actions.waitForExistence(timeout: 6))
         func tapMenu(_ name: String) {
@@ -33,18 +33,18 @@ final class OfflineImageArchiveUITests: XCTestCase {
         let initialMeasurement = XCTNSPredicateExpectation(predicate: measured, object: existing)
         XCTAssertEqual(XCTWaiter.wait(for: [initialMeasurement], timeout: 8), .completed)
         actions.tap()
-        tapMenu("排序：默认顺序")
-        if app.buttons["排序依据"].firstMatch.isHittable { app.buttons["排序依据"].firstMatch.tap() }
-        tapMenu("占用空间")
+        tapMenu("並べ替え：デフォルト順")
+        if app.buttons["並べ替え"].firstMatch.isHittable { app.buttons["並べ替え"].firstMatch.tap() }
+        tapMenu("使用容量")
         actions.tap()
-        tapMenu("排序：占用空间")
+        tapMenu("並べ替え：使用容量")
         if app.buttons["方向"].firstMatch.isHittable { app.buttons["方向"].firstMatch.tap() }
-        tapMenu("降序")
+        tapMenu("降順")
         actions.tap()
         let category = app.buttons["downloads-category"].firstMatch
         XCTAssertTrue(category.waitForExistence(timeout: 5))
         category.tap()
-        if app.buttons["画廊分类"].firstMatch.isHittable { app.buttons["画廊分类"].firstMatch.tap() }
+        if app.buttons["ギャラリーのカテゴリ"].firstMatch.isHittable { app.buttons["ギャラリーのカテゴリ"].firstMatch.tap() }
         tapMenu("Manga")
         XCTAssertTrue(app.staticTexts["Sort Fixture Apple"].firstMatch.waitForNonExistence(timeout: 5))
         XCTAssertTrue(existing.exists)
@@ -52,7 +52,7 @@ final class OfflineImageArchiveUITests: XCTestCase {
             app.coordinate(withNormalizedOffset: CGVector(dx: 0.08, dy: 0.10)).tap()
         }
         actions.tap()
-        let archive = app.buttons["导入 ZIP / CBZ"].firstMatch
+        let archive = app.buttons["ZIP / CBZ をインポート"].firstMatch
         XCTAssertTrue(archive.waitForExistence(timeout: 5))
         archive.tap()
         openLocalAppFolder(app)
@@ -85,22 +85,22 @@ final class OfflineImageArchiveUITests: XCTestCase {
         let pages = app.buttons["reader-pages"]
         XCTAssertTrue(pages.waitForExistence(timeout: 8))
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 1 页"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["1 ページ目へジャンプ"].waitForExistence(timeout: 5))
         app.buttons["2"].tap()
         revealToolsOnPageTwo(app)
         let close = app.buttons["reader-close"]
         XCTAssertTrue(close.waitForExistence(timeout: 5))
         close.tap()
 
-        try selectTab("历史")
+        try selectTab("履歴")
         let historyGallery = app.buttons.matching(NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@",
-                                                               name, "本地图片")).firstMatch
+                                                               name, "ローカル画像")).firstMatch
         XCTAssertTrue(historyGallery.waitForExistence(timeout: 8))
         historyGallery.coordinate(withNormalizedOffset: CGVector(dx: 0.45, dy: 0.34)).tap()
         revealToolsOnPageTwo(app)
         XCTAssertTrue(pages.waitForExistence(timeout: 5))
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 2 页"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["2 ページ目へジャンプ"].waitForExistence(timeout: 5))
     }
     @MainActor func testNativeFolderPickerCancelsAndImportsTwoImages() throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["EH_RUN_NATIVE_FILE_SMOKE"] == "1")
@@ -111,13 +111,13 @@ final class OfflineImageArchiveUITests: XCTestCase {
         app.launchEnvironment["EH_OFFLINE_UI_FIXTURE"] = "1"
         app.launchEnvironment["EH_FIXTURE_IMAGE_FOLDER"] = id
         app.launch()
-        try XCTUnwrap(app.buttons.matching(NSPredicate(format: "label == %@", "下载"))
+        try XCTUnwrap(app.buttons.matching(NSPredicate(format: "label == %@", "ダウンロード"))
             .allElementsBoundByIndex.first(where: \.isHittable)).tap()
         let actions = app.buttons["downloads-actions"].firstMatch
         XCTAssertTrue(actions.waitForExistence(timeout: 6))
         func showPicker() {
             actions.tap()
-            let importFolder = app.buttons["导入图片文件夹"].firstMatch
+            let importFolder = app.buttons["画像フォルダーをインポート"].firstMatch
             XCTAssertTrue(importFolder.waitForExistence(timeout: 5))
             importFolder.tap()
             XCTAssertTrue(app.searchFields.firstMatch.waitForExistence(timeout: 8))
@@ -144,7 +144,7 @@ final class OfflineImageArchiveUITests: XCTestCase {
         if open.waitForExistence(timeout: 3) { open.tap() }
 
         let gallery = app.buttons.matching(NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@",
-                                                        name, "已完成")).firstMatch
+                                                        name, "完了")).firstMatch
         if !gallery.waitForExistence(timeout: 8) {
             let hierarchy = XCTAttachment(string: app.debugDescription)
             hierarchy.name = "Native folder selection outcome"
@@ -157,7 +157,7 @@ final class OfflineImageArchiveUITests: XCTestCase {
         let pages = app.buttons["reader-pages"]
         XCTAssertTrue(pages.waitForExistence(timeout: 8))
         pages.tap()
-        XCTAssertTrue(app.navigationBars["跳转到第 1 页"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["1 ページ目へジャンプ"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["2"].exists)
     }
 

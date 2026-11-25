@@ -15,9 +15,9 @@
 		<true/>
 	</dict>
 	<key>NSFaceIDUsageDescription</key>
-	<string>使用 Face ID 解锁应用</string>
+	<string>Face ID でアプリのロックを解除します</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>保存阅读器里的图片到相册</string>
+	<string>リーダーの画像を写真に保存します</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>UIBackgroundModes</key>

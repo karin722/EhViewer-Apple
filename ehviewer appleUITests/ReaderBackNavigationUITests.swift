@@ -107,14 +107,14 @@ final class ReaderBackNavigationUITests: XCTestCase {
         XCTAssertTrue(row.exists && visible.contains(row.frame.midY))
         let rowY = row.frame.midY
         row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).press(forDuration: 0.8)
-        let read = app.buttons["直接阅读"].firstMatch
+        let read = app.buttons["すぐに読む"].firstMatch
         XCTAssertTrue(read.waitForExistence(timeout: 6))
         read.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.5)).tap()
         let close = app.buttons["reader-close"]
         XCTAssertTrue(waitForHit(close))
         edgeDrag(in: app, to: 0.78, velocity: .fast, hold: 0)
         XCTAssertTrue(close.waitForNonExistence(timeout: 6))
-        XCTAssertTrue(waitForHit(app.buttons["我的"].firstMatch))
+        XCTAssertTrue(waitForHit(app.buttons["マイページ"].firstMatch))
         XCTAssertTrue(row.waitForExistence(timeout: 5))
         XCTAssertEqual(row.frame.midY, rowY, accuracy: 4)
         XCTAssertFalse(app.buttons["gallery-detail-back"].exists, "Direct entry goes straight back to the list.")
@@ -133,11 +133,11 @@ final class ReaderBackNavigationUITests: XCTestCase {
         resume.coordinate(withNormalizedOffset: CGVector(dx: 0.40, dy: 0.50)).tap()
         let close = app.buttons["reader-close"]
         XCTAssertTrue(waitForHit(close))
-        XCTAssertEqual(close.label, "返回", "The screen reader must not announce a destination that was never opened.")
+        XCTAssertEqual(close.label, "戻る", "The screen reader must not announce a destination that was never opened.")
         close.tap()
         XCTAssertTrue(close.waitForNonExistence(timeout: 6))
         XCTAssertTrue(resume.waitForExistence(timeout: 8))
-        XCTAssertTrue(waitForHit(app.buttons["我的"].firstMatch))
+        XCTAssertTrue(waitForHit(app.buttons["マイページ"].firstMatch))
         XCTAssertTrue(resume.label.contains("Previous visit fixture") || resume.staticTexts["Previous visit fixture"].exists)
         XCTAssertFalse(app.buttons["gallery-detail-back"].exists)
     }
@@ -172,7 +172,7 @@ final class ReaderBackNavigationUITests: XCTestCase {
         }
         XCTAssertTrue(popped, "The detail Back tap should return to its list.")
         XCTAssertTrue(app.staticTexts["Synthetic Gallery"].firstMatch.waitForExistence(timeout: 5))
-        XCTAssertTrue(waitForHit(app.buttons["我的"].firstMatch))
+        XCTAssertTrue(waitForHit(app.buttons["マイページ"].firstMatch))
     }
 
     @MainActor private func launch(scrolled: Bool = false, vertical: Bool = false) throws -> XCUIApplication {

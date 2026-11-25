@@ -211,20 +211,20 @@ struct AdvancedSearchView: View {
                 .padding()
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("搜索选项")
+            .navigationTitle("検索オプション")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("キャンセル") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     if let onApply {
-                        Button("应用") { onApply(state); dismiss() }
+                        Button("適用") { onApply(state); dismiss() }
                             .disabled(!allowsApply)
                     } else {
-                        Button("完成") { dismiss() }
+                        Button("完了") { dismiss() }
                     }
                 }
                 #if os(iOS)
@@ -232,7 +232,7 @@ struct AdvancedSearchView: View {
                     Button(role: .destructive) {
                         state.reset()
                     } label: {
-                        Label("重置所有选项", systemImage: "arrow.counterclockwise")
+                        Label("すべてのオプションをリセット", systemImage: "arrow.counterclockwise")
                     }
                     .tint(.red)
                 }
@@ -241,7 +241,7 @@ struct AdvancedSearchView: View {
                     Button(role: .destructive) {
                         state.reset()
                     } label: {
-                        Label("重置所有选项", systemImage: "arrow.counterclockwise")
+                        Label("すべてのオプションをリセット", systemImage: "arrow.counterclockwise")
                     }
                     .tint(.red)
                 }

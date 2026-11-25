@@ -63,7 +63,7 @@ struct AndroidUpstreamAlignmentTests {
 
     @Test func torrentParserReadsEveryEntry() {
         let result = TorrentParser.parse(Self.torrentHTML)
-        #expect(result.count == 2, "两个 <form> 块应各解析出一条种子")
+        #expect(result.count == 2, "2 つの <form> ブロックからそれぞれトレントが 1 件ずつ解析されるはず")
     }
 
     /// 上传时间必须和所在的 <form> 块配对 —— 这正是上游按 form 切块的原因
@@ -87,7 +87,7 @@ struct AndroidUpstreamAlignmentTests {
         let name = result.first?.name ?? ""
         #expect(!name.contains("\n"))
         #expect(!name.contains("  "))
-        #expect(name.contains("Can't Stop"), "&#039; 应被解码为 '")
+        #expect(name.contains("Can't Stop"), "&#039; は ' にデコードされるはず")
         #expect(name.hasSuffix(".zip"))
     }
 

@@ -30,7 +30,7 @@ struct AndroidLibraryImportControl: View {
             showsFilePicker = true
         } label: {
             HStack {
-                Text("从安卓导入收藏与历史")
+                Text("Android からお気に入りと履歴をインポート")
                 if isWorking { ProgressView().controlSize(.small) }
             }
         }
@@ -52,27 +52,27 @@ struct AndroidLibraryImportControl: View {
             NavigationStack {
                 Form {
                     Section {
-                        Text("只导入安卓端本地收藏和阅读历史，不覆盖 Apple 端已有记录。不导入书签、下载文件或账号资料。")
+                        Text("Android 版のローカルお気に入りと閲覧履歴のみをインポートし、Apple 版の既存レコードは上書きしません。ブックマーク、ダウンロードファイル、アカウント情報はインポートしません。")
                     }
-                    Section("导入预览") {
-                        LabeledContent("本地收藏", value: Self.describe(candidate.summary.favorites))
-                        LabeledContent("阅读历史", value: Self.describe(candidate.summary.history))
+                    Section("インポートのプレビュー") {
+                        LabeledContent("ローカルお気に入り", value: Self.describe(candidate.summary.favorites))
+                        LabeledContent("閲覧履歴", value: Self.describe(candidate.summary.history))
                         if candidate.summary.history.overHistoryLimit > 0 {
-                            Text("有 \(candidate.summary.history.overHistoryLimit) 条历史超出当前上限（\(candidate.historyLimit) 条），本次不会导入。可先在高级设置调高上限。")
+                            Text("\(candidate.summary.history.overHistoryLimit) 件の履歴が現在の上限（\(candidate.historyLimit) 件）を超えているため、今回はインポートされません。先に詳細設定で上限を引き上げることができます。")
                                 .foregroundStyle(.secondary)
                         }
-                        Text("导入不会清理已有历史；之后正常阅读仍遵循历史记录上限。")
+                        Text("インポートで既存の履歴は削除されません。インポート後の通常の閲覧も履歴の上限に従います。")
                             .foregroundStyle(.secondary)
                     }
                 }
-                .navigationTitle("导入安卓资料")
+                .navigationTitle("Android のデータをインポート")
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("取消") { preview = nil }
+                        Button("キャンセル") { preview = nil }
                             .disabled(isWorking)
                     }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("导入") { apply(candidate) }
+                        Button("インポート") { apply(candidate) }
                             .disabled(isWorking || candidate.summary.importableCount == 0)
                     }
                 }
@@ -80,14 +80,14 @@ struct AndroidLibraryImportControl: View {
             }
         }
         .alert(outcomeTitle, isPresented: $showsOutcome) {
-            Button("好", role: .cancel) { outcomeTitle = "" }
+            Button("OK", role: .cancel) { outcomeTitle = "" }
         } message: {
             Text(outcomeBody)
         }
     }
 
     private static func describe(_ counts: AndroidLibraryImportCounts) -> String {
-        "新增 \(counts.new) · 已存在 \(counts.existing) · 无效 \(counts.invalid)"
+        "新規 \(counts.new) · 既存 \(counts.existing) · 無効 \(counts.invalid)"
     }
 
     private func preparePreview(_ url: URL) {
@@ -130,20 +130,20 @@ struct AndroidLibraryImportControl: View {
                 if summary.history.new > 0 {
                     NotificationCenter.default.post(name: .galleryHistoryChanged, object: nil)
                 }
-                outcomeTitle = summary.importableCount > 0 ? "导入完成" : "没有新增记录"
-                outcomeBody = "本地收藏：\(Self.describe(summary.favorites))\n阅读历史：\(Self.describe(summary.history))"
+                outcomeTitle = summary.importableCount > 0 ? "インポート完了" : "新しいレコードはありません"
+                outcomeBody = "ローカルお気に入り：\(Self.describe(summary.favorites))\n閲覧履歴：\(Self.describe(summary.history))"
                 if summary.history.overHistoryLimit > 0 {
-                    outcomeBody += "\n另有 \(summary.history.overHistoryLimit) 条历史超出上限，未导入。"
+                    outcomeBody += "\nほかに \(summary.history.overHistoryLimit) 件の履歴が上限を超えたため、インポートされませんでした。"
                 }
             } catch {
-                outcomeTitle = "未能导入"
+                outcomeTitle = "インポートできませんでした"
                 outcomeBody = AndroidLibraryImportError.destinationUnavailable.localizedDescription
             }
         }
     }
 
     private func showFailure(_ error: AndroidLibraryImportError) {
-        outcomeTitle = "未能导入"
+        outcomeTitle = "インポートできませんでした"
         outcomeBody = error.localizedDescription
         showsOutcome = true
     }

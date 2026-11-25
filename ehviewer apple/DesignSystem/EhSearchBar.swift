@@ -31,7 +31,7 @@ struct EhSearchBar: View {
     /// 已确定的标签，显示为可整体删除的 token
     @Binding var tokens: [String]
 
-    var placeholder: String = "搜索标签或标题"
+    var placeholder: String = "タグまたはタイトルを検索"
     var showsCancelButton: Bool = true
     var showsClearForEmpty: Bool = false
 
@@ -90,7 +90,7 @@ struct EhSearchBar: View {
                     }
                     .buttonStyle(.plain)
                 } else if showsClearForEmpty {
-                    Button("清除搜索", systemImage: "xmark.circle.fill") { onClear?() }
+                    Button("検索をクリア", systemImage: "xmark.circle.fill") { onClear?() }
                         .labelStyle(.iconOnly)
                         .font(.system(size: 15))
                         .foregroundStyle(EhColor.tertiaryLabel)
@@ -122,7 +122,7 @@ struct EhSearchBar: View {
             }
 
             if showsCancelButton && isFocused {
-                Button("取消") {
+                Button("キャンセル") {
                     isFocused = false
                     if let onCancel { onCancel() }
                     else { text = "" }
@@ -342,6 +342,6 @@ struct EhSearchToggleButton: View {
         } label: {
             Image(systemName: isActive ? "magnifyingglass.circle.fill" : "magnifyingglass")
         }
-        .accessibilityLabel(isActive ? "关闭搜索" : "搜索")
+        .accessibilityLabel(isActive ? "検索を閉じる" : "検索")
     }
 }

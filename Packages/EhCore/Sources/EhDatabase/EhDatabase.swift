@@ -10,7 +10,7 @@ public final class EhDatabase: Sendable {
         do {
             return try EhDatabase()
         } catch {
-            print("[EhDatabase] 初始化失败: \(error)")
+            print("[EhDatabase] 初期化失敗: \(error)")
             let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
             let dbPath = docsDir.appendingPathComponent("eh.sqlite").path
 
@@ -22,10 +22,10 @@ public final class EhDatabase: Sendable {
             // 收藏、过滤器记录重建一个空库——一个能靠改代码修好的
             // bug，代价变成了不可逆的数据丢失。
             guard EhDatabase.isCorruptionError(error) else {
-                print("[EhDatabase] ⚠️ 不是文件损坏（很可能是迁移或代码问题），"
-                      + "不动用户数据，本次运行降级为内存数据库")
+                print("[EhDatabase] ⚠️ ファイル破損ではありません（移行またはコードの問題の可能性が高い）、"
+                      + "ユーザーデータには触れず、今回の実行はインメモリデータベースにフォールバックします")
                 if let memory = try? EhDatabase(inMemory: true) { return memory }
-                fatalError("[EhDatabase] 内存数据库初始化失败，这是代码 bug: \(error)")
+                fatalError("[EhDatabase] インメモリデータベースの初期化に失敗しました。これはコードのバグです: \(error)")
             }
 
             // 备份损坏的数据库（保留最近一次，用户可自行恢复）
@@ -38,17 +38,17 @@ public final class EhDatabase: Sendable {
             } catch {
                 // 备份失败（磁盘满、权限）此前是 try? 吞掉的，然后照删不误。
                 // 备份没成就不能删——留着损坏的文件至少还有抢救的余地。
-                print("[EhDatabase] ⚠️ 备份失败: \(error)，不删除原库，降级为内存数据库")
+                print("[EhDatabase] ⚠️ バックアップ失敗: \(error)、元のデータベースは削除せず、インメモリデータベースにフォールバックします")
                 backedUp = false
             }
             guard backedUp else {
                 if let memory = try? EhDatabase(inMemory: true) { return memory }
-                fatalError("[EhDatabase] 内存数据库初始化失败，这是代码 bug: \(error)")
+                fatalError("[EhDatabase] インメモリデータベースの初期化に失敗しました。これはコードのバグです: \(error)")
             }
             // 同时备份 WAL 和 SHM 文件
             try? FileManager.default.copyItem(atPath: dbPath + "-wal", toPath: backupPath + "-wal")
             try? FileManager.default.copyItem(atPath: dbPath + "-shm", toPath: backupPath + "-shm")
-            print("[EhDatabase] 已备份损坏数据库至 eh.sqlite.corrupted_backup")
+            print("[EhDatabase] 破損したデータベースを eh.sqlite.corrupted_backup にバックアップしました")
 
             // 删除原数据库及附属文件
             try? FileManager.default.removeItem(atPath: dbPath)
@@ -59,12 +59,12 @@ public final class EhDatabase: Sendable {
                 return try EhDatabase()
             } catch {
                 // 二次失败也不 fatalError（可能磁盘满），返回内存数据库作为降级模式
-                print("[EhDatabase] ⚠️ 重建仍失败: \(error)，使用内存数据库降级运行")
+                print("[EhDatabase] ⚠️ 再構築も失敗: \(error)、インメモリデータベースで動作します")
                 do {
                     return try EhDatabase(inMemory: true)
                 } catch {
                     // 内存数据库也失败的唯一可能是 migrate 代码本身有 bug
-                    fatalError("[EhDatabase] 内存数据库初始化失败，这是代码 bug: \(error)")
+                    fatalError("[EhDatabase] インメモリデータベースの初期化に失敗しました。これはコードのバグです: \(error)")
                 }
             }
         }
@@ -694,7 +694,7 @@ public final class EhDatabase: Sendable {
             }
 
             guard integrityOk else {
-                print("[EhDatabase] ⚠️ quick_check 失败，数据库可能损坏，跳过 VACUUM")
+                print("[EhDatabase] ⚠️ quick_check 失敗、データベースが破損している可能性があるため VACUUM をスキップします")
                 return
             }
 

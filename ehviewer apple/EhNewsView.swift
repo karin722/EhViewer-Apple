@@ -22,27 +22,27 @@ struct EhNewsView: View {
     var body: some View {
         Group {
             if isLoading {
-                ProgressView("读取公告…")
+                ProgressView("お知らせを読み込み中…")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let errorMessage {
                 ContentUnavailableView {
-                    Label("读不到公告", systemImage: "newspaper")
+                    Label("お知らせを読み込めません", systemImage: "newspaper")
                 } description: {
                     Text(errorMessage)
                 } actions: {
-                    Button("重试") { Task { await load() } }
+                    Button("再試行") { Task { await load() } }
                 }
             } else if let html, !html.isEmpty {
                 NewsWebView(html: html)
             } else {
                 ContentUnavailableView(
-                    "暂无公告",
+                    "お知らせはありません",
                     systemImage: "newspaper",
-                    description: Text("E-Hentai 目前没有发布新的站内公告。")
+                    description: Text("E-Hentai には現在、新しいサイト内のお知らせはありません。")
                 )
             }
         }
-        .navigationTitle("站内公告")
+        .navigationTitle("サイトのお知らせ")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif

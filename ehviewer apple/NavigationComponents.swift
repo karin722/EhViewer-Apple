@@ -56,7 +56,7 @@ struct AppBackButton: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("返回")
+        .accessibilityLabel("戻る")
     }
 }
 

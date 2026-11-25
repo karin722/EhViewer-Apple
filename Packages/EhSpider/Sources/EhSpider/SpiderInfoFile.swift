@@ -56,7 +56,7 @@ public struct SpiderInfoFile: Sendable {
 
         if let attrs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
            let size = attrs[.size] as? Int, size > maxFileSize {
-            print("[SpiderInfoFile] 文件异常大 (\(size) bytes)，跳过: \(fileURL.lastPathComponent)")
+            print("[SpiderInfoFile] ファイルサイズが異常 (\(size) bytes)、スキップ: \(fileURL.lastPathComponent)")
             return nil
         }
 

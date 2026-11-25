@@ -196,7 +196,7 @@ extension BackgroundDownloadManager: URLSessionDownloadDelegate {
             // 存储 resume data，下次可以恢复下载
             let key = "resumeData_\(task.taskIdentifier)"
             UserDefaults.standard.set(resumeData, forKey: key)
-            debugLog("[BackgroundDownload] 已保存 resume data (\(resumeData.count) bytes)，可断点续传")
+            debugLog("[BackgroundDownload] resume data を保存しました (\(resumeData.count) bytes)。レジュームできます")
         }
 
         taskInfo.completion(.failure(error))

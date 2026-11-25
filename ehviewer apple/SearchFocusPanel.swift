@@ -42,12 +42,12 @@ struct SearchFocusPanel: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 if let onSearchFullSite {
-                    entryRow(symbol: "globe", title: "搜全站", subtitle: "不限于订阅",
+                    entryRow(symbol: "globe", title: "全体を検索", subtitle: "購読に限定しない",
                              action: onSearchFullSite)
-                        .accessibilityIdentifier("浏览-搜全站")
+                        .accessibilityIdentifier("ブラウズ - 全体を検索")
                 }
                 if !suggestions.isEmpty {
-                    sectionHeader("标签建议", trailing: "EhTagDatabase")
+                    sectionHeader("タグの候補", trailing: "EhTagDatabase")
                     ForEach(suggestions) { item in
                         suggestionRow(item)
                     }
@@ -57,7 +57,7 @@ struct SearchFocusPanel: View {
                 // 设计稿这一屏的标题就是「聚焦：历史 + 标签建议」，
                 // 而且用户常常是打了一半才想起「上次搜的那条是什么」
                 if !history.isEmpty {
-                    sectionHeader("最近搜索", action: ("清除", onClearHistory))
+                    sectionHeader("最近の検索", action: ("クリア", onClearHistory))
                     // 历史用胶囊平铺而不是逐行列出：它们通常很短，
                     // 一行一条会把面板撑得很长，而用户是在里面找一个眼熟的
                     FlowLayout(spacing: 8) {
@@ -80,25 +80,25 @@ struct SearchFocusPanel: View {
                     .padding(.bottom, 6)
                 }
 
-                sectionHeader("更多方式")
+                sectionHeader("その他の方法")
                 entryRow(
                     symbol: "bookmark",
-                    title: "快速搜索",
-                    subtitle: "保存好的搜索条件，一点即用",
+                    title: "クイック検索",
+                    subtitle: "保存した検索条件をワンタップで使えます",
                     action: onOpenQuickSearch
                 )
                 entryRow(
                     symbol: "tag",
-                    title: "标签选择器",
-                    subtitle: "按命名空间浏览，自动拼装搜索语法",
+                    title: "タグセレクター",
+                    subtitle: "名前空間ごとに閲覧し、検索構文を自動で組み立てます",
                     action: onOpenTagSelector
                 )
                 entryRow(
                     symbol: isAdvancedActive
                         ? "line.3.horizontal.decrease.circle.fill"
                         : "line.3.horizontal.decrease.circle",
-                    title: "高级搜索",
-                    subtitle: isAdvancedActive ? "已设置筛选条件" : "分类、评分、页数范围",
+                    title: "詳細検索",
+                    subtitle: isAdvancedActive ? "絞り込み条件が設定されています" : "カテゴリ、評価、ページ数の範囲",
                     tint: isAdvancedActive ? EhColor.accent : EhColor.secondaryLabel,
                     action: onOpenAdvancedSearch
                 )

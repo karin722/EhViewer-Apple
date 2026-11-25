@@ -85,7 +85,7 @@ struct GalleryDetailView: View {
                 Divider()
 
                 if vm.isLoading {
-                    ProgressView("加载详情...")
+                    ProgressView("詳細を読み込み中...")
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 40)
                 } else if let error = vm.errorMessage {
@@ -214,25 +214,25 @@ struct GalleryDetailView: View {
             .presentationDetents([.height(200)])
         }
         .confirmationDialog(
-            "当前是移动网络",
+            "現在モバイル通信中です",
             isPresented: $showCellularWarning,
             titleVisibility: .visible
         ) {
-            Button("仍然下载") {
+            Button("それでもダウンロード") {
                 Haptics.impact()
                 Task { await vm.startDownload(gallery: gallery) }
             }
-            Button("取消", role: .cancel) {}
+            Button("キャンセル", role: .cancel) {}
         } message: {
-            Text("这本共 \(vm.detail?.info.pages ?? gallery.pages) 页，下载会消耗蜂窝数据。可以在设置里关掉这个提醒。")
+            Text("このギャラリーは全 \(vm.detail?.info.pages ?? gallery.pages) ページで、ダウンロードにはモバイルデータ通信を使用します。この通知は設定でオフにできます。")
         }
         .sheet(isPresented: $showResourceSheet) { resourceSheet }
-        .alert("移除离线文件？", isPresented: Binding(
+        .alert("オフラインファイルを削除しますか？", isPresented: Binding(
             get: { removalPrompt != nil },
             set: { if !$0 { removalPrompt = nil } }
         ), presenting: removalPrompt) { prompt in
-            Button("取消", role: .cancel) {}
-            Button("移除下载文件", role: .destructive) {
+            Button("キャンセル", role: .cancel) {}
+            Button("ダウンロードファイルを削除", role: .destructive) {
                 Task {
                     await DownloadManager.shared.deleteFinishedDownloads(
                         matching: [prompt.gid: prompt.identity], in: prompt.root
@@ -241,7 +241,7 @@ struct GalleryDetailView: View {
                 }
             }
         } message: { _ in
-            Text("只移除这本画廊的离线下载，不会取消收藏或清除阅读进度。")
+            Text("このギャラリーのオフラインダウンロードのみを削除します。お気に入りの解除や閲覧位置の消去は行いません。")
         }
         .sheet(isPresented: $showArchive) {
             if let archiveUrl = vm.detail?.archiveUrl, !archiveUrl.isEmpty {
@@ -261,13 +261,13 @@ struct GalleryDetailView: View {
             Button {
                 Task { await vm.loadDetail(gid: gallery.gid, token: gallery.token) }
             } label: {
-                Label("刷新", systemImage: "arrow.clockwise")
+                Label("更新", systemImage: "arrow.clockwise")
             }
 
             Button {
                 GalleryActionService.shared.copyLink(gid: gallery.gid, token: gallery.token)
             } label: {
-                Label("复制链接", systemImage: "doc.on.doc")
+                Label("リンクをコピー", systemImage: "doc.on.doc")
             }
 
             // 用浏览器打开：Cookie 失效、遇到验证码、或者想看网页版的
@@ -281,7 +281,7 @@ struct GalleryDetailView: View {
                 if let u = URL(string: url) { NSWorkspace.shared.open(u) }
                 #endif
             } label: {
-                Label("在浏览器中打开", systemImage: "safari")
+                Label("ブラウザで開く", systemImage: "safari")
             }
         } label: {
             Image(systemName: "ellipsis")
@@ -343,7 +343,7 @@ struct GalleryDetailView: View {
                 .disabled(!vm.canRate)
 
                 HStack(spacing: EhSpacing.row) {
-                    Text("\(gallery.pages) 页")
+                    Text("\(gallery.pages) ページ")
                     if let size = vm.size { Text(size) }
                     if let lang = vm.language { Text(lang) }
                 }
@@ -356,7 +356,7 @@ struct GalleryDetailView: View {
 
     private var ratingSuffix: String {
         if let count = vm.detail?.ratingCount, count > 0 {
-            return "/ 5 · \(count) 评分"
+            return "/ 5 · \(count) 件の評価"
         }
         return "/ 5"
     }
@@ -393,8 +393,8 @@ struct GalleryDetailView: View {
                 if hasTorrent {
                     resourceEntry(
                         symbol: "arrow.down.doc",
-                        title: "种子",
-                        subtitle: "\(torrentCount) 个 · 不消耗配额",
+                        title: "トレント",
+                        subtitle: "\(torrentCount) 件 · 上限を消費しません",
                         tint: EhColor.success
                     ) {
                         showResourceSheet = false
@@ -404,8 +404,8 @@ struct GalleryDetailView: View {
                 if hasArchive {
                     resourceEntry(
                         symbol: "archivebox",
-                        title: "归档 / H@H",
-                        subtitle: "消耗图片配额",
+                        title: "アーカイブ / H@H",
+                        subtitle: "画像の閲覧上限を消費します",
                         tint: EhColor.warning
                     ) {
                         showResourceSheet = false
@@ -413,7 +413,7 @@ struct GalleryDetailView: View {
                     }
                 }
 
-                Text("种子由其他用户做种，不消耗你的图片配额，但可用性取决于是否有人在线；归档与 H@H 派发由官方提供，稳定但会按图片数量扣除配额。")
+                Text("トレントは他のユーザーがシードしているため画像の閲覧上限を消費しませんが、利用できるかはオンラインのユーザーがいるかによります。アーカイブと H@H は公式提供で安定していますが、画像枚数に応じて上限を消費します。")
                     .font(EhFont.caption)
                     .foregroundStyle(EhColor.secondaryLabel)
                     .fixedSize(horizontal: false, vertical: true)
@@ -423,13 +423,13 @@ struct GalleryDetailView: View {
             .padding(EhSpacing.page)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(EhColor.sheetBackground)
-            .navigationTitle("资源下载")
+            .navigationTitle("リソースのダウンロード")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭") { showResourceSheet = false }
+                    Button("閉じる") { showResourceSheet = false }
                 }
             }
         }
@@ -468,7 +468,7 @@ struct GalleryDetailView: View {
     private var readButtonTitle: String {
         // 有进度就是「继续阅读」，不必把页码也塞进按钮——
         // 页码在列表行的「读至 N」上已经有了，按钮上再写一遍只是把文案变长。
-        vm.hasReadingProgress ? "继续阅读" : "阅读"
+        vm.hasReadingProgress ? "続きを読む" : "読む"
     }
 
     private var hasAnyResource: Bool {
@@ -564,10 +564,10 @@ struct GalleryDetailView: View {
                         pages: vm.detail?.info.pages ?? gallery.pages,
                         previewSet: vm.detail?.previewSet, initialPage: nil
                     )
-                } label: { Label("离线阅读", systemImage: "book") }
+                } label: { Label("オフラインで読む", systemImage: "book") }
                 Button(role: .destructive) {
                     Task { await prepareDownloadedFileRemoval() }
-                } label: { Label("移除离线文件…", systemImage: "trash") }
+                } label: { Label("オフラインファイルを削除…", systemImage: "trash") }
             } label: {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 18, weight: .semibold))
@@ -575,7 +575,7 @@ struct GalleryDetailView: View {
                     .background(EhColor.fill, in: RoundedRectangle(cornerRadius: 12))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("管理下载，已下载")
+            .accessibilityLabel("ダウンロードを管理、ダウンロード済み")
             .accessibilityIdentifier("gallery-detail-download")
         } else {
             EhSquareIconButton(symbol: action.detailSymbol) {
@@ -635,7 +635,7 @@ struct GalleryDetailView: View {
         let tagDb = EhTagDatabase.shared
 
         return VStack(alignment: .leading, spacing: 8) {
-            Text("标签")
+            Text("ラベル")
                 .font(.headline)
                 .padding(.horizontal)
                 .padding(.top, 12)
@@ -666,7 +666,7 @@ struct GalleryDetailView: View {
             
             // 调试信息：提示用户下载标签数据库
             if showTranslations && !tagDb.isLoaded {
-                Text("请在设置中更新标签翻译数据库")
+                Text("設定でタグ翻訳データベースを更新してください")
                     .font(.caption)
                     .foregroundStyle(.orange)
                     .padding(.horizontal)
@@ -704,12 +704,12 @@ struct GalleryDetailView: View {
             Button {
                 Task { await subscribeTag(fullTag) }
             } label: {
-                Label("订阅这个标签", systemImage: "bell")
+                Label("このタグを購読", systemImage: "bell")
             }
             Button(role: .destructive) {
                 blockTag(fullTag)
             } label: {
-                Label("屏蔽这个标签", systemImage: "eye.slash")
+                Label("このタグをブロック", systemImage: "eye.slash")
             }
             Divider()
             Button {
@@ -719,9 +719,9 @@ struct GalleryDetailView: View {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(fullTag, forType: .string)
                 #endif
-                EhToast.success("已复制标签")
+                EhToast.success("タグをコピーしました")
             } label: {
-                Label("复制标签", systemImage: "doc.on.doc")
+                Label("タグをコピー", systemImage: "doc.on.doc")
             }
         }
     }
@@ -737,11 +737,11 @@ struct GalleryDetailView: View {
             _ = try await EhAPI.shared.addTag(
                 url: EhURL.myTagsUrl(for: AppSettings.shared.gallerySite), tag: tag
             )
-            EhToast.success("已订阅「\(name)」")
+            EhToast.success("「\(name)」を購読しました")
         } catch {
             // 只发触感 + print 等于没反馈：离线时用户完全不知道订阅没成
-            EhToast.failure("订阅标签失败")
-            debugLog("[GalleryDetail] 订阅标签失败: \(error)")
+            EhToast.failure("タグの購読に失敗しました")
+            debugLog("[GalleryDetail] タグの購読に失敗: \(error)")
         }
     }
 
@@ -753,10 +753,10 @@ struct GalleryDetailView: View {
             try EhDatabase.shared.insertFilter(
                 FilterRecord(mode: 2, text: name, enable: true)
             )
-            EhToast.success("已屏蔽「\(name)」")
+            EhToast.success("「\(name)」をブロックしました")
         } catch {
-            EhToast.failure("屏蔽标签失败")
-            debugLog("[GalleryDetail] 屏蔽标签失败: \(error)")
+            EhToast.failure("タグのブロックに失敗しました")
+            debugLog("[GalleryDetail] タグのブロックに失敗: \(error)")
         }
     }
 
@@ -786,7 +786,7 @@ struct GalleryDetailView: View {
         return VStack(alignment: .leading, spacing: 8) {
             Divider()
             HStack {
-                Text("预览")
+                Text("プレビュー")
                     .font(.headline)
                 Spacer()
                 // 查看全部预览按钮
@@ -800,7 +800,7 @@ struct GalleryDetailView: View {
                             initialPreviewSet: previewSet
                         )
                     } label: {
-                        Text("查看全部 (\(vm.detail?.info.pages ?? gallery.pages)张)")
+                        Text("すべて表示 (\(vm.detail?.info.pages ?? gallery.pages)枚)")
                             .font(.subheadline)
                     }
                 }
@@ -832,7 +832,7 @@ struct GalleryDetailView: View {
                                 )
                             }
                             .accessibilityAddTraits(.isButton)
-                            .accessibilityLabel("第 \(preview.position + 1) 页预览")
+                            .accessibilityLabel("\(preview.position + 1) ページ目のプレビュー")
                             
                             // 页码标签 (对齐 Android: position + 1)
                             Text("\(preview.position + 1)")
@@ -878,7 +878,7 @@ struct GalleryDetailView: View {
                         initialPreviewSet: previewSet
                     )
                 } label: {
-                    Text("查看全部预览 (\(vm.detail?.info.pages ?? gallery.pages)张)")
+                    Text("すべてのプレビューを表示 (\(vm.detail?.info.pages ?? gallery.pages)枚)")
                         .font(.subheadline)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
@@ -901,7 +901,7 @@ struct GalleryDetailView: View {
         return VStack(alignment: .leading, spacing: 8) {
             Divider()
             HStack {
-                Text("评论")
+                Text("コメント")
                     .font(.headline)
                 Spacer()
                 // 超过2条时显示"更多评论"
@@ -916,7 +916,7 @@ struct GalleryDetailView: View {
                             hasMore: vm.hasMoreComments
                         )
                     } label: {
-                        Text("更多评论")
+                        Text("さらにコメントを表示")
                             .font(.subheadline)
                     }
                 }
@@ -925,7 +925,7 @@ struct GalleryDetailView: View {
             .padding(.top, 8)
 
             if displayComments.isEmpty {
-                Text("暂无评论")
+                Text("コメントはありません")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal)
@@ -965,8 +965,8 @@ struct GalleryDetailView: View {
     /// （largeTitle 图标 + .bordered 按钮），和列表页的失败界面长得不一样。
     private func errorSection(_ message: String) -> some View {
         EhStateView(
-            kind: .error(title: "加载失败", message: message),
-            primaryAction: ("重试", {
+            kind: .error(title: "読み込みに失敗しました", message: message),
+            primaryAction: ("再試行", {
                 Task { await vm.loadDetail(gid: gallery.gid, token: gallery.token) }
             })
         )
@@ -1307,10 +1307,10 @@ class GalleryDetailViewModel {
             )
             // 如果返回有效评分则使用，否则使用用户选择的评分
             self.displayRating = result.rating > 0 ? Float(result.rating) : rating
-            EhToast.success("已评分")
+            EhToast.success("評価しました")
         } catch {
             // 此前只 debugLog：打完分请求失败，界面纹丝不动，用户以为打上了
-            EhToast.failure("评分失败")
+            EhToast.failure("評価に失敗しました")
             debugLog("Rate gallery failed: \(error)")
         }
     }
@@ -1397,7 +1397,7 @@ struct RatingSheet: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Text("评分")
+            Text("評価")
                 .font(.headline)
 
             HStack(spacing: 8) {
@@ -1417,12 +1417,12 @@ struct RatingSheet: View {
                 .monospacedDigit()
 
             HStack(spacing: 16) {
-                Button("取消") {
+                Button("キャンセル") {
                     dismiss()
                 }
                 .buttonStyle(.bordered)
 
-                Button("确定") {
+                Button("OK") {
                     Haptics.success()
                     onRate(selectedRating)
                     dismiss()
@@ -1554,7 +1554,7 @@ struct FavoriteSlotPicker: View {
                         HStack {
                             Image(systemName: "internaldrive")
                                 .foregroundStyle(.secondary)
-                            Text("本地收藏")
+                            Text("ローカルお気に入り")
                                 .foregroundStyle(.primary)
                             Spacer()
                         }
@@ -1584,20 +1584,20 @@ struct FavoriteSlotPicker: View {
 
                 if purpose.allowsRemember {
                     Section {
-                        Toggle("记住这个收藏夹，下次不再询问", isOn: $remember)
+                        Toggle("このお気に入りフォルダーを記憶し、次回から確認しない", isOn: $remember)
                             .tint(EhColor.accentFill)
                     } footer: {
-                        Text("之后收藏会直接放进所选收藏夹。可在「我的」页的设置区打开「收藏」，改回「每次询问」。")
+                        Text("今後はお気に入りが選択したフォルダーに直接追加されます。「マイページ」の設定エリアで「お気に入り」を開き、「毎回確認」に戻せます。")
                     }
                 }
             }
-            .navigationTitle("选择收藏夹")
+            .navigationTitle("お気に入りフォルダーを選択")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { finish(nil) }
+                    Button("キャンセル") { finish(nil) }
                 }
             }
         }
@@ -1616,12 +1616,12 @@ struct FavoriteSlotPicker: View {
 private extension GalleryDetailDownloadAction {
     var detailLabel: String {
         switch self {
-        case .enqueue: "下载"
-        case .resume: "继续下载"
-        case .retry: "重试下载"
-        case .queued: "等待下载"
-        case .downloading: "下载中"
-        case .openReader: "已下载，打开阅读器"
+        case .enqueue: "ダウンロード"
+        case .resume: "ダウンロードを再開"
+        case .retry: "ダウンロードを再試行"
+        case .queued: "ダウンロード待ち"
+        case .downloading: "ダウンロード中"
+        case .openReader: "ダウンロード済み、リーダーを開く"
         }
     }
 

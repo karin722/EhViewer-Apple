@@ -34,8 +34,8 @@ struct TagSelectorView: View {
                 if namespaces.isEmpty {
                     EhStateView(kind: .empty(
                         symbol: "tag.slash",
-                        title: "标签数据库还没下载",
-                        message: "到「设置 → 更新标签翻译数据库」下载后即可使用。"
+                        title: "タグデータベースがまだダウンロードされていません",
+                        message: "「設定 → タグ翻訳データベースを更新」でダウンロードすると使えるようになります。"
                     ))
                 } else {
                     namespacePicker
@@ -45,7 +45,7 @@ struct TagSelectorView: View {
                     EhSearchBar(
                         text: $filter,
                         tokens: $searchTokens,
-                        placeholder: "在本组内筛选",
+                        placeholder: "このグループ内で絞り込み",
                         showsCancelButton: false,
                         isFocused: $isFilterFocused
                     )
@@ -53,13 +53,13 @@ struct TagSelectorView: View {
                     tagGrid
                 }
             }
-            .navigationTitle("选择标签")
+            .navigationTitle("タグを選択")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("キャンセル") { dismiss() }
                 }
             }
             // 确认动作放底部常驻条而不是工具栏：勾选是在页面中下部完成的，
@@ -67,14 +67,14 @@ struct TagSelectorView: View {
             .safeAreaInset(edge: .bottom) {
                 if !picked.isEmpty {
                     HStack(spacing: EhSpacing.row) {
-                        Text("已选 \(picked.count) 个")
+                        Text("\(picked.count) 個選択中")
                             .font(EhFont.caption)
                             .foregroundStyle(EhColor.secondaryLabel)
                         Spacer()
-                        Button("清空") { picked.removeAll() }
+                        Button("消去") { picked.removeAll() }
                             .font(EhFont.caption)
                             .foregroundStyle(EhColor.secondaryLabel)
-                        Button("加入搜索") {
+                        Button("検索に追加") {
                             picked.forEach(onPick)
                             dismiss()
                         }
@@ -129,7 +129,7 @@ struct TagSelectorView: View {
     private var tagGrid: some View {
         ScrollView {
             if tags.isEmpty {
-                Text(filter.isEmpty ? "这一组暂时没有标签" : "没有匹配的标签")
+                Text(filter.isEmpty ? "このグループにはまだタグがありません" : "一致するタグはありません")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
@@ -205,15 +205,15 @@ struct TagSelectorView: View {
         case "female":    return "女性"
         case "male":      return "男性"
         case "mixed":     return "混合"
-        case "artist":    return "艺术家"
-        case "group":     return "团体"
+        case "artist":    return "アーティスト"
+        case "group":     return "グループ"
         case "parody":    return "原作"
-        case "character": return "角色"
-        case "cosplayer": return "扮演者"
-        case "language":  return "语言"
-        case "other":     return "其他"
-        case "reclass":   return "重分类"
-        case "misc":      return "杂项"
+        case "character": return "キャラクター"
+        case "cosplayer": return "コスプレイヤー"
+        case "language":  return "言語"
+        case "other":     return "その他"
+        case "reclass":   return "再分類"
+        case "misc":      return "その他"
         default:          return namespace
         }
     }

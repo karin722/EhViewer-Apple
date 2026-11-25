@@ -389,7 +389,7 @@ public actor SpiderDen {
         // 磁盘空间预检查: 至少需要 数据大小 + 10MB 余量
         let requiredBytes = Int64(data.count) + 10 * 1024 * 1024
         if !Self.hasSufficientDiskSpace(bytes: requiredBytes) {
-            print("[SpiderDen] ⚠️ 磁盘空间不足，需要 \(requiredBytes / 1024 / 1024)MB，跳过写入")
+            print("[SpiderDen] ⚠️ ストレージ容量不足、\(requiredBytes / 1024 / 1024)MB 必要です。書き込みをスキップします")
             return false
         }
 
@@ -400,7 +400,7 @@ public actor SpiderDen {
             try data.write(to: file)
             return true
         } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileWriteOutOfSpaceError {
-            print("[SpiderDen] ❌ 磁盘已满，无法写入页面 \(index)")
+            print("[SpiderDen] ❌ ストレージがいっぱいのため、ページ \(index) を書き込めません")
             return false
         } catch {
             print("[SpiderDen] Failed to write to download dir: \(error)")

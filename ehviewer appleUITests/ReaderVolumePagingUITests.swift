@@ -92,7 +92,7 @@ final class ReaderVolumePagingUITests: XCTestCase {
         XCTAssertTrue(settings.waitForExistence(timeout: 4))
         settings.tap()
 
-        let toggle = app.switches["音量键翻页"].firstMatch
+        let toggle = app.switches["音量ボタンでページ送り"].firstMatch
         let visible = (app.frame.height * 0.18)...(app.frame.height * 0.82)
         for _ in 0..<8 {
             if toggle.exists && visible.contains(toggle.frame.midY) { break }
@@ -106,7 +106,7 @@ final class ReaderVolumePagingUITests: XCTestCase {
         let state = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", enabled ? "1" : "0"),
                                               object: toggle)
         XCTAssertEqual(XCTWaiter.wait(for: [state], timeout: 4), .completed)
-        app.buttons["完成"].tap()
-        XCTAssertTrue(app.navigationBars["阅读设置"].waitForNonExistence(timeout: 5))
+        app.buttons["完了"].tap()
+        XCTAssertTrue(app.navigationBars["閲覧設定"].waitForNonExistence(timeout: 5))
     }
 }

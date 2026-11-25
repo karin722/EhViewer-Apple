@@ -21,9 +21,9 @@ enum GalleryArchiveExporter {
 
         var errorDescription: String? {
             switch self {
-            case .notDownloaded: return "这本还没有下载到本地"
-            case .empty:         return "下载目录里没有图片"
-            case .zipFailed(let m): return "打包失败：\(m)"
+            case .notDownloaded: return "このギャラリーはまだダウンロードされていません"
+            case .empty:         return "ダウンロードフォルダーに画像がありません"
+            case .zipFailed(let m): return "まとめるのに失敗しました：\(m)"
             }
         }
     }

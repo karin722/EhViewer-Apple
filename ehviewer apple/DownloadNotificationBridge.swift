@@ -88,8 +88,8 @@ final class DownloadNotificationBridge: DownloadListener, @unchecked Sendable {
             // 发送磁盘满通知，让 UI 层弹窗提示用户
             NotificationCenter.default.post(name: .ehDiskFull, object: nil)
             DownloadNotificationService.shared.sendLocalNotification(
-                title: "下载已暂停",
-                body: "磁盘空间不足，所有下载已自动暂停。请释放存储空间后手动恢复下载。"
+                title: "ダウンロードを一時停止しました",
+                body: "ストレージ容量が不足しているため、すべてのダウンロードを自動的に一時停止しました。空き容量を確保してから手動でダウンロードを再開してください。"
             )
         }
     }

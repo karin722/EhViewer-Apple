@@ -8,11 +8,11 @@ struct ReaderGestureGuidanceTests {
     @Test func verticalGuidanceDescribesScrollingWithoutClaimingDoubleTapZoom() {
         let guidance = ReaderGestureGuidance(direction: .topToBottom)
         #expect(guidance.directionTitle == "上→下")
-        #expect(guidance.leftPageTitle == "上一页")
-        #expect(guidance.rightPageTitle == "下一页")
+        #expect(guidance.leftPageTitle == "前のページ")
+        #expect(guidance.rightPageTitle == "次のページ")
         #expect(!guidance.showsDoubleTapZoom)
-        #expect(guidance.motionTitle(for: .touch) == "上下滚动阅读")
-        #expect(guidance.motionTitle(for: .pointer) == "上下滚动阅读")
+        #expect(guidance.motionTitle(for: .touch) == "上下にスクロールして読む")
+        #expect(guidance.motionTitle(for: .pointer) == "上下にスクロールして読む")
     }
 
     @Test func horizontalGuidanceTracksReadingDirectionAndInput() {
@@ -20,14 +20,14 @@ struct ReaderGestureGuidanceTests {
         let rightToLeft = ReaderGestureGuidance(direction: .rightToLeft)
         #expect(leftToRight.directionTitle == "左→右")
         #expect(rightToLeft.directionTitle == "右→左")
-        #expect(leftToRight.leftPageTitle == "上一页")
-        #expect(leftToRight.rightPageTitle == "下一页")
-        #expect(rightToLeft.leftPageTitle == "下一页")
-        #expect(rightToLeft.rightPageTitle == "上一页")
+        #expect(leftToRight.leftPageTitle == "前のページ")
+        #expect(leftToRight.rightPageTitle == "次のページ")
+        #expect(rightToLeft.leftPageTitle == "次のページ")
+        #expect(rightToLeft.rightPageTitle == "前のページ")
         for guidance in [leftToRight, rightToLeft] {
             #expect(guidance.showsDoubleTapZoom)
-            #expect(guidance.motionTitle(for: .touch) == "左右滑动也可以翻页")
-            #expect(guidance.motionTitle(for: .pointer) == "使用滚轮或触控板翻页")
+            #expect(guidance.motionTitle(for: .touch) == "左右にスワイプしてもページをめくれます")
+            #expect(guidance.motionTitle(for: .pointer) == "ホイールまたはトラックパッドでページをめくる")
         }
     }
 }

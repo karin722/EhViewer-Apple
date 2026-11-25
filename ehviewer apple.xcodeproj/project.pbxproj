@@ -334,12 +334,13 @@
 				};
 			};
 			buildConfigurationList = DC4A07632F3DA21800717C38 /* Build configuration list for PBXProject "ehviewer apple" */;
-			developmentRegion = en;
+			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 				"zh-Hans",
+				ja,
 			);
 			mainGroup = DC4A075F2F3DA21800717C38;
 			minimizedProjectReferenceProxies = 1;
