@@ -46,6 +46,36 @@ jobs:
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO
 
+    - name: Archive unsigned iOS app
+      run: |
+        xcodebuild archive \
+          -project "ehviewer apple.xcodeproj" \
+          -scheme "ehviewer apple" \
+          -configuration Release \
+          -destination "generic/platform=iOS" \
+          -archivePath "$RUNNER_TEMP/EhViewer.xcarchive" \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          COMPILER_INDEX_STORE_ENABLE=NO
+
+    - name: Package unsigned IPA
+      run: |
+        app=$(ls -d "$RUNNER_TEMP/EhViewer.xcarchive/Products/Applications/"*.app | head -1)
+        echo "App: $app"
+        mkdir -p "$RUNNER_TEMP/ipa/Payload"
+        cp -R "$app" "$RUNNER_TEMP/ipa/Payload/"
+        (cd "$RUNNER_TEMP/ipa" && zip -qry ../EhViewer-ja-unsigned.ipa Payload)
+        ls -lh "$RUNNER_TEMP/EhViewer-ja-unsigned.ipa"
+
+    - name: Upload IPA
+      uses: actions/upload-artifact@v4
+      with:
+        name: EhViewer-ja-unsigned-ipa
+        path: ${{ runner.temp }}/EhViewer-ja-unsigned.ipa
+        if-no-files-found: error
+        retention-days: 30
+
     - name: Build for macOS
       run: |
         xcodebuild build \
